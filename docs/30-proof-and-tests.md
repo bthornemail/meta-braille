@@ -21,7 +21,7 @@ Together they prove that:
 - browser-side relation stores can ingest canonical relation batches and retrieve selected relation state
 - relation importers can turn WordNet and the article corpus into canonical `node` / `gloss` / `edge` / `frame` NDJSON
 - the shared vocabulary projector can normalize WordNet, narrative, and hexagram proof slices into one canonical concept surface
-- the signal-first event path can project stable hexagram header fields and dump lines from the Braille stream
+- the signal-first event path can project stable hexagram fields, witness fields, and dump lines from the Braille stream
 - the signal transcript is frozen as a golden replay witness shared across AWK, Python, and JS
 
 ## What `test_reasoner.py` Proves
@@ -109,7 +109,7 @@ This proves the live browser relation layer at the helper and store level. It do
 
 The same file now also checks the signal-first projection helpers:
 
-- King Wen ordered hexagram mapping
+- King Wen visible-order hexagram mapping
 - event-to-header projection
 - rolling dump-line rendering from the event stream
 - golden transcript equality against a fixed fixture

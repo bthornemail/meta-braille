@@ -25,6 +25,47 @@ The lower-six-bit projection used as a reduced or propagation-oriented state vie
 Implementation:
 - [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L90)
 
+### bit-linked stream
+
+The ordered transition chain emitted by the runtime. This is the simplest description of the machine: a sequential stream of bit-encapsulated state transitions that later projections observe.
+
+Implementation:
+- [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L113)
+- [braille_runtime.py](/root/meta-braille/braille_runtime.py#L115)
+- [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js)
+
+### canonical transition chain
+
+Another name for the same signal-first runtime spine. It emphasizes that runtime meaning comes from ordered transitions and replay, not from isolated symbols or static records.
+
+Implementation:
+- [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L113)
+- [web/app.js](/root/meta-braille/web/app.js)
+
+### hexagram projection class
+
+The compact Unicode Yijing symbol derived from the `curr6` projection window. It is a visible projection class over the canonical Braille state, not a second authority surface.
+
+Implementation:
+- [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L102)
+- [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js)
+
+### King Wen visible order
+
+The visible ordering used for the hexagram projection layer. In the current implementation it describes how the hexagram projection is presented, not how canonical state is stored.
+
+Implementation:
+- [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js)
+- [docs/60-signal-first-braille-hexagram.md](/root/meta-braille/docs/60-signal-first-braille-hexagram.md)
+
+### witness
+
+The compact field that shows how a projection token is paired with a local relation snapshot. In the current signal-first slice, `pattern16` is the main witness field.
+
+Implementation:
+- [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L105)
+- [web/graph.js](/root/meta-braille/web/graph.js)
+
 ### `FS`, `GS`, `US`, `RS`
 
 Selector roles derived from Braille row pairs:
@@ -109,6 +150,10 @@ Implementation:
 
 The normalized `node` / `gloss` / `edge` / `frame` NDJSON shape that can be imported from lexical or narrative sources before being projected into Braille or browser views.
 
+Current status:
+- still implemented and useful
+- no longer the only organizing center of the repo after the signal-first upgrade
+
 Implementation:
 - [docs/40-canonical-relation-schema.md](/root/meta-braille/docs/40-canonical-relation-schema.md)
 - [scripts/wordnet_to_relations.py](/root/meta-braille/scripts/wordnet_to_relations.py)
@@ -137,8 +182,12 @@ Implementation:
 
 | Concept | Source dev-doc(s) | Runtime/Web implementation | Proof/Test coverage | Notes / current status |
 | --- | --- | --- | --- | --- |
+| Bit-linked stream / canonical transition chain | [Life_Ruined_by_Word_Games](/root/meta-braille/dev-docs/2026-03-29-Life_Ruined_by_Word_Games.md), [Braille_Thinking_System](/root/meta-braille/dev-docs/2026-03-29-Braille_Thinking_System.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L113), [braille_runtime.py](/root/meta-braille/braille_runtime.py#L115), [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L69), [test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L126) | Implemented as the current signal-first runtime spine |
 | Braille as structured byte | [Braille_Thinking_System](/root/meta-braille/dev-docs/2026-03-29-Braille_Thinking_System.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L30) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L16) | Implemented |
 | 8-dot canonical and 6-dot projection split | [Life_Ruined_by_Word_Games](/root/meta-braille/dev-docs/2026-03-29-Life_Ruined_by_Word_Games.md), [Braille_Thinking_System](/root/meta-braille/dev-docs/2026-03-29-Braille_Thinking_System.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L30), [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L90) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L16) | Implemented |
+| Hexagram projection class | [Braille_Thinking_System](/root/meta-braille/dev-docs/2026-03-29-Braille_Thinking_System.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L102), [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L53), [test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L114) | Implemented as a compact projection class, not canonical storage |
+| King Wen visible order | [Braille_Thinking_System](/root/meta-braille/dev-docs/2026-03-29-Braille_Thinking_System.md) | [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js), [docs/60-signal-first-braille-hexagram.md](/root/meta-braille/docs/60-signal-first-braille-hexagram.md) | [test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L114) | Implemented as visible ordering for the hexagram layer |
+| Transcript as canonical observable surface | [Life_Ruined_by_Word_Games](/root/meta-braille/dev-docs/2026-03-29-Life_Ruined_by_Word_Games.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L113), [braille_runtime.py](/root/meta-braille/braille_runtime.py#L115), [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L69), [test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L134) | Implemented as golden replay witness |
 | `rel16` relation law | [Life_Ruined_by_Word_Games](/root/meta-braille/dev-docs/2026-03-29-Life_Ruined_by_Word_Games.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L39) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L53) | Implemented, replay-stable |
 | `FS` / `GS` / `US` / `RS` selector roles | [Braille_Thinking_System](/root/meta-braille/dev-docs/2026-03-29-Braille_Thinking_System.md), [Braille_Shadow_Scene_Graph_Spec](/root/meta-braille/dev-docs/2026-03-29-Braille_Shadow_Scene_Graph_Spec.md) | [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L56), [web/graph.js](/root/meta-braille/web/graph.js#L1), [web/index.html](/root/meta-braille/web/index.html#L177) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L16), [test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L5) | Implemented as selectors and UI surfaces |
 | FIFO ingress and local modularity | [Life_Ruined_by_Word_Games](/root/meta-braille/dev-docs/2026-03-29-Life_Ruined_by_Word_Games.md) | [braille_fifo_backend.sh](/root/meta-braille/braille_fifo_backend.sh#L16) | [test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L59) | Implemented |

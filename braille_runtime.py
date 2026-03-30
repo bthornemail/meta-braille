@@ -363,6 +363,9 @@ class RuntimeHandler(BaseHTTPRequestHandler):
         if parsed.path == "/graph.js":
             self.serve_file(self.server.config.web_dir / "graph.js", "application/javascript; charset=utf-8")
             return
+        if parsed.path == "/narrative-components.js":
+            self.serve_file(self.server.config.web_dir / "narrative-components.js", "application/javascript; charset=utf-8")
+            return
         if parsed.path == "/hexagram-projection.js":
             self.serve_file(self.server.config.web_dir / "hexagram-projection.js", "application/javascript; charset=utf-8")
             return

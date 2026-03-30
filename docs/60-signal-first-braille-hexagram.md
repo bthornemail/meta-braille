@@ -8,10 +8,13 @@ The core shift is simple:
 bit law -> Braille projection -> hexagram header projection -> dump / scene / clock rendering
 ```
 
+In runtime terms, this is best understood as a bit-linked stream, or canonical transition chain. The machine is the ordered chain of emitted state transitions. Braille and hexagrams are projections of that chain, not competing foundations.
+
 ## Core Split
 
 - Braille = canonical machine-facing carrier
-- hexagram = compact header/class view over the same state
+- hexagram = compact projection class over the same state
+- King Wen = visible ordering for the hexagram projection layer
 - dump/scene/clock = visible projections
 - WordNet/Prolog/narrative = observer layers
 
@@ -32,7 +35,7 @@ The projection token is explicit in the event envelope:
 - `projection_window` = `curr6`
 - `projection_bits` = `6`
 
-Because the Unicode Yijing block is laid out in King Wen order, the visible order is King Wen order.
+The visible hexagram layer is presented in King Wen visible order. That order belongs to the display projection, not to canonical storage.
 
 ## Event Fields
 
@@ -47,9 +50,16 @@ The signal-first runtime adds:
 
 Current semantics:
 
-- `header8` = two-digit compact class token derived from the 6-bit hexagram index
+- `header8` = two-digit compact projection token derived from the 6-bit hexagram index
 - `pattern16` = `header8` paired with the current `d2_6` witness
 - `path` and orbit fields continue to carry addressed body/context
+
+Taken together, the runtime event reads as:
+
+- canonical carrier = Braille event state
+- compact projection class = hexagram layer
+- witness = `pattern16`
+- addressed body/context = `path`, orbit, part, dialect, chain
 
 ## Canonical Transcript
 
@@ -71,6 +81,8 @@ This transcript is:
 - byte-for-byte comparable
 - derived only from canonical event fields
 - shared across AWK, Python, and JS helpers
+
+The transcript is the canonical observable surface of the transition chain. UI, graph, narrative, and semantic overlays observe this surface rather than redefining it.
 
 ## UI Modes
 
@@ -110,4 +122,12 @@ But the primary architectural story is now:
 ```text
 signal first
 relations second
+```
+
+More explicitly:
+
+```text
+bit-linked stream first
+projection layers second
+observer layers third
 ```

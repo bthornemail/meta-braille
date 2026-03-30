@@ -1,99 +1,119 @@
 # meta-braille
 
-This repo now contains a first runnable vertical slice for the Braille stream architecture described in the docs:
+`meta-braille` is a deterministic signal interpreter with human-decodable projection layers.
 
-`FIFO ingress -> gawk relational reasoner -> MQTT/Memcached hooks -> browser data-* graph -> WebRTC peer channel`
+The current public slice is organized like this:
 
-The browser projection now treats Braille row pairs as selector channels:
-- `FS` = file-system style / top selector
-- `GS` = group style / right selector
-- `US` = node/unit style / bottom selector
-- `RS` = edge/relation style / left selector
-
-DOM nodes carry the Braille graph state like:
-
-```html
-<div
-  data-braille="⠓"
-  data-braille8="13"
-  data-braille6="13"
-  data-rel16="A"
-  data-rows="0x1,0x3,0x0,0x0"
-  data-fs="1"
-  data-gs="3"
-  data-us="0"
-  data-rs="0"
-></div>
+```text
+Braille        = canonical signal
+transition     = atomic step
+tap stream     = temporal reading model
+hexagram       = compact decoded class
+King Wen       = visible ordering of decoded layer
+narrative      = observer interpretation
 ```
 
-The browser also projects recent events into a JSON Canvas-shaped document where:
-- FS/GS/US/RS behave as selector channels
-- nodes are Braille-addressed DOM/Canvas units
-- edges are derived from selector flow between consecutive events
+The browser demo renders that stack as:
 
-## Files
-- `braille_relational_reasoner.awk`: canonical 8-dot / projected 6-dot stream reasoner that emits NDJSON.
-- `braille_fifo_backend.sh`: busybox-style shell entrypoint for `init`, `run`, `publish`, `inspect`, and `serve`.
-- `braille_runtime.py`: stdlib-only HTTP server plus recovery/signaling helpers and MQTT/memcached adapters.
-- `web/`: browser surface with a worker-backed `data-*` graph, service-worker shadow scene graph, and narrow WebRTC signaling flow.
-- `dev-docs/2026-03-29-Braille_Shadow_Scene_Graph_Spec.md`: stack spec for Braille, MQTT, memcached, Service Worker, and renderer roles.
+```text
+Braille stream
+-> golden transcript
+-> tap stream / hexagram / graph / narrative projections
+```
 
-## Quick Start
-Run the backend in one terminal:
+## What Is In The Repo
+
+- [docs/00-overview.md](docs/00-overview.md): builder-facing entry point
+- [docs/10-runtime-and-web-architecture.md](docs/10-runtime-and-web-architecture.md): end-to-end runtime walkthrough
+- [docs/30-proof-and-tests.md](docs/30-proof-and-tests.md): what is currently proven
+- [docs/60-signal-first-braille-hexagram.md](docs/60-signal-first-braille-hexagram.md): signal-first upgrade
+- [braille_relational_reasoner.awk](braille_relational_reasoner.awk): canonical stream reasoner
+- [braille_fifo_backend.sh](braille_fifo_backend.sh): local FIFO backend entrypoint
+- [braille_runtime.py](braille_runtime.py): stdlib HTTP runtime and recovery/signaling helper
+- [web/index.html](web/index.html): browser demo surface
+
+## Public Demo
+
+The fastest way to see the project is:
+
+```sh
+./scripts/public_demo.sh
+```
+
+That command:
+
+1. creates `./runtime`
+2. seeds a deterministic sample Braille stream
+3. starts the browser server on `http://127.0.0.1:8008`
+
+Open the page and use:
+
+- `Signal` mode for the canonical public demo
+- `Tap Stream` for temporal pulse reading
+- `King Wen` for reordered decoded hexagram view
+- `Stream` for the broader event view
+- `WordNet` for the observer layer
+
+## Manual Quick Start
+
+Run the full backend in one terminal:
 
 ```sh
 ./braille_fifo_backend.sh init
 ./braille_fifo_backend.sh run
 ```
 
-Run the browser proxy/server in another:
+Run the browser server in another:
 
 ```sh
 ./braille_fifo_backend.sh serve
 ```
 
-Publish a stream:
+Publish a short stream:
 
 ```sh
 printf '⠁⠃⠇⠏\n' | ./braille_fifo_backend.sh publish
 ```
 
-Then open `http://127.0.0.1:8008`.
-
-## Environment
-Common knobs:
-
-```sh
-STATE_DIR=./runtime
-CHANNEL=default
-DIALECT=default
-PART=0
-CHAIN=0
-WINDOW_SIZE=64
-ORBIT_MOD=5040
-MQTT_ENABLE=0
-MEMCACHED_ENABLE=0
-HTTP_HOST=127.0.0.1
-HTTP_PORT=8008
-```
-
-Optional integrations:
-- If `mosquitto_pub` is installed and `MQTT_ENABLE=1`, the runtime publishes stream/proof/tip topics.
-- If a memcached daemon is available and `MEMCACHED_ENABLE=1`, the runtime writes bounded recovery snapshots via the text protocol.
-
-## Shadow Scene Graph
-The browser registers `web/service-worker.js`, which keeps a local shadow scene graph mirror of recent events and exposes it at:
+Then open:
 
 ```text
-/shadow-scene-graph
+http://127.0.0.1:8008
 ```
 
-That mirror is a control-plane staging area for DOM/SVG/A-Frame projections. It is local state, not canonical truth.
+## Replay Contract
 
-## Tests
+The canonical observable surface is the golden transcript:
+
+```text
+<hexagram> | <braille> | <header8>/<pattern16> | <path>
+```
+
+Example:
+
+```text
+䷁ | ⠁ | 01/0101 | m/orbit/0/part/0/dialect/default/chain/0
+```
+
+If two implementations produce the same transcript for the same input, they are behaving as the same public protocol.
+
+## Verify
+
 Run:
 
 ```sh
-python3 -m unittest discover -s tests -p 'test_*.py'
 node --test tests/test_graph.mjs
+python3 -m unittest discover -s tests -p 'test_*.py'
 ```
+
+## Project Status
+
+- `implemented`: canonical Braille stream, golden transcript, tap-stream projection, hexagram projection, browser signal view, narrative overlay, relation importers
+- `partial`: MQTT hooks, memcached hooks, service-worker mirror, live WordNet observer mode, WebRTC peer path
+- `conceptual only`: A-Frame renderer, memcached binary protocol law, richer distributed consensus semantics
+
+## Publishing Notes
+
+- Public release checklist: [docs/70-public-release.md](docs/70-public-release.md)
+- License: [LICENSE](LICENSE)
+- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -7,7 +7,7 @@ import {
 } from "./relation-store.js";
 
 const STATIC_CACHE = "meta-braille-static-v1";
-const SHELL_FILES = ["/", "/app.js", "/graph.js", "/worker.js", "/service-worker.js", "/relation-worker.js", "/prolog-relations.js", "/relation-store.js", "/hexagram-projection.js"];
+const SHELL_FILES = ["/", "/app.js", "/graph.js", "/worker.js", "/service-worker.js", "/relation-worker.js", "/prolog-relations.js", "/relation-store.js", "/hexagram-projection.js", "/narrative-components.js"];
 const shadowSceneGraph = new Map();
 let relationStore = createRelationStore();
 

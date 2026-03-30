@@ -6,8 +6,9 @@ import {
   jsonCanvasDocumentFromRelations,
   signalDumpLinesFromEvents,
 } from "./graph.js";
+import { renderNarrativeComponents, resolveNarratives } from "./narrative-components.js";
 import { WORDNET_RELATION_SOURCES, buildWordNetControlPlane } from "./prolog-relations.js";
-import { projectHexagramFromEvent } from "./hexagram-projection.js";
+import { buildTapStreamFrames, projectHexagramFromEvent } from "./hexagram-projection.js";
 
 const worker = new Worker("./worker.js", { type: "module" });
 const relationWorker = new Worker("./relation-worker.js", { type: "module" });
@@ -48,9 +49,13 @@ const sceneGlyphEl = document.querySelector("#scene-glyph");
 const sceneTitleEl = document.querySelector("#scene-title");
 const sceneCaptionEl = document.querySelector("#scene-caption");
 const sceneDumpEl = document.querySelector("#scene-dump");
+const sceneTapEl = document.querySelector("#scene-tap-stream");
 const sceneMetaEl = document.querySelector("#scene-meta");
+const narrativeOverlayEl = document.querySelector("#narrative-overlay");
 const projection2dButton = document.querySelector("#projection-2d");
 const projection3dButton = document.querySelector("#projection-3d");
+const tapStreamButton = document.querySelector("#tap-view-stream");
+const tapKingWenButton = document.querySelector("#tap-view-kingwen");
 const cardModeButtons = [...document.querySelectorAll("[data-card-mode]")];
 const cardToggleButtons = [...document.querySelectorAll("[data-toggle-card]")];
 const cardBodies = {
@@ -68,6 +73,7 @@ state.cardModes = {
   projection: "local",
 };
 state.sceneProjection = "2d";
+state.tapView = "stream";
 state.shadowGraph = null;
 
 worker.onmessage = (message) => {
@@ -123,6 +129,7 @@ async function bootstrap() {
   wireFeatureCards();
   wireModeButtons();
   wireProjectionButtons();
+  wireTapViewButtons();
   wireGraphSelection();
   loadWordNetSources();
 }
@@ -330,6 +337,20 @@ function wireProjectionButtons() {
   renderSceneProjectionButtons();
 }
 
+function wireTapViewButtons() {
+  tapStreamButton.addEventListener("click", () => {
+    state.tapView = "stream";
+    renderTapViewButtons();
+    renderScenePanel();
+  });
+  tapKingWenButton.addEventListener("click", () => {
+    state.tapView = "kingwen";
+    renderTapViewButtons();
+    renderScenePanel();
+  });
+  renderTapViewButtons();
+}
+
 function renderModeButtons() {
   signalModeButton.dataset.active = String(state.relationMode === "signal");
   streamModeButton.dataset.active = String(state.relationMode === "stream");
@@ -339,6 +360,11 @@ function renderModeButtons() {
 function renderSceneProjectionButtons() {
   projection2dButton.dataset.active = String(state.sceneProjection === "2d");
   projection3dButton.dataset.active = String(state.sceneProjection === "3d");
+}
+
+function renderTapViewButtons() {
+  tapStreamButton.dataset.active = String(state.tapView === "stream");
+  tapKingWenButton.dataset.active = String(state.tapView === "kingwen");
 }
 
 function wireGraphSelection() {
@@ -490,6 +516,7 @@ function renderControlPlane(event) {
 
 function renderScenePanel(recordsOverride = null, selectionOverride = null) {
   renderSceneProjectionButtons();
+  renderTapViewButtons();
   const scene = state.relationMode === "wordnet"
     ? buildWordNetScene(recordsOverride ?? [...state.relationRecords.values()], selectionOverride ?? getSelectedRelation(recordsOverride ?? [...state.relationRecords.values()]))
     : state.relationMode === "signal"
@@ -504,7 +531,9 @@ function renderScenePanel(recordsOverride = null, selectionOverride = null) {
   sceneTitleEl.textContent = scene.title;
   sceneCaptionEl.textContent = scene.caption;
   sceneDumpEl.textContent = scene.dump.join("\n");
+  sceneTapEl.innerHTML = buildTapStreamMarkup(scene.tapFrames ?? []);
   sceneMetaEl.textContent = scene.meta.join("\n");
+  renderNarrativeComponents(narrativeOverlayEl, scene.components ?? []);
 }
 
 function buildStreamScene(events) {
@@ -514,6 +543,7 @@ function buildStreamScene(events) {
   const rel = latest.rel16 ?? "-";
   const path = latest.path ?? "m/orbit/0/part/0/dialect/default/chain/0";
   const recent = events.slice(-12);
+  const tapFrames = buildTapStreamFrames(events, { limit: 12, order: state.tapView });
   return {
     kind: "stream",
     orbit: orbitValue,
@@ -521,11 +551,14 @@ function buildStreamScene(events) {
     title: `Orbit ${orbitValue} / Braille ${braille}`,
     caption: `Top-left is the live 240-step clock. Top-right is the projection minimap in ${state.sceneProjection.toUpperCase()} mode.`,
     dump: signalDumpLinesFromEvents(events, 8),
+    tapFrames,
+    components: resolveNarratives(latest),
     meta: [
       `path=${path}`,
       `rel16=${rel}`,
       `events=${events.length}`,
       `projection=${state.sceneProjection}`,
+      `tap_view=${state.tapView}`,
     ],
     sequence: recent.map((event, index) => ({
       glyph: event.braille ?? "·",
@@ -545,13 +578,16 @@ function buildSignalScene(events) {
   const projection = projectHexagramFromEvent(latest);
   const orbitValue = Number(latest.orbit_step ?? latest.orbit ?? 0) % 240;
   const recent = events.slice(-12);
+  const tapFrames = buildTapStreamFrames(events, { limit: 12, order: state.tapView });
   return {
     kind: "signal",
     orbit: orbitValue,
     glyph: `${projection.hexagram}${latest.braille ?? "⠀"}`,
     title: `Signal ${projection.hexagram} / ${latest.braille ?? "⠀"}`,
-    caption: "Signal-first mode treats Braille as canonical and hexagrams as the compact header/class view over the same stream.",
+    caption: "Tap Stream mode reads the canonical Braille stream as timed pulses while hexagrams appear as the compact decoded class over the same transition chain.",
     dump: signalDumpLinesFromEvents(events, 8),
+    tapFrames,
+    components: resolveNarratives(latest),
     meta: [
       `header8=${projection.header8}`,
       `pattern16=${projection.pattern16}`,
@@ -559,6 +595,7 @@ function buildSignalScene(events) {
       `codepoint=${projection.hexagram_codepoint}`,
       `path=${latest.path ?? "-"}`,
       `observer-layer=wordnet/prolog/narrative`,
+      `tap_view=${state.tapView}`,
     ],
     sequence: recent.map((event, index) => {
       const item = projectHexagramFromEvent(event);
@@ -596,6 +633,8 @@ function buildWordNetScene(records, selection) {
       `observer | ${selected.label ?? "WordNet"} | ${selected.role ?? "node"} | ${selected.id ?? "-"}`,
       `glosses=${selected.glosses?.length ?? 0} | edges=${edges.length} | mode=observer`,
     ],
+    tapFrames: [],
+    components: [],
     meta: [
       `selected=${selected.id ?? "-"}`,
       `nodes=${nodeCount}`,
@@ -680,6 +719,19 @@ function buildProjectionMap3d(scene) {
       ${bars.join("")}
     </svg>
   `;
+}
+
+function buildTapStreamMarkup(frames) {
+  if (!frames.length) {
+    return '<div class="tap-empty">Waiting for tap pulses…</div>';
+  }
+  return frames.map((frame) => `
+    <div class="tap-group" data-gap="${frame.gap}">
+      <span class="tap-pulses">${escapeHtml(frame.pulseText)}</span>
+      <span class="tap-braille">${escapeHtml(frame.braille)}</span>
+      <span class="tap-hexagram">${escapeHtml(frame.hexagram)}</span>
+    </div>
+  `).join("");
 }
 
 function renderCard(card, event) {

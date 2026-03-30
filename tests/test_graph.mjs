@@ -9,6 +9,7 @@ import {
   signalDumpLinesFromEvents,
 } from "../web/graph.js";
 import {
+  buildTapStreamFrames,
   formatSignalTranscriptLine as formatSignalTranscriptProjection,
   KING_WEN_HEXAGRAMS,
   projectHexagramFromEvent,
@@ -26,6 +27,7 @@ import {
   ingestRelationBatch,
   summarizeRelationStore,
 } from "../web/relation-store.js";
+import { resolveNarratives } from "../web/narrative-components.js";
 
 test("datasetFromEvent maps event fields to DOM-friendly strings", () => {
   const dataset = datasetFromEvent({
@@ -150,6 +152,39 @@ test("formatSignalTranscriptLine matches the golden transcript fixture", () => {
 
   assert.deepEqual(lines, fixture);
   assert.deepEqual(lines, events.map((event) => formatSignalTranscriptProjection(event)));
+});
+
+test("buildTapStreamFrames derives pulse groups and supports King Wen ordering", () => {
+  const events = [
+    { braille: "⠁", curr8: "01", curr6: "01", d2_6: "01", step: 1, path: "m/orbit/0/part/0/dialect/default/chain/0" },
+    { braille: "⠃", curr8: "03", curr6: "03", d2_6: "03", step: 2, path: "m/orbit/1/part/0/dialect/default/chain/0" },
+    { braille: "⠋", curr8: "0B", curr6: "0B", d2_6: "0A", step: 5, path: "m/orbit/2/part/0/dialect/default/chain/0" },
+  ];
+  const streamFrames = buildTapStreamFrames(events, { order: "stream" });
+  const kingwenFrames = buildTapStreamFrames(events, { order: "kingwen" });
+
+  assert.equal(streamFrames.length, 3);
+  assert.equal(streamFrames[0].gap, "lead");
+  assert.equal(streamFrames[1].gap, "short");
+  assert.equal(streamFrames[2].gap, "long");
+  assert.equal(streamFrames[2].pulseText.length >= 1, true);
+  assert.deepEqual(kingwenFrames.map((frame) => frame.hexagram_order), [2, 4, 12]);
+});
+
+test("resolveNarratives returns a pure overlay component for signal events", () => {
+  const components = resolveNarratives({
+    braille: "⠁",
+    hexagram: "䷁",
+    header8: "01",
+    rel16: "3",
+    orbit_step: 0,
+    path: "m/orbit/0/part/0/dialect/default/chain/0",
+    selectors: { FS: 1, GS: 0, US: 1, RS: 0 },
+  });
+
+  assert.equal(components.length, 1);
+  assert.equal(components[0].kind, "human");
+  assert.match(components[0].body, /m\/orbit\/0/);
 });
 
 test("parsePrologLine parses s/6, g/2, hyp/2, ant/4 and ignores malformed lines", () => {

@@ -56,7 +56,7 @@ Important fields emitted here:
 
 This stage is the current canonical reasoning surface.
 
-In the signal-first upgrade, Braille remains canonical and the hexagram fields are treated as a deterministic compact projection of `curr6`, not as a second source of truth.
+In the signal-first upgrade, Braille remains canonical and the hexagram fields are treated as a deterministic compact projection of `curr6`, not as a second source of truth. The runtime is best read as a canonical transition chain: a bit-linked stream whose visible hexagram layer is presented in King Wen order.
 
 ## 2. FIFO And Shell Orchestration
 
