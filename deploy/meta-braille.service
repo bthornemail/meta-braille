@@ -1,0 +1,22 @@
+[Unit]
+Description=meta-braille public demo
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/meta-braille
+Environment=STATE_DIR=/var/www/meta-braille/runtime
+Environment=HTTP_HOST=127.0.0.1
+Environment=HTTP_PORT=8008
+Environment=CHANNEL=public
+Environment=DIALECT=default
+Environment=PART=0
+Environment=CHAIN=0
+Environment=WINDOW_SIZE=64
+ExecStart=/var/www/meta-braille/scripts/public_demo.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

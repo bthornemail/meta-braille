@@ -20,6 +20,7 @@ tests = proof-of-concept witness for implemented behavior
 6. [Shared Vocabulary](./50-shared-vocabulary.md)
 7. [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md)
 8. [Public Release](./70-public-release.md)
+9. [matroid-garden.com Deployment](./80-matroid-garden-deploy.md)
 
 ## What This System Is
 

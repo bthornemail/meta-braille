@@ -115,5 +115,6 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 ## Publishing Notes
 
 - Public release checklist: [docs/70-public-release.md](docs/70-public-release.md)
+- Domain attach guide: [docs/80-matroid-garden-deploy.md](docs/80-matroid-garden-deploy.md)
 - License: [LICENSE](LICENSE)
 - Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
