@@ -21,6 +21,7 @@ tests = proof-of-concept witness for implemented behavior
 7. [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md)
 8. [Public Release](./70-public-release.md)
 9. [matroid-garden.com Deployment](./80-matroid-garden-deploy.md)
+10. [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md)
 
 ## What This System Is
 
@@ -38,7 +39,7 @@ FIFO ingress
 
 The source of truth is not the browser, MQTT, memcached, or the UI. The current code treats the Braille event law as canonical and everything else as transport, recovery, projection, or mirroring.
 
-The newest parallel upgrade extends that idea one step further: the runtime now supports a signal-first Braille + hexagram view where Braille remains canonical, the Yijing hexagram block acts as the compact projection class over the same state stream, and the underlying machine is best thought of as a bit-linked stream or canonical transition chain.
+The newest parallel upgrade extends that idea one step further: the runtime now supports a signal-first Braille + hexagram view where Braille is the basis language and canonical carrier, the Yijing hexagram block acts as the compact dialectic projection class over the same state stream, and the underlying machine is best thought of as a bit-linked stream or canonical transition chain.
 
 ## Canonical Runtime Pieces
 
@@ -134,3 +135,4 @@ Current builder-relevant areas:
 - For the proof surface and current test limits, go to [Proof And Tests](./30-proof-and-tests.md).
 - For the small cross-domain anchor vocabulary, go to [Shared Vocabulary](./50-shared-vocabulary.md).
 - For the signal-first upgrade, go to [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md).
+- For the full address / projection / materialization stack, go to [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md).
