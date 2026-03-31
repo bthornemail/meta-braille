@@ -349,6 +349,37 @@ def recent_events(config: RuntimeConfig, dialect: str | None, part: str | None, 
 class RuntimeHandler(BaseHTTPRequestHandler):
     server: "RuntimeServer"
 
+    def do_HEAD(self) -> None:  # noqa: N802
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path in {
+            "/",
+            "/app.js",
+            "/worker.js",
+            "/graph.js",
+            "/narrative-components.js",
+            "/hexagram-projection.js",
+            "/service-worker.js",
+            "/relation-worker.js",
+            "/prolog-relations.js",
+            "/relation-store.js",
+        }:
+            self.send_response(HTTPStatus.OK)
+            self.end_headers()
+            return
+        if parsed.path.startswith("/api/"):
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            return
+        if parsed.path.startswith("/public/"):
+            public_root = (self.server.config.web_dir / "public").resolve()
+            target = (self.server.config.web_dir / parsed.path.lstrip("/")).resolve()
+            if (public_root in target.parents or target == public_root) and target.exists():
+                self.send_response(HTTPStatus.OK)
+                self.end_headers()
+                return
+        self.send_error(HTTPStatus.NOT_FOUND, "Not found")
+
     def do_GET(self) -> None:  # noqa: N802
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == "/":

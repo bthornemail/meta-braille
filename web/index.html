@@ -104,7 +104,7 @@
         background: white;
         overflow: hidden;
       }
-      .feature-card[hidden] {
+      .feature-card[data-collapsed="true"] .feature-body {
         display: none;
       }
       .feature-head {
@@ -119,6 +119,9 @@
       .feature-head h3 {
         margin: 0;
         font-size: 0.95rem;
+      }
+      .feature-head button {
+        min-width: 86px;
       }
       .feature-body {
         padding: 12px 14px;
@@ -322,6 +325,7 @@
           <button id="mode-signal" type="button">Signal</button>
           <button id="mode-stream" type="button">Stream</button>
           <button id="mode-wordnet" type="button">WordNet</button>
+          <button id="reset-view" type="button" title="Restore the default layout without changing the stream">Reset View</button>
         </div>
         <p id="wordnet-status">wordnet: waiting…</p>
       </section>
@@ -355,7 +359,7 @@
             <div class="feature-card" data-card="transport">
               <div class="feature-head">
                 <h3>Transport Fabric</h3>
-                <button type="button" data-toggle-card="transport">Hide</button>
+                <button type="button" data-toggle-card="transport" title="Collapse or expand this panel">Collapse</button>
               </div>
               <div class="feature-body">
                 <div class="pillbar">
@@ -368,7 +372,7 @@
             <div class="feature-card" data-card="history">
               <div class="feature-head">
                 <h3>History / Diff</h3>
-                <button type="button" data-toggle-card="history">Hide</button>
+                <button type="button" data-toggle-card="history" title="Collapse or expand this panel">Collapse</button>
               </div>
               <div class="feature-body">
                 <div class="pillbar">
@@ -453,7 +457,7 @@
             <div class="feature-card" data-card="selection">
               <div class="feature-head">
                 <h3>Selection / Node</h3>
-                <button type="button" data-toggle-card="selection">Hide</button>
+                <button type="button" data-toggle-card="selection" title="Collapse or expand this panel">Collapse</button>
               </div>
               <div class="feature-body">
                 <div class="pillbar">
@@ -466,7 +470,7 @@
             <div class="feature-card" data-card="projection">
               <div class="feature-head">
                 <h3>Projection / Mirror</h3>
-                <button type="button" data-toggle-card="projection">Hide</button>
+                <button type="button" data-toggle-card="projection" title="Collapse or expand this panel">Collapse</button>
               </div>
               <div class="feature-body">
                 <div class="pillbar">

@@ -34,6 +34,7 @@ const connectButton = document.querySelector("#connect-peer");
 const signalModeButton = document.querySelector("#mode-signal");
 const streamModeButton = document.querySelector("#mode-stream");
 const wordnetModeButton = document.querySelector("#mode-wordnet");
+const resetViewButton = document.querySelector("#reset-view");
 const canvasPre = document.querySelector("#json-canvas");
 const fsScopeEl = document.querySelector("#fs-scope");
 const fsPartitionEl = document.querySelector("#fs-partition");
@@ -71,6 +72,12 @@ state.cardModes = {
   history: "local",
   selection: "local",
   projection: "local",
+};
+state.cardCollapsed = {
+  transport: false,
+  history: false,
+  selection: false,
+  projection: false,
 };
 state.sceneProjection = "2d";
 state.tapView = "stream";
@@ -130,6 +137,7 @@ async function bootstrap() {
   wireModeButtons();
   wireProjectionButtons();
   wireTapViewButtons();
+  wireResetViewButton();
   wireGraphSelection();
   loadWordNetSources();
 }
@@ -294,17 +302,13 @@ function wireFeatureCards() {
 
   for (const button of cardToggleButtons) {
     button.addEventListener("click", () => {
-      const card = document.querySelector(`[data-card="${button.dataset.toggleCard}"]`);
-      const hidden = !card.hasAttribute("hidden");
-      if (hidden) {
-        card.setAttribute("hidden", "");
-        button.textContent = "Show";
-      } else {
-        card.removeAttribute("hidden");
-        button.textContent = "Hide";
-      }
+      const cardName = button.dataset.toggleCard;
+      state.cardCollapsed[cardName] = !state.cardCollapsed[cardName];
+      renderCardCollapseState();
     });
   }
+
+  renderCardCollapseState();
 }
 
 function wireModeButtons() {
@@ -321,6 +325,26 @@ function wireModeButtons() {
     renderMainView();
   });
   renderModeButtons();
+}
+
+function wireResetViewButton() {
+  resetViewButton.addEventListener("click", () => {
+    state.relationMode = "signal";
+    state.sceneProjection = "2d";
+    state.tapView = "stream";
+    for (const key of Object.keys(state.cardModes)) {
+      state.cardModes[key] = "local";
+    }
+    for (const key of Object.keys(state.cardCollapsed)) {
+      state.cardCollapsed[key] = false;
+    }
+    updateCardModeButtons();
+    renderCardCollapseState();
+    renderModeButtons();
+    renderSceneProjectionButtons();
+    renderTapViewButtons();
+    renderMainView();
+  });
 }
 
 function wireProjectionButtons() {
@@ -382,6 +406,17 @@ function wireGraphSelection() {
 function updateCardModeButtons() {
   for (const button of cardModeButtons) {
     button.dataset.active = String(state.cardModes[button.dataset.cardMode] === button.dataset.mode);
+  }
+}
+
+function renderCardCollapseState() {
+  for (const button of cardToggleButtons) {
+    const cardName = button.dataset.toggleCard;
+    const card = document.querySelector(`[data-card="${cardName}"]`);
+    const collapsed = Boolean(state.cardCollapsed[cardName]);
+    card.dataset.collapsed = String(collapsed);
+    button.textContent = collapsed ? "Expand" : "Collapse";
+    button.title = collapsed ? "Expand this panel" : "Collapse this panel";
   }
 }
 

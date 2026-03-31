@@ -2,6 +2,12 @@
 
 `meta-braille` is a deterministic signal interpreter with human-decodable projection layers.
 
+If you are arriving fresh, the shortest way to understand the project is:
+
+1. read [docs/00-overview.md](docs/00-overview.md)
+2. open the public demo
+3. compare the live scene to the golden transcript format in this README
+
 The current public slice is organized like this:
 
 ```text
@@ -20,6 +26,12 @@ Braille stream
 -> golden transcript
 -> tap stream / hexagram / graph / narrative projections
 ```
+
+In plain language:
+
+- the Braille stream is the source of truth
+- the transcript is the replay proof
+- the browser views are different ways of reading the same stream
 
 ## What Is In The Repo
 
@@ -53,6 +65,8 @@ Open the page and use:
 - `King Wen` for reordered decoded hexagram view
 - `Stream` for the broader event view
 - `WordNet` for the observer layer
+
+If you only click one thing, start with `Signal`, then switch between `Tap Stream` and `King Wen`.
 
 ## Manual Quick Start
 
