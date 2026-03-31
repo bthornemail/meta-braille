@@ -4,12 +4,12 @@ This repo does not try to prove the whole conceptual system at once. The current
 
 ## Current Test Surface
 
-There are two automated test files:
+There are four automated test areas:
 
-- [tests/test_reasoner.py](/root/meta-braille/tests/test_reasoner.py)
-- [tests/test_graph.mjs](/root/meta-braille/tests/test_graph.mjs)
-- [tests/test_relation_importers.py](/root/meta-braille/tests/test_relation_importers.py)
-- [tests/test_shared_vocabulary.py](/root/meta-braille/tests/test_shared_vocabulary.py)
+- runtime reasoner tests
+- browser graph/projection tests
+- relation importer tests
+- shared vocabulary tests
 
 Together they prove that:
 
@@ -24,11 +24,11 @@ Together they prove that:
 - the signal-first event path can project stable hexagram fields, witness fields, and dump lines from the Braille stream
 - the signal transcript is frozen as a golden replay witness shared across AWK, Python, and JS
 
-## What `test_reasoner.py` Proves
+## What The Runtime Tests Prove
 
 ### Schema witness
 
-[test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L16) feeds Braille input into the AWK reasoner and checks the resulting event objects.
+The runtime tests feed Braille input into the reasoner and check the resulting event objects.
 
 It verifies:
 
@@ -43,7 +43,7 @@ This is the strongest current proof that the runtime event contract is stable fo
 
 ### Replay stability
 
-[test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L53) runs the same input twice and asserts identical output.
+The runtime tests run the same input twice and assert identical output.
 
 This proves a narrow but important property:
 
@@ -53,15 +53,15 @@ same input stream -> same event stream
 
 ### Backend smoke path
 
-[test_reasoner.py](/root/meta-braille/tests/test_reasoner.py#L59) launches the shell backend, publishes Braille input, and checks that `rel.log` is populated.
+The runtime tests also launch the shell backend, publish Braille input, and check that `rel.log` is populated.
 
 This proves that the local FIFO/backend path is wired end-to-end at a smoke-test level.
 
-## What `test_graph.mjs` Proves
+## What The Browser Projection Tests Prove
 
 ### DOM dataset projection
 
-[test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L5) checks that `datasetFromEvent()` produces the expected DOM-safe fields.
+The browser projection tests check that event-to-dataset conversion produces the expected DOM-safe fields.
 
 It verifies:
 
@@ -75,7 +75,7 @@ This is the proof surface for the browser `data-*` graph contract.
 
 ### JSON Canvas projection helper
 
-[test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L29) checks that the helper can turn recent events into a JSON Canvas-shaped node and edge object.
+They also check that the helper can turn recent events into a JSON Canvas-shaped node and edge object.
 
 This proves:
 
@@ -87,13 +87,13 @@ It does not prove that the browser is executing a complete JSON Canvas engine.
 
 ### Service-worker selector mirror compatibility
 
-[test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L67) checks that selector fields survive in a shape suitable for service-worker mirroring.
+They check that selector fields survive in a shape suitable for service-worker mirroring.
 
 This is a proof of compatibility, not a full browser integration test.
 
 ### Live WordNet parser and relation projection helpers
 
-[test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L100) checks the browser-side parser contract for:
+They check the browser-side parser contract for:
 
 - `s/6`
 - `g/2`
@@ -101,7 +101,7 @@ This is a proof of compatibility, not a full browser integration test.
 - `ant/4`
 - malformed lines that must be ignored
 
-[test_graph.mjs](/root/meta-braille/tests/test_graph.mjs#L126) also checks that parsed relation batches can be ingested into a local relation store, selected by ID, and projected into JSON Canvas-shaped browser objects.
+They also check that parsed relation batches can be ingested into a local relation store, selected by ID, and projected into JSON Canvas-shaped browser objects.
 
 This proves the live browser relation layer at the helper and store level. It does not yet prove a full browser fetch-plus-service-worker end-to-end flow under a real browser automation harness.
 
@@ -114,11 +114,11 @@ The same file now also checks the signal-first projection helpers:
 - rolling dump-line rendering from the event stream
 - golden transcript equality against a fixed fixture
 
-## What `test_relation_importers.py` Proves
+## What The Relation Importer Tests Prove
 
 ### WordNet import
 
-[test_relation_importers.py](/root/meta-braille/tests/test_relation_importers.py#L12) runs the WordNet importer against the bundled Prolog files and checks that the emitted NDJSON includes:
+The relation importer tests run the WordNet importer against the bundled Prolog files and check that the emitted NDJSON includes:
 
 - `node`
 - `gloss`
@@ -130,7 +130,7 @@ This proves the repo can already lift part of WordNet into the shared canonical 
 
 ### Narrative import
 
-[test_relation_importers.py](/root/meta-braille/tests/test_relation_importers.py#L33) runs the article importer against the bundled article set and checks for:
+They also run the article importer against the bundled article set and check for:
 
 - story or actor nodes
 - gloss records from quoted passages
@@ -139,11 +139,11 @@ This proves the repo can already lift part of WordNet into the shared canonical 
 
 This proves the repo can already lift the narrative corpus into the same relation substrate used for lexical imports.
 
-## What `test_shared_vocabulary.py` Proves
+## What The Shared Vocabulary Tests Prove
 
 ### Cross-domain convergence
 
-[test_shared_vocabulary.py](/root/meta-braille/tests/test_shared_vocabulary.py#L12) runs the shared-vocabulary projector across all three proof domains:
+The shared vocabulary tests run the projector across all three proof domains:
 
 - WordNet
 - narrative
@@ -155,23 +155,15 @@ This is the current proof that the repo can compare lexical, narrative, and orde
 
 ### Public proof slice generation
 
-[test_shared_vocabulary.py](/root/meta-braille/tests/test_shared_vocabulary.py#L34) verifies that the projector can write browser-inspectable proof slices into `web/public/proof/` and that each emitted record carries canonical vocabulary metadata.
+They also verify that the projector can write browser-inspectable proof slices and that each emitted record carries canonical vocabulary metadata.
 
 ## How To Run
 
-Run the Python tests:
+Run the Python test suite.
 
-```sh
-python3 -m unittest discover -s tests -p 'test_*.py'
-```
+Run the Node test suite as well.
 
-Run the Node tests:
-
-```sh
-node --test tests/test_graph.mjs
-```
-
-These are the same commands referenced by the top-level README and should remain synchronized with the actual repo.
+These two suites are the practical verification surface for the current repo and should remain synchronized with the implemented test surface.
 
 ## What These Tests Do Not Prove Yet
 
@@ -195,6 +187,6 @@ Use this rule when reading the repo:
 
 - if it is covered by code and tests, treat it as implemented proof-of-concept behavior
 - if it is covered by code only, treat it as implemented but lightly proven behavior
-- if it appears only in `dev-docs/` or the spec docs, treat it as conceptual or planned unless stated otherwise
+- if it appears only as a future or conceptual idea in the handbook, treat it as planned unless stated otherwise
 
 That rule helps prevent over-reading the current state of the project.

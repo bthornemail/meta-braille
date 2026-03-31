@@ -1,0 +1,16 @@
+[Unit]
+Description=Meta-Braille Native Runtime
+After=network.target
+
+[Service]
+Type=simple
+User=meta-braille
+Group=meta-braille
+WorkingDirectory=/opt/meta-braille/c-server
+ExecStart=/opt/meta-braille/c-server/meta_circular_runtime
+Restart=always
+RestartSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

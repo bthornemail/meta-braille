@@ -24,10 +24,12 @@ Use:
 - `nginx` to reverse-proxy the public hostname to that local app
 - `certbot` to issue a valid certificate for `matroid-garden.com`
 
-## Files Included In The Repo
+## Files Included In The Deployment Bundle
 
-- [deploy/meta-braille.service](../deploy/meta-braille.service)
-- [deploy/matroid-garden.nginx.conf](../deploy/matroid-garden.nginx.conf)
+The deployment bundle includes:
+
+- a `systemd` service for the public demo
+- an `nginx` site configuration for `matroid-garden.com`
 
 ## Server Layout
 
@@ -71,13 +73,7 @@ sudo systemctl start meta-braille.service
 sudo systemctl status meta-braille.service
 ```
 
-This service runs:
-
-```text
-scripts/public_demo.sh
-```
-
-which seeds the deterministic demo stream and starts the Python server on `127.0.0.1:8008`.
+This service seeds the deterministic demo stream and starts the Python server on `127.0.0.1:8008`.
 
 ### 4. Install the nginx site
 
@@ -111,4 +107,4 @@ curl -I https://matroid-garden.com
 
 - This uses the seeded public demo, not the full live FIFO fanout path.
 - That is intentional for the first public domain attach because it is simpler and more stable.
-- Once the domain is stable, the service can be switched from `scripts/public_demo.sh` to a fuller live backend topology if desired.
+- Once the domain is stable, the service can be switched from the seeded public demo to a fuller live backend topology if desired.

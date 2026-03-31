@@ -39,7 +39,7 @@ The first shared vocabulary is intentionally small:
 - `witness`
 - `scope`
 
-These terms live in [shared_relation_vocabulary.py](/root/meta-braille/scripts/shared_relation_vocabulary.py).
+These terms are the current shared vocabulary contract of the repo.
 
 ## Domain Crosswalk
 
@@ -75,23 +75,7 @@ The first hexagram proof slice uses a small King Wen-aligned anchor set:
 
 ## Proof Slices
 
-The projector script can emit all three domains into the same normalized NDJSON form:
-
-```sh
-python3 scripts/shared_relation_vocabulary.py --domain all --limit 24
-```
-
-It can also write public proof slices for browser inspection:
-
-```sh
-python3 scripts/shared_relation_vocabulary.py --write-public-proof-slices --limit 24
-```
-
-That produces:
-
-- [wordnet-shared-vocabulary.ndjson](/root/meta-braille/web/public/proof/wordnet-shared-vocabulary.ndjson)
-- [narrative-shared-vocabulary.ndjson](/root/meta-braille/web/public/proof/narrative-shared-vocabulary.ndjson)
-- [hexagram-shared-vocabulary.ndjson](/root/meta-braille/web/public/proof/hexagram-shared-vocabulary.ndjson)
+The shared vocabulary layer can emit all three domains into the same normalized NDJSON form and can also write public proof slices for browser inspection, one each for WordNet, narrative, and hexagram records.
 
 ## Why This Matters
 
@@ -106,7 +90,7 @@ Implemented now:
 - shared vocabulary definition
 - projector script for WordNet, narrative, and hexagram proof slices
 - generated public proof slices
-- automated proof coverage in [test_shared_vocabulary.py](/root/meta-braille/tests/test_shared_vocabulary.py)
+- automated proof coverage for the shared vocabulary projector
 
 Still partial:
 

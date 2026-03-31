@@ -23,14 +23,15 @@ projections = structure
 observers = meaning
 ```
 
-## Repo Surface
+## Handbook Surface
 
 Before publishing, confirm:
 
-- [README.md](../README.md) describes the public story clearly
-- [LICENSE](../LICENSE) exists
-- [CONTRIBUTING.md](../CONTRIBUTING.md) exists
 - [docs/00-overview.md](./00-overview.md) links the handbook in reading order
+- [docs/10-runtime-and-web-architecture.md](./10-runtime-and-web-architecture.md) explains the flow clearly
+- [docs/30-proof-and-tests.md](./30-proof-and-tests.md) states the current proof boundary clearly
+- [docs/60-signal-first-braille-hexagram.md](./60-signal-first-braille-hexagram.md) matches the public vocabulary
+- [docs/90-canonical-projection-and-resolution.md](./90-canonical-projection-and-resolution.md) matches the current protocol law
 - implementation maturity is clearly marked as implemented, partial, or conceptual only
 
 ## Demo Surface
@@ -45,35 +46,15 @@ The public demo should show:
 
 ## Verification
 
-Before tagging a public release, run:
-
-```sh
-node --test tests/test_graph.mjs
-python3 -m unittest discover -s tests -p 'test_*.py'
-```
+Before tagging a public release, run the Python and Node test suites and confirm they both pass.
 
 ## Local Demo Commands
 
-One-command public demo:
-
-```sh
-./scripts/public_demo.sh
-```
-
-Manual backend flow:
-
-```sh
-./braille_fifo_backend.sh init
-./braille_fifo_backend.sh run
-./braille_fifo_backend.sh serve
-printf '⠁⠃⠇⠏\n' | ./braille_fifo_backend.sh publish
-```
+The public demo should remain reproducible from both a one-command flow and a manual backend flow.
 
 ## Deployment
 
-The repo now includes a small container path:
-
-- [Dockerfile](../Dockerfile)
+The repo now includes a small container path.
 
 That container:
 
@@ -102,7 +83,7 @@ Release notes should emphasize:
 ## Push Checklist
 
 - [ ] tests pass
-- [ ] README is current
+- [ ] handbook language is current
 - [ ] docs reflect current vocabulary
 - [ ] demo script works from a clean checkout
 - [ ] deployment path starts successfully

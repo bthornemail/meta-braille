@@ -29,13 +29,7 @@ narrative      = observer interpretation
 
 ## Verification
 
-This release was verified with:
-
-```sh
-./scripts/seed_demo_stream.sh
-node --test tests/test_graph.mjs
-python3 -m unittest discover -s tests -p 'test_*.py'
-```
+This release was verified with the seeded demo flow plus the Python and Node test suites:
 
 ## Notes
 

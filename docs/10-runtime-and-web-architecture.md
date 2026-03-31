@@ -1,6 +1,6 @@
 # Runtime And Web Architecture
 
-This document walks through the current implementation from input stream to browser projection. It is organized by behavior, not by file inventory, so a builder can understand the runtime path before drilling into source files.
+This document walks through the current implementation from input stream to browser projection. It is organized by behavior, not by file inventory, so a builder can understand the runtime path without leaving the handbook.
 
 ## End-To-End Flow
 
@@ -20,7 +20,7 @@ Braille input
 
 ## 1. Stream Reasoning
 
-The first stage is the AWK reasoner in [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk#L3).
+The first stage is the AWK reasoner.
 
 It performs these steps for each Braille character:
 
@@ -60,7 +60,7 @@ In the signal-first upgrade, Braille remains canonical and the hexagram fields a
 
 ## 2. FIFO And Shell Orchestration
 
-The shell entrypoint in [braille_fifo_backend.sh](/root/meta-braille/braille_fifo_backend.sh#L45) provides the busybox-style local runtime commands:
+The shell entrypoint provides the busybox-style local runtime commands:
 
 - `init`
 - `run`
@@ -80,7 +80,7 @@ This keeps the local process layer small and transparent.
 
 ## 3. Runtime Fanout, Recovery, And Signaling
 
-The Python runtime in [braille_runtime.py](/root/meta-braille/braille_runtime.py#L69) does three kinds of work:
+The Python runtime does three kinds of work:
 
 ### Event normalization
 
@@ -90,8 +90,6 @@ The Python runtime in [braille_runtime.py](/root/meta-braille/braille_runtime.py
 - hex row strings
 - control-plane envelopes `fs`, `gs`, `us`, `rs`
 - `orbit_step`
-
-See [braille_runtime.py](/root/meta-braille/braille_runtime.py#L115).
 
 ### Recovery and hot-state storage
 
@@ -103,7 +101,7 @@ See [braille_runtime.py](/root/meta-braille/braille_runtime.py#L115).
 - per-coordinate cache directories
 - bounded recovery window files
 
-It also writes optional memcached keys and optional MQTT publish events when those integrations are enabled. See [braille_runtime.py](/root/meta-braille/braille_runtime.py#L286).
+It also writes optional memcached keys and optional MQTT publish events when those integrations are enabled.
 
 Current truth boundary:
 
@@ -121,11 +119,11 @@ The HTTP server exposes:
 - `/api/peers`
 - `/api/signals`
 
-and also serves the browser shell and service worker. See [braille_runtime.py](/root/meta-braille/braille_runtime.py#L331).
+and also serves the browser shell and service worker.
 
 ## 4. Browser Runtime
 
-The main browser control logic lives in [web/app.js](/root/meta-braille/web/app.js#L1).
+The main browser control logic lives in the browser shell and its helper modules.
 
 It currently does these jobs:
 
@@ -143,28 +141,28 @@ It currently does these jobs:
 
 The browser now also has a live WordNet mode built on top of the same shell.
 
-The source list is fixed in [web/prolog-relations.js](/root/meta-braille/web/prolog-relations.js#L1):
+The source list is fixed to four public WordNet relation files:
 
 - `wn_s.pl`
 - `wn_g.pl`
 - `wn_hyp.pl`
 - `wn_ant.pl`
 
-The relation worker in [web/relation-worker.js](/root/meta-braille/web/relation-worker.js#L1) fetches those public `.pl` files directly from `web/public`, parses them line by line, and emits four internal browser events:
+The relation worker fetches those public `.pl` files, parses them line by line, and emits four internal browser events:
 
 - `relation_source_loaded`
 - `relation_record_parsed`
 - `relation_batch_ready`
 - `relation_selected`
 
-The parser contract lives in [web/prolog-relations.js](/root/meta-braille/web/prolog-relations.js#L1) and currently supports:
+The parser contract currently supports:
 
 - `s/6` -> synset node, sense node, `sense` edge
 - `g/2` -> gloss record
 - `hyp/2` -> `fs` hierarchy edge
 - `ant/4` -> `rs` contrast edge
 
-The page runtime in [web/app.js](/root/meta-braille/web/app.js#L1) ingests those canonical relation records, mirrors them into the service worker, and projects them into the same DOM and JSON Canvas helper surfaces used by the Braille stream.
+The page runtime ingests those canonical relation records, mirrors them into the service worker, and projects them into the same DOM and JSON Canvas helper surfaces used by the Braille stream.
 
 ### Signal-first mode
 
@@ -177,7 +175,7 @@ That mode emphasizes:
 - rolling dump lines rendered from the same event envelope
 - the orbit clock and minimap as the main visible proof surface
 
-This is implemented by the shared event projection layer in [web/graph.js](/root/meta-braille/web/graph.js#L1), the hexagram projection helper in [web/hexagram-projection.js](/root/meta-braille/web/hexagram-projection.js#L1), and the scene logic in [web/app.js](/root/meta-braille/web/app.js#L1).
+This mode is implemented by the shared event projection layer, the hexagram projection helper, and the scene logic in the browser shell.
 
 ### Top and bottom control planes
 
@@ -194,7 +192,7 @@ The browser now renders real `FS` and `RS` surfaces:
   - `rel16`
   - `result_trace`
 
-These are updated from `renderControlPlane()` in [web/app.js](/root/meta-braille/web/app.js#L288).
+These are updated together by the main control-plane renderer.
 
 ### Side rails
 
@@ -207,11 +205,11 @@ The side rails are currently:
   - selection / node
   - projection / mirror
 
-Each card can switch between local and remote modes and can be hidden or shown. See [web/app.js](/root/meta-braille/web/app.js#L230) and the layout in [web/index.html](/root/meta-braille/web/index.html#L196).
+Each card can switch between local and remote modes and can be collapsed or expanded.
 
 ## 5. DOM Graph And JSON Canvas Projection
 
-The graph helper layer in [web/graph.js](/root/meta-braille/web/graph.js#L1) is where runtime events become browser-facing projection objects.
+The graph helper layer is where runtime events become browser-facing projection objects.
 
 It provides three important transforms:
 
@@ -230,7 +228,7 @@ Current status:
 
 ## 6. Shadow Scene Graph
 
-The service worker in [web/service-worker.js](/root/meta-braille/web/service-worker.js#L1) acts as a local control-plane mirror.
+The service worker acts as a local control-plane mirror.
 
 It currently:
 
@@ -249,8 +247,6 @@ The current WebRTC path is narrow and builder-oriented:
 - peer presence is tracked via `/api/presence`
 - signaling messages move through `/api/signals`
 - data channels mirror stream events once a peer link exists
-
-This is implemented in [web/app.js](/root/meta-braille/web/app.js#L138).
 
 Current limitations:
 

@@ -146,6 +146,39 @@ def parse_event(line: str) -> dict[str, Any] | None:
     event.setdefault("pattern16", f"{event.get('header8', '00')}{event.get('d2_6', '00')}")
     event.setdefault("transcript", format_signal_transcript_line(event))
     event.setdefault(
+        "axis7",
+        {
+            "family": 7,
+            "tick": (int(event.get("step", 1)) - 1) % 7,
+            "step": event.get("step", 0),
+            "rel16": event.get("rel16", ""),
+        },
+    )
+    orbit_value = int(event.get("orbit", event.get("orbit_step", 0)) or 0)
+    event.setdefault(
+        "axis240",
+        {
+            "family": 240,
+            "slot": orbit_value % 240,
+            "orbit": orbit_value,
+            "path": event.get("path", ""),
+            "part": event.get("part", ""),
+            "dialect": event.get("dialect", ""),
+            "chain": event.get("chain", ""),
+        },
+    )
+    event.setdefault(
+        "axis256",
+        {
+            "family": 256,
+            "curr8": event.get("curr8", ""),
+            "curr6": event.get("curr6", ""),
+            "frame32": f"{event.get('curr8', '')}{event.get('curr6', '')}",
+            "projection_window": event.get("projection_window", "curr6"),
+            "projection_bits": event.get("projection_bits", 6),
+        },
+    )
+    event.setdefault(
         "fs",
         {
             "scope128": event.get("path", ""),

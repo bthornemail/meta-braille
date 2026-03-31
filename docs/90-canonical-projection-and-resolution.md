@@ -2,7 +2,7 @@
 
 This document defines the canonical projection and resolution process for the current `meta-braille` repo.
 
-The primary source for this law is the current README, runtime, browser surface, and replay contract in this repo. The archived TTC / matroid-theory material is used only where it still helps clarify the materialization-address layer.
+The primary source for this law is the current handbook in `docs/`. Historical trie/materialization work may still inform the address layer, but the current protocol must be understandable from the docs folder alone.
 
 In this handbook:
 
@@ -45,9 +45,29 @@ That means:
 
 If a later layer appears to disagree with an earlier layer, the earlier layer wins.
 
+## 0.5 DOM Substrate Rule
+
+The shortest practical description of the current implementation is:
+
+```text
+DOM = carrier
+data-* = canonical state surface
+JS / Worker / runtime = interpreter
+```
+
+This rule matters because it prevents later projection layers from pretending to be the source of truth.
+
+In the browser:
+
+- DOM nodes host canonical `data-*` state
+- runtime and worker code derive transitions and witnesses
+- transcript, hexagram, tap-stream, canvas, and narrative are layered views over that substrate
+
+So one browser page is still enough to prove the runtime law. Everything else is projection, transport, or packaging.
+
 ## 1. Canonical Layers
 
-The current project should be read first on its own terms. The archived TTC material can still clarify the address layer, but it is not the primary definition of the current protocol.
+The current project should be read first on its own terms. Historical material can still clarify the address layer, but it is not the primary definition of the current protocol.
 
 ### Basis language law
 
@@ -74,7 +94,7 @@ Hexagrams are the dialectic over that language.
 Unicode blocks are partitioned projection spaces for that dialectic.
 ```
 
-This is the current project law, not only an archive interpretation.
+This is the current project law, not only a historical interpretation.
 
 In the current public implementation this can be read as two coupled spaces:
 
@@ -101,13 +121,13 @@ The executable source of truth in the current repo is the Braille event stream:
 - `rel16`
 - `FS`, `GS`, `US`, `RS`
 
-This is the canonical transition law. It is emitted by [braille_relational_reasoner.awk](/root/meta-braille/braille_relational_reasoner.awk) and normalized by [braille_runtime.py](/root/meta-braille/braille_runtime.py).
+This is the canonical transition law. It is emitted by the reasoner and normalized by the runtime.
 
 This is also the basis language of the meta-circular interpreter. Every later surface is derived from this layer.
 
 ### 2. Canonical materialization address
 
-The current project needs a canonical materialization law for projected nodes, paths, and sparse layout surfaces. The archived TTC project remains the clearest source for that specific layer:
+The current project needs a canonical materialization law for projected nodes, paths, and sparse layout surfaces. The compatible law used in this handbook is:
 
 ```text
 artifacts/{quadrant}/{phase}/{lane}/{leaf}/
@@ -120,11 +140,7 @@ Using the factoradic 5040 trie statement:
 - `lane` in `{00..3b}`
 - `leaf` in `{0000..13af}`
 
-This is the canonical addressing layer. For the current repo, treat it as a compatible address law that can be attached to the runtime stream. It comes from the TTC archive, especially:
-
-- [dev-docs/archive/matroid-theory/README.md](/root/meta-braille/dev-docs/archive/matroid-theory/README.md)
-- [dev-docs/archive/matroid-theory/src/ttc_canonical_runtime.c](/root/meta-braille/dev-docs/archive/matroid-theory/src/ttc_canonical_runtime.c)
-- [dev-docs/archive/matroid-theory/src/ttc_vm.awk](/root/meta-braille/dev-docs/archive/matroid-theory/src/ttc_vm.awk)
+This is the canonical addressing layer. For the current repo, treat it as a compatible address law that can be attached to the runtime stream and persisted in projected node metadata.
 
 ### 3. Projection classes
 
@@ -191,7 +207,7 @@ It also means the stream itself can be understood in two compatible ways:
 
 The second view is readable because of the first. It never replaces it.
 
-This is the point where the README phrasing matters most:
+This is the point where the handbook phrasing matters most:
 
 ```text
 Braille = canonical carrier / basis
@@ -223,6 +239,27 @@ In the current framing, the projection layer is best thought of as a sparse trie
 - projection surfaces expose different partitions of the same resolved state
 
 So the projection layer is not "a new language." It is a sparse, ordered projection over the basis language.
+
+The same rule also applies one layer lower:
+
+```text
+coordinate space is not canonical language
+```
+
+Finite grids, relational geometries, trie surfaces, and world layouts can all
+act as coordinate adapters for traversal, but the canonical language remains the
+emitted Braille and transcript stream. For the full coordinate-adapter framing,
+continue to [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md).
+
+The same unification can also be read as an axis model:
+
+```text
+7-axis   = cyclic stepping
+240-axis = canonical address and topology
+256-axis = observer window and projection
+```
+
+For that higher-level framing, continue to [Axis Model](./98-axis-model.md).
 
 ## 4. Canonical Address Contract
 
@@ -290,7 +327,7 @@ curr6
 -> pattern16
 ```
 
-This is documented in [docs/60-signal-first-braille-hexagram.md](/root/meta-braille/docs/60-signal-first-braille-hexagram.md).
+This is documented in [60-signal-first-braille-hexagram.md](./60-signal-first-braille-hexagram.md).
 
 This should be read as:
 
@@ -395,7 +432,7 @@ the projection layer sequences hexagrams in King Wen order
 the canvas arranges that sequence over sparse trie addresses
 ```
 
-Another equivalent way to say this, matching the current README, is:
+Another equivalent way to say this, matching the handbook language, is:
 
 ```text
 Braille defines basis state
@@ -404,9 +441,9 @@ transcript proves protocol equivalence
 King Wen orders the visible projection
 ```
 
-## 7. Old TTC Project And Current Repo
+## 7. Historical Address Law And Current Repo
 
-The archived TTC project is trie-first and materialization-first.
+Earlier trie-first work established a useful materialization-address pattern.
 
 The current `meta-braille` repo is stream-first and transition-first.
 
@@ -418,7 +455,7 @@ Factoradic 5040 trie = canonical materialization address
 Canvas / DOM / hexagram = projection layers
 ```
 
-That means the old project does not need to be copied literally into the new one. Instead:
+That means the historical project does not need to be copied literally into the new one. Instead:
 
 - preserve the trie law
 - preserve the lane / leaf identity contract

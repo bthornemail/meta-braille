@@ -53,10 +53,13 @@ BEGIN {
     }
 }
 
-function print_event(ch, curr8, curr6, d1_6, d2_6, d1_8, d2_8, rel16, ROW, orbit, part, dialect, chain, step, path,    rows_json, selectors_json, rows_hex, fs_json, gs_json, us_json, rs_json, hex_projection, hexagram, hexagram_cp, hexagram_index, hexagram_order, header8, pattern16, transcript) {
+function print_event(ch, curr8, curr6, d1_6, d2_6, d1_8, d2_8, rel16, ROW, orbit, part, dialect, chain, step, path,    rows_json, selectors_json, rows_hex, fs_json, gs_json, us_json, rs_json, axis7_json, axis240_json, axis256_json, hex_projection, hexagram, hexagram_cp, hexagram_index, hexagram_order, header8, pattern16, transcript, axis7_tick, axis240_slot, frame32) {
     rows_json = "[" ROW[1] "," ROW[2] "," ROW[3] "," ROW[4] "]"
     selectors_json = "{\"FS\":" ROW[1] ",\"GS\":" ROW[2] ",\"US\":" ROW[3] ",\"RS\":" ROW[4] "}"
     rows_hex = "0x" ROW[1] ",0x" ROW[2] ",0x" ROW[3] ",0x" ROW[4]
+    axis7_tick = (step - 1) % 7
+    axis240_slot = orbit % 240
+    frame32 = hex2(curr8) hex2(curr6)
     split(hexagram_projection_json(curr6, d2_6), hex_projection, "\034")
     hexagram = hex_projection[1]
     hexagram_cp = hex_projection[2]
@@ -67,8 +70,11 @@ function print_event(ch, curr8, curr6, d1_6, d2_6, d1_8, d2_8, rel16, ROW, orbit
     transcript = hexagram " | " ch " | " header8 "/" pattern16 " | " path
     fs_json = "{\"scope128\":\"" json_escape(path) "\",\"partition_layer\":\"" json_escape(part) "\",\"scene_step\":" step ",\"orbit_step\":" orbit "}"
     gs_json = "{\"tree64\":\"" json_escape(dialect ":" part ":" chain) "\",\"group_id\":\"" json_escape(part) "\",\"dialect_set\":[\"" json_escape(dialect) "\"],\"transport_history\":\"fifo/mqtt\"}"
-    us_json = "{\"frame32\":\"" hex2(curr8) hex2(curr6) "\",\"selected_unit\":\"" json_escape(ch) "\",\"toggle_set\":{\"lazy\":0,\"greedy\":1},\"local_eval_mode\":\"greedy\"}"
+    us_json = "{\"frame32\":\"" frame32 "\",\"selected_unit\":\"" json_escape(ch) "\",\"toggle_set\":{\"lazy\":0,\"greedy\":1},\"local_eval_mode\":\"greedy\"}"
     rs_json = "{\"frame16\":\"" sprintf("%X", rel16) hex2(d2_6) "\",\"braille_reduce\":\"" json_escape(ch) "\",\"rel16\":\"" sprintf("%X", rel16) "\",\"result_trace\":\"" hex2(d1_8) ":" hex2(d2_8) "\",\"header8\":\"" header8 "\",\"pattern16\":\"" pattern16 "\"}"
+    axis7_json = "{\"family\":7,\"tick\":" axis7_tick ",\"step\":" step ",\"rel16\":\"" sprintf("%X", rel16) "\"}"
+    axis240_json = "{\"family\":240,\"slot\":" axis240_slot ",\"orbit\":" orbit ",\"path\":\"" json_escape(path) "\",\"part\":\"" json_escape(part) "\",\"dialect\":\"" json_escape(dialect) "\",\"chain\":\"" json_escape(chain) "\"}"
+    axis256_json = "{\"family\":256,\"curr8\":\"" hex2(curr8) "\",\"curr6\":\"" hex2(curr6) "\",\"frame32\":\"" frame32 "\",\"projection_window\":\"curr6\",\"projection_bits\":6}"
 
     printf("{")
     printf("\"braille\":\"%s\",", json_escape(ch))
@@ -88,6 +94,9 @@ function print_event(ch, curr8, curr6, d1_6, d2_6, d1_8, d2_8, rel16, ROW, orbit
     printf("\"projection_window\":\"curr6\",")
     printf("\"projection_bits\":6,")
     printf("\"transcript\":\"%s\",", json_escape(transcript))
+    printf("\"axis7\":%s,", axis7_json)
+    printf("\"axis240\":%s,", axis240_json)
+    printf("\"axis256\":%s,", axis256_json)
     printf("\"rows\":%s,", rows_json)
     printf("\"selectors\":%s,", selectors_json)
     printf("\"rows_hex\":\"%s\",", rows_hex)
