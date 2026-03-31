@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NDJSON → SVG Replay (Fano Plane Demo)</title>
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; margin: 18px; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  .card { border: 1px solid #ddd; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+  button { padding: 8px 10px; border-radius: 10px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+  button:hover { background: #f6f6f6; }
+  pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+  .muted { color: #666; font-size: 12px; }
+</style>
+</head>
+<body>
+<h2>NDJSON → SVG Replay (Fano Plane Demo)</h2>
+<div class="row">
+  <div class="card">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button id="btnPrev">◀ Prev</button>
+      <button id="btnNext">Next ▶</button>
+      <button id="btnPlay">Play</button>
+      <button id="btnPause">Pause</button>
+      <span class="muted">Step: <span id="step">0</span> / <span id="total">0</span></span>
+    </div>
+    <div class="muted" style="margin-top:8px;">This is a minimal interactive SVG viewer. Replace the embedded <code>EVENTS</code> array with your real NDJSON.</div>
+  </div>
+  <div class="card" style="min-width:340px;flex:1;">
+    <div class="muted">Current event</div>
+    <pre id="evt"></pre>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px; display:inline-block;">
+<svg id="svg" width="420" height="300" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="420" height="300" rx="14" fill="#fff" stroke="#ddd"/>
+  <text x="16" y="26" font-size="14" fill="#222">Fano plane (7 points / 7 lines)</text>
+
+  <!-- Lines -->
+  <path id="L1" d="M 200 60 L 120 220 L 140 140 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/><path id="L2" d="M 200 60 L 280 220 L 200 180 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/><path id="L3" d="M 200 60 L 200 220 L 260 140 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/><path id="L4" d="M 120 220 L 280 220 L 200 220 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/><path id="L5" d="M 120 220 L 260 140 L 200 180 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/><path id="L6" d="M 280 220 L 140 140 L 260 140 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/><path id="L7" d="M 140 140 L 200 220 L 200 180 Z" fill="none" stroke="#bbb" stroke-width="4" stroke-linejoin="round" opacity="0.35"/>
+
+  <!-- Points -->
+  <g id="P1"><circle cx="200" cy="60" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="200" y="65" text-anchor="middle" font-size="12" fill="#111">1</text></g><g id="P2"><circle cx="120" cy="220" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="120" y="225" text-anchor="middle" font-size="12" fill="#111">2</text></g><g id="P3"><circle cx="280" cy="220" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="280" y="225" text-anchor="middle" font-size="12" fill="#111">3</text></g><g id="P4"><circle cx="140" cy="140" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="140" y="145" text-anchor="middle" font-size="12" fill="#111">4</text></g><g id="P5"><circle cx="200" cy="220" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="200" y="225" text-anchor="middle" font-size="12" fill="#111">5</text></g><g id="P6"><circle cx="260" cy="140" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="260" y="145" text-anchor="middle" font-size="12" fill="#111">6</text></g><g id="P7"><circle cx="200" cy="180" r="12" fill="#fff" stroke="#444" stroke-width="2" filter="url(#shadow)"/><text x="200" y="185" text-anchor="middle" font-size="12" fill="#111">7</text></g>
+
+  <text id="label" x="16" y="286" font-size="12" fill="#444"></text>
+</svg>
+</div>
+
+<script>
+const EVENTS = [{"timestamp": "2026-02-16T00:00:00Z", "event": "fano_line_highlight", "payload": {"line": 1, "intensity": 0.65, "label": "step 0"}}, {"timestamp": "2026-02-16T00:00:01Z", "event": "fano_line_highlight", "payload": {"line": 2, "intensity": 0.765, "label": "step 1"}}, {"timestamp": "2026-02-16T00:00:02Z", "event": "fano_line_highlight", "payload": {"line": 3, "intensity": 0.866, "label": "step 2"}}, {"timestamp": "2026-02-16T00:00:03Z", "event": "fano_line_highlight", "payload": {"line": 4, "intensity": 0.945, "label": "step 3"}}, {"timestamp": "2026-02-16T00:00:04Z", "event": "fano_line_highlight", "payload": {"line": 5, "intensity": 0.99, "label": "step 4"}}, {"timestamp": "2026-02-16T00:00:05Z", "event": "fano_line_highlight", "payload": {"line": 6, "intensity": 0.998, "label": "step 5"}}, {"timestamp": "2026-02-16T00:00:06Z", "event": "fano_line_highlight", "payload": {"line": 7, "intensity": 0.968, "label": "step 6"}}, {"timestamp": "2026-02-16T00:00:07Z", "event": "fano_line_highlight", "payload": {"line": 1, "intensity": 0.903, "label": "step 7"}}, {"timestamp": "2026-02-16T00:00:08Z", "event": "fano_line_highlight", "payload": {"line": 2, "intensity": 0.81, "label": "step 8"}}, {"timestamp": "2026-02-16T00:00:09Z", "event": "fano_line_highlight", "payload": {"line": 3, "intensity": 0.699, "label": "step 9"}}, {"timestamp": "2026-02-16T00:00:10Z", "event": "fano_line_highlight", "payload": {"line": 4, "intensity": 0.583, "label": "step 10"}}, {"timestamp": "2026-02-16T00:00:11Z", "event": "fano_line_highlight", "payload": {"line": 5, "intensity": 0.475, "label": "step 11"}}, {"timestamp": "2026-02-16T00:00:12Z", "event": "fano_line_highlight", "payload": {"line": 6, "intensity": 0.385, "label": "step 12"}}, {"timestamp": "2026-02-16T00:00:13Z", "event": "fano_line_highlight", "payload": {"line": 7, "intensity": 0.325, "label": "step 13"}}, {"timestamp": "2026-02-16T00:00:14Z", "event": "fano_line_highlight", "payload": {"line": 1, "intensity": 0.3, "label": "step 14"}}, {"timestamp": "2026-02-16T00:00:15Z", "event": "fano_line_highlight", "payload": {"line": 2, "intensity": 0.314, "label": "step 15"}}, {"timestamp": "2026-02-16T00:00:16Z", "event": "fano_line_highlight", "payload": {"line": 3, "intensity": 0.365, "label": "step 16"}}, {"timestamp": "2026-02-16T00:00:17Z", "event": "fano_line_highlight", "payload": {"line": 4, "intensity": 0.448, "label": "step 17"}}, {"timestamp": "2026-02-16T00:00:18Z", "event": "fano_line_highlight", "payload": {"line": 5, "intensity": 0.552, "label": "step 18"}}, {"timestamp": "2026-02-16T00:00:19Z", "event": "fano_line_highlight", "payload": {"line": 6, "intensity": 0.668, "label": "step 19"}}, {"timestamp": "2026-02-16T00:00:20Z", "event": "fano_line_highlight", "payload": {"line": 7, "intensity": 0.781, "label": "step 20"}}, {"timestamp": "2026-02-16T00:00:21Z", "event": "fano_line_highlight", "payload": {"line": 1, "intensity": 0.88, "label": "step 21"}}, {"timestamp": "2026-02-16T00:00:22Z", "event": "fano_line_highlight", "payload": {"line": 2, "intensity": 0.954, "label": "step 22"}}, {"timestamp": "2026-02-16T00:00:23Z", "event": "fano_line_highlight", "payload": {"line": 3, "intensity": 0.994, "label": "step 23"}}, {"timestamp": "2026-02-16T00:00:24Z", "event": "fano_line_highlight", "payload": {"line": 4, "intensity": 0.996, "label": "step 24"}}, {"timestamp": "2026-02-16T00:00:25Z", "event": "fano_line_highlight", "payload": {"line": 5, "intensity": 0.961, "label": "step 25"}}, {"timestamp": "2026-02-16T00:00:26Z", "event": "fano_line_highlight", "payload": {"line": 6, "intensity": 0.891, "label": "step 26"}}, {"timestamp": "2026-02-16T00:00:27Z", "event": "fano_line_highlight", "payload": {"line": 7, "intensity": 0.794, "label": "step 27"}}];
+document.getElementById("total").textContent = EVENTS.length - 1;
+
+let idx = 0;
+let timer = null;
+
+function setLineActive(line, intensity) {
+  // reset
+  for (let k=1;k<=7;k++) {
+    const el = document.getElementById("L"+k);
+    el.setAttribute("stroke", "#bbb");
+    el.setAttribute("opacity", "0.35");
+  }
+  // highlight
+  const active = document.getElementById("L"+line);
+  const op = Math.max(0.25, Math.min(1.0, 0.2 + 0.8*intensity));
+  active.setAttribute("stroke", "#111");
+  active.setAttribute("opacity", String(op));
+}
+
+function render() {
+  const e = EVENTS[idx];
+  document.getElementById("step").textContent = idx;
+  document.getElementById("evt").textContent = JSON.stringify(e, null, 2);
+  const line = e?.payload?.line ?? 1;
+  const intensity = e?.payload?.intensity ?? 0.8;
+  setLineActive(line, intensity);
+  document.getElementById("label").textContent = `${e.timestamp} • ${e.event} • ${e.payload?.label ?? ""}`;
+}
+
+function next() { idx = Math.min(EVENTS.length-1, idx+1); render(); }
+function prev() { idx = Math.max(0, idx-1); render(); }
+
+document.getElementById("btnNext").addEventListener("click", next);
+document.getElementById("btnPrev").addEventListener("click", prev);
+
+document.getElementById("btnPlay").addEventListener("click", () => {
+  if (timer) return;
+  timer = setInterval(() => {
+    if (idx >= EVENTS.length-1) { clearInterval(timer); timer=null; return; }
+    next();
+  }, 350);
+});
+
+document.getElementById("btnPause").addEventListener("click", () => {
+  if (timer) { clearInterval(timer); timer=null; }
+});
+
+render();
+</script>
+</body>
+</html>

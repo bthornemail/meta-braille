@@ -31,6 +31,45 @@ At the same time, it does not replace canonical symbolic law. It sits below the
 canonical event and transcript layer, and above environment-specific file,
 render, and scan embodiments.
 
+## 0.5 Realization Axis
+
+The deterministic witness lane and the scanner-compatible lane should be read
+as two positions on the same realization axis, not as competing artifact
+systems.
+
+The clean rule is:
+
+```text
+one canonical artifact
+-> witness realization
+-> scanner realization
+```
+
+linked by:
+
+```text
+offset transform
+```
+
+The realization axis is the coordinate space in which one invariant artifact
+can appear in multiple lawful surfaces.
+
+An offset transform is a deterministic mapping between the canonical witness
+lattice and a scanner-compatible Aztec realization such that:
+
+- payload bytes remain identical
+- transcript remains identical
+- symbol order remains identical
+- continuation and block boundaries remain identical
+- artifact identity and path remain identical
+
+Only the following may differ by transform:
+
+- coordinate placement
+- framing and wrapper conventions
+- scanner-visible quiet zone or barcode constraints
+- scan and re-entry method
+
 ## 1. Relationship To The Symbolic Web
 
 The [Symbolic Web Definition](./01-symbolic-web-definition.md) freezes the main
@@ -149,6 +188,24 @@ Braille / transcript law
 -> scan / re-entry
 ```
 
+The historically implemented lossless path was more specific:
+
+```text
+artifact bytes
+-> A13 frame encoding
+-> 60-slot Aztec symbols
+-> canonical 27x27 surface table
+-> decode
+-> exact byte recovery
+```
+
+That exact deterministic path is what makes the artifact lane more than a
+generic export format.
+
+The standardized scanner realization may add a transport wrapper or
+scanner-specific envelope, but only under an offset agreement that preserves
+the same canonical payload and transcript.
+
 ## 5. Aztec As Projective Kernel
 
 The Aztec artifact can be read as a projective kernel because it preserves
@@ -212,6 +269,12 @@ This is why the Aztec surface belongs inside the Symbolic Web: it allows a
 materialized artifact to leave one environment and re-enter another without
 requiring meaning-level agreement.
 
+Under the offset agreement model the equality rule is:
+
+```text
+decode(witness realization) == decode(scanner realization)
+```
+
 ## 8. Why This Matters
 
 The Aztec artifact surface matters because it gives the project a real portable
@@ -229,7 +292,33 @@ while keeping the artifact tied back to canonical symbolic state.
 This is stronger than a generic “image export” story. It is a lawful artifact
 story.
 
-## 9. Current Reading In The Handbook
+## 9. Template Artifact Mode
+
+Template and builder surfaces may expose the Aztec lane as an artifact mode for
+selected nodes, entities, or schema objects.
+
+The intended browser-side cycle is:
+
+```text
+active authoring object
+-> freeze as artifact
+-> Aztec SVG or PNG embodiment
+-> export
+-> import or scan
+-> deterministic re-instantiation
+```
+
+This means:
+
+- authoring state remains a projection/editor surface
+- artifact export must be derived from canonical payload
+- SVG import must re-enter through canonical payload recovery
+- PNG import may re-enter through the deterministic Aztec PNG header/metadata lane
+- scanner-compatible barcode import may re-enter through the standardized
+  offset-linked transport realization
+- the template UI does not become protocol authority
+
+## 10. Current Reading In The Handbook
 
 The safest current reading is:
 
@@ -244,9 +333,8 @@ canonical symbolic event and transcript
 This keeps the historical artifact lane alive without allowing it to replace
 the newer canonical event law.
 
-## 10. One-Sentence Freeze
+## 11. One-Sentence Freeze
 
-The Aztec artifact surface is the portable 2D projective embodiment of
-canonical symbolic state: a shared, scannable witness surface that can be
-embedded, rasterized, composed, and re-instantiated across environments without
-replacing transcript authority.
+The system defines one canonical artifact class whose deterministic witness
+surface and scanner-compatible transport surface are offset-linked realizations
+of the same payload, transcript, and symbol order.

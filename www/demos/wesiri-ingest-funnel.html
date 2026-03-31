@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wesiri Ingest Funnel · Symbolic Web</title>
+<link rel="stylesheet" href="./_demo.css">
+</head>
+<body>
+<div class="shell">
+  <div class="head">
+    <div>
+      <div class="title">WESIRI INGEST FUNNEL</div>
+      <div class="subtitle">Updated from the older federated-light page. This is now an ingest/adapter demo: paste NDJSON-shaped records, inspect transcript fields, and hand off to the current world/shadow builders.</div>
+      <div class="proof">䷁ | ⠁ | 01/0101 | ingest://demo/funnel</div>
+    </div>
+  </div>
+  <div class="grid two">
+    <div class="card">
+      <h2>Input</h2>
+      <div class="body">
+        <textarea id="ndjson-input">{"seq":1,"braille":"⠁","hexagram":"䷁","path":"m/orbit/0/part/0/dialect/default/chain/0","transcript":"䷁ | ⠁ | 01/0101 | m/orbit/0/part/0/dialect/default/chain/0"}
+{"seq":2,"braille":"⠓","hexagram":"䷍","path":"m/orbit/0/part/0/dialect/default/chain/1","transcript":"䷍ | ⠓ | 13/1303 | m/orbit/0/part/0/dialect/default/chain/1"}</textarea>
+        <div class="row" style="margin-top:10px">
+          <button id="parse">Parse</button>
+          <a href="../templates/worldbuilder.html">worldbuilder</a>
+          <a href="../templates/mesh-builder.html">mesh-builder</a>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Normalized Records</h2>
+      <div class="body mono" id="output">Waiting for parse.</div>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('parse').onclick = () => {
+  const text = document.getElementById('ndjson-input').value;
+  const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  const records = lines.map(line => JSON.parse(line)).map(record => ({
+    seq: record.seq ?? null,
+    braille: record.braille ?? '-',
+    hexagram: record.hexagram ?? '-',
+    path: record.path ?? '-',
+    transcript: record.transcript ?? `${record.hexagram || '䷁'} | ${record.braille || '⠁'} | --/---- | ${record.path || '-'}`,
+    valid: Boolean(record.braille && record.path)
+  }));
+  document.getElementById('output').textContent = JSON.stringify(records, null, 2);
+};
+</script>
+</body>
+</html>

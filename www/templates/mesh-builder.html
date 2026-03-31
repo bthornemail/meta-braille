@@ -333,11 +333,18 @@ footer{
   <div class="ctx-item" onclick="ctxAction('label')">✎ Edit Label</div>
   <div class="ctx-item" onclick="ctxAction('duplicate')">⊕ Duplicate</div>
   <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('artifact-toggle')">◼ Freeze / Activate Artifact</div>
+  <div class="ctx-item" onclick="ctxAction('artifact-svg')">↓ Export Aztec SVG</div>
+  <div class="ctx-item" onclick="ctxAction('artifact-png')">↓ Export Aztec PNG</div>
+  <div class="ctx-item" onclick="ctxAction('artifact-import')">↑ Instantiate from Artifact</div>
+  <div class="ctx-sep"></div>
   <div class="ctx-item danger" onclick="ctxAction('delete')">⊗ Delete</div>
 </div>
 
 <input id="label-input" type="text" placeholder="label…" onblur="finishLabel()" onkeydown="labelKey(event)"/>
+<input id="artifact-import-input" type="file" accept=".svg,.png,image/svg+xml,image/png" style="display:none"/>
 
+<script src="../src/aztec-artifact.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════════════
 // MATH HELPERS
@@ -759,6 +766,7 @@ let panStart=null, panOrigin={x:0,y:0};
 let viewX=0, viewY=0, viewScale=1;
 let ctxTarget = null;
 let labelTarget = null;
+let pendingArtifactImportTargetId = null;
 
 const svg = document.getElementById('main-svg');
 const nodesG = document.getElementById('nodes-group');
@@ -883,10 +891,10 @@ function placeNode(shapeId, x, y) {
   if(!shape) return;
   const id=uid();
   const r=38;
-  const node={id, shapeId, x, y, r, label:shape.name, color:shape.color};
+  const node={id, shapeId, x, y, r, label:shape.name, color:shape.color, artifactState:'active'};
   nodes.push(node);
   renderNode(node);
-  emit('mesh.node.place',{node_id:id,shape_id:shapeId,shape_name:shape.name,cat:shape.cat,x:Math.round(x),y:Math.round(y),label:node.label,sha256:`sha256:${hashStr(id+shapeId)}`},'ev-place');
+  emit('mesh.node.place',{node_id:id,shape_id:shapeId,shape_name:shape.name,cat:shape.cat,x:Math.round(x),y:Math.round(y),label:node.label,artifact_state:node.artifactState,sha256:`sha256:${hashStr(id+shapeId)}`},'ev-place');
   updateFooter();
 }
 
@@ -1020,6 +1028,149 @@ function selectNode(node) {
   }
 }
 
+function canonicalNodePayload(node) {
+  const shape=SHAPES[node.shapeId] || {};
+  const connected=edges.filter(edge=>edge.fromId===node.id||edge.toId===node.id);
+  return {
+    kind: 'mesh.node.artifact',
+    node: {
+      id: node.id,
+      shapeId: node.shapeId,
+      shapeName: shape.name || node.label,
+      cat: shape.cat || 'shape',
+      x: Math.round(node.x),
+      y: Math.round(node.y),
+      r: node.r,
+      label: node.label,
+      color: node.color,
+      artifactState: node.artifactState || 'active'
+    },
+    edges: connected.map(edge=>({
+      id: edge.id,
+      fromId: edge.fromId,
+      toId: edge.toId,
+      type: edge.type,
+      label: edge.label
+    })),
+    transcript: `mesh|${node.label}|${node.shapeId}|${node.id}`
+  };
+}
+
+function buildArtifactSvgMarkup(node){
+  return window.AztecArtifact.renderPayloadAsSvg(canonicalNodePayload(node), {
+    label: node.label || node.id || 'mesh-node',
+    classes: ['mesh-node-artifact']
+  });
+}
+
+function toggleArtifactState(nodeId){
+  const node=nodes.find(item=>item.id===nodeId);
+  if(!node) return;
+  node.artifactState = node.artifactState === 'inactive' ? 'active' : 'inactive';
+  emit(
+    node.artifactState === 'inactive' ? 'mesh.node.artifact.freeze' : 'mesh.node.artifact.activate',
+    {
+      node_id: node.id,
+      shape_id: node.shapeId,
+      label: node.label,
+      artifact_class: 'aztec-surface',
+      artifact_state: node.artifactState
+    },
+    node.artifactState === 'inactive' ? 'ev-label' : 'ev-place'
+  );
+}
+
+function exportArtifactSVG(nodeId){
+  const node=nodes.find(item=>item.id===nodeId);
+  if(!node) return;
+  const svgText=buildArtifactSvgMarkup(node);
+  const blob=new Blob([svgText],{type:'image/svg+xml'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${(node.label || node.id).replace(/[^a-z0-9_-]+/gi,'-').toLowerCase()}-artifact.svg`;
+  a.click();
+  emit('mesh.node.artifact.export',{node_id:node.id,format:'svg',artifact_class:'aztec-surface'},'ev-label');
+}
+
+function exportArtifactPNG(nodeId){
+  const node=nodes.find(item=>item.id===nodeId);
+  if(!node) return;
+  window.AztecArtifact.renderPayloadAsPngBlob(canonicalNodePayload(node), {
+    label: node.label || node.id || 'artifact',
+    classes: ['mesh-node-artifact']
+  }).then((pngBlob)=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(pngBlob);
+    a.download=`${(node.label || node.id).replace(/[^a-z0-9_-]+/gi,'-').toLowerCase()}-artifact.png`;
+    a.click();
+    emit('mesh.node.artifact.export',{node_id:node.id,format:'png',artifact_class:'aztec-surface'},'ev-label');
+  }).catch((error)=>{
+    emit('mesh.node.artifact.export.reject',{node_id:node.id,format:'png',reason:error.message},'ev-delete');
+  });
+}
+
+function openArtifactImport(nodeId=null){
+  pendingArtifactImportTargetId=nodeId;
+  document.getElementById('artifact-import-input').click();
+}
+
+async function handleArtifactImportFile(file){
+  const payload=await window.AztecArtifact.payloadObjectFromBlob(file);
+  instantiateNodeFromArtifactPayload(payload, file.name || 'artifact.svg');
+}
+
+function instantiateNodeFromArtifactPayload(payload, sourceName='artifact.svg'){
+  const nodeData=payload?.node;
+  if(!nodeData || !nodeData.id || !nodeData.shapeId) throw new Error('invalid artifact payload');
+  const existing=nodes.find(item=>item.id===pendingArtifactImportTargetId) || nodes.find(item=>item.id===nodeData.id);
+  if(existing){
+    Object.assign(existing, nodeData);
+    const g=document.getElementById('node-'+existing.id);
+    if(g) g.remove();
+    renderNode(existing);
+    refreshAllEdges();
+    selectNode(existing);
+    emit('mesh.node.artifact.instantiate',{
+      node_id: existing.id,
+      source: sourceName,
+      artifact_class: 'aztec-surface',
+      artifact_state: existing.artifactState || 'inactive'
+    },'ev-place');
+    return;
+  }
+  const node={
+    ...nodeData,
+    artifactState: nodeData.artifactState || 'inactive'
+  };
+  nodes.push(node);
+  renderNode(node);
+  if(Array.isArray(payload.edges)){
+    payload.edges.forEach(edge=>{
+      if(nodes.some(item=>item.id===edge.fromId) && nodes.some(item=>item.id===edge.toId) && !edges.some(item=>item.id===edge.id)){
+        const restored={
+          id: edge.id || eid(),
+          fromId: edge.fromId,
+          toId: edge.toId,
+          type: edge.type || 'flow',
+          label: edge.label || EDGE_TYPES[edge.type || 'flow']?.label || 'connects'
+        };
+        edges.push(restored);
+        renderEdge(restored);
+      }
+    });
+  }
+  selectNode(node);
+  updateFooter();
+  emit('mesh.node.artifact.instantiate',{
+    node_id: node.id,
+    shape_id: node.shapeId,
+    label: node.label,
+    source: sourceName,
+    artifact_class: 'aztec-surface',
+    artifact_state: node.artifactState
+  },'ev-place');
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // LABEL EDIT
 // ═══════════════════════════════════════════════════════════════════════
@@ -1063,6 +1214,10 @@ function ctxAction(action){
     const n=ctxTarget;
     placeNode(n.shapeId, n.x+60, n.y+60);
   }
+  if(action==='artifact-toggle') toggleArtifactState(ctxTarget.id);
+  if(action==='artifact-svg') exportArtifactSVG(ctxTarget.id);
+  if(action==='artifact-png') exportArtifactPNG(ctxTarget.id);
+  if(action==='artifact-import') openArtifactImport(ctxTarget.id);
   if(action==='delete') deleteNode(ctxTarget.id);
   ctxTarget=null;
 }
@@ -1166,6 +1321,19 @@ document.addEventListener('keydown',e=>{
   if(e.key==='p') setMode('pan');
 });
 
+document.getElementById('artifact-import-input').addEventListener('change', async (event)=>{
+  const file=event.target.files && event.target.files[0];
+  event.target.value='';
+  if(!file) return;
+  try{
+    await handleArtifactImportFile(file);
+  }catch(error){
+    emit('mesh.node.artifact.import.reject',{source:file.name,reason:error.message},'ev-delete');
+  }finally{
+    pendingArtifactImportTargetId=null;
+  }
+});
+
 // ═══════════════════════════════════════════════════════════════════════
 // AUTO LAYOUT
 // ═══════════════════════════════════════════════════════════════════════
@@ -1200,7 +1368,7 @@ function exportNDJSON() {
   lines.push(JSON.stringify({schema_version:1,kind:'mesh.compose',lane:'mesh',seq:++s,event:'mesh.compose.start',run_id,payload:{node_count:nodes.length,edge_count:edges.length,generated_at:new Date().toISOString()}}));
   nodes.forEach(node=>{
     const shape=SHAPES[node.shapeId];
-    lines.push(JSON.stringify({schema_version:1,kind:'mesh.node',lane:'mesh',seq:++s,event:'mesh.node.record',payload:{node_id:node.id,shape_id:node.shapeId,shape_name:shape?.name,cat:shape?.cat,x:Math.round(node.x),y:Math.round(node.y),r:node.r,label:node.label,color:node.color,sha256:`sha256:${hashStr(node.id+node.shapeId)}`}}));
+    lines.push(JSON.stringify({schema_version:1,kind:'mesh.node',lane:'mesh',seq:++s,event:'mesh.node.record',payload:{node_id:node.id,shape_id:node.shapeId,shape_name:shape?.name,cat:shape?.cat,x:Math.round(node.x),y:Math.round(node.y),r:node.r,label:node.label,color:node.color,artifact_state:node.artifactState||'active',sha256:`sha256:${hashStr(node.id+node.shapeId)}`}}));
   });
   edges.forEach(edge=>{
     lines.push(JSON.stringify({schema_version:1,kind:'mesh.edge',lane:'mesh',seq:++s,event:'mesh.edge.record',payload:{edge_id:edge.id,from_id:edge.fromId,to_id:edge.toId,type:edge.type,label:edge.label,sha256:`sha256:${hashStr(edge.id+edge.fromId+edge.toId)}`}}));

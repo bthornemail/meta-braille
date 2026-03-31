@@ -68,7 +68,7 @@ class RuntimeConfig:
 
 def load_config(args: argparse.Namespace) -> RuntimeConfig:
     state_dir = Path(args.state_dir or os.environ.get("STATE_DIR", "./runtime")).resolve()
-    web_dir = Path(args.web_dir or os.environ.get("WEB_DIR", "./web")).resolve()
+    web_dir = Path(args.web_dir or os.environ.get("WEB_DIR", "./www")).resolve()
     channel = args.channel or os.environ.get("CHANNEL", "default")
     dialect = args.dialect or os.environ.get("DIALECT", "default")
     part = str(args.part if args.part is not None else os.environ.get("PART", "0"))
@@ -382,20 +382,21 @@ def recent_events(config: RuntimeConfig, dialect: str | None, part: str | None, 
 class RuntimeHandler(BaseHTTPRequestHandler):
     server: "RuntimeServer"
 
+    def resolve_static_path(self, request_path: str) -> Path | None:
+        clean_path = request_path.lstrip("/")
+        if not clean_path:
+            clean_path = "index.html"
+        web_root = self.server.config.web_dir.resolve()
+        target = (web_root / clean_path).resolve()
+        if target != web_root and web_root not in target.parents:
+            return None
+        if not target.exists() or not target.is_file():
+            return None
+        return target
+
     def do_HEAD(self) -> None:  # noqa: N802
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path in {
-            "/",
-            "/app.js",
-            "/worker.js",
-            "/graph.js",
-            "/narrative-components.js",
-            "/hexagram-projection.js",
-            "/service-worker.js",
-            "/relation-worker.js",
-            "/prolog-relations.js",
-            "/relation-store.js",
-        }:
+        if self.resolve_static_path(parsed.path):
             self.send_response(HTTPStatus.OK)
             self.end_headers()
             return
@@ -404,53 +405,10 @@ class RuntimeHandler(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
             return
-        if parsed.path.startswith("/public/"):
-            public_root = (self.server.config.web_dir / "public").resolve()
-            target = (self.server.config.web_dir / parsed.path.lstrip("/")).resolve()
-            if (public_root in target.parents or target == public_root) and target.exists():
-                self.send_response(HTTPStatus.OK)
-                self.end_headers()
-                return
         self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 
     def do_GET(self) -> None:  # noqa: N802
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == "/":
-            self.serve_file(self.server.config.web_dir / "index.html", "text/html; charset=utf-8")
-            return
-        if parsed.path == "/app.js":
-            self.serve_file(self.server.config.web_dir / "app.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/worker.js":
-            self.serve_file(self.server.config.web_dir / "worker.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/graph.js":
-            self.serve_file(self.server.config.web_dir / "graph.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/narrative-components.js":
-            self.serve_file(self.server.config.web_dir / "narrative-components.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/hexagram-projection.js":
-            self.serve_file(self.server.config.web_dir / "hexagram-projection.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/service-worker.js":
-            self.serve_file(self.server.config.web_dir / "service-worker.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/relation-worker.js":
-            self.serve_file(self.server.config.web_dir / "relation-worker.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/prolog-relations.js":
-            self.serve_file(self.server.config.web_dir / "prolog-relations.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path == "/relation-store.js":
-            self.serve_file(self.server.config.web_dir / "relation-store.js", "application/javascript; charset=utf-8")
-            return
-        if parsed.path.startswith("/public/"):
-            public_root = (self.server.config.web_dir / "public").resolve()
-            target = (self.server.config.web_dir / parsed.path.lstrip("/")).resolve()
-            if public_root in target.parents or target == public_root:
-                self.serve_file(target, content_type_for_path(target))
-                return
         if parsed.path == "/api/config":
             self.write_json(
                 {
@@ -488,6 +446,10 @@ class RuntimeHandler(BaseHTTPRequestHandler):
             since = int(params.get("since", ["0"])[0])
             messages, next_offset = read_signal_queue(self.server.config, peer, since)
             self.write_json({"messages": messages, "nextOffset": next_offset})
+            return
+        static_target = self.resolve_static_path(parsed.path)
+        if static_target:
+            self.serve_file(static_target, content_type_for_path(static_target))
             return
         self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 
@@ -599,12 +561,18 @@ def content_type_for_path(path: Path) -> str:
     suffix = path.suffix.lower()
     if suffix == ".js":
         return "application/javascript; charset=utf-8"
+    if suffix == ".css":
+        return "text/css; charset=utf-8"
     if suffix == ".json":
         return "application/json; charset=utf-8"
+    if suffix == ".ndjson":
+        return "application/x-ndjson; charset=utf-8"
     if suffix in {".md", ".pl", ".txt"}:
         return "text/plain; charset=utf-8"
     if suffix == ".html":
         return "text/html; charset=utf-8"
+    if suffix == ".svg":
+        return "image/svg+xml"
     return "application/octet-stream"
 
 

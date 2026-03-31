@@ -47,6 +47,22 @@ class LegacyWrapperTests(unittest.TestCase):
         self.assertEqual(event["phase"], "p2")
         self.assertTrue(event["transcript"].endswith(event["path"]))
 
+    def test_wrapped_universe_fixture_preserves_world_program_shape(self) -> None:
+        fixture = REPO / "tests" / "fixtures" / "universe-run.wrapped.ndjson"
+        events = [json.loads(line) for line in fixture.read_text(encoding="utf-8").splitlines() if line.strip()]
+        self.assertGreaterEqual(len(events), 4)
+        first = events[0]
+        self.assertEqual(first["seq"], 1)
+        self.assertIn("legacy_projection", first)
+        self.assertEqual(first["legacy_projection"]["event"], "universe.run.start")
+        self.assertTrue(first["path"].startswith("artifact://"))
+        self.assertIn("/xx/p0/00/0000", first["path"])
+        self.assertEqual(first["transcript"], f"{first['hexagram']} | {first['braille']} | {first['header8']}/{first['pattern16']} | {first['path']}")
+        third = events[2]
+        self.assertEqual(third["legacy_projection"]["event"], "universe.canon.event")
+        self.assertIn("payload", third["legacy_projection"])
+        self.assertIn("record", third["legacy_projection"]["payload"])
+
 
 if __name__ == "__main__":
     unittest.main()

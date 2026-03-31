@@ -49,6 +49,18 @@ FIFO ingress
 
 The source of truth is not the browser, MQTT, memcached, or the UI. The current code treats the Braille event law as canonical and everything else as transport, recovery, projection, or mirroring.
 
+The artifact lane now follows the same rule. The project treats a canonical
+artifact as invariant across a realization axis:
+
+```text
+artifact = invariant
+realization = coordinate choice
+witness / scanner = positions on the realization axis
+```
+
+So artifact surfaces do not compete with the canonical event law. They are
+offset-related realizations of the same payload, transcript, and identity.
+
 The newest parallel upgrade extends that idea one step further: the runtime now supports a signal-first Braille + hexagram view where Braille is the basis language and canonical carrier, the Yijing hexagram block acts as the compact dialectic projection class over the same state stream, and the underlying machine is best thought of as a bit-linked stream or canonical transition chain.
 
 ## Canonical Runtime Pieces

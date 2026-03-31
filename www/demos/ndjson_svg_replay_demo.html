@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NDJSON SVG Replay Demo · Symbolic Web</title>
+<link rel="stylesheet" href="./_demo.css">
+<style>
+#plane{background:#fff;border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="head">
+    <div>
+      <div class="title">NDJSON SVG REPLAY</div>
+      <div class="subtitle">Updated from the older Fano-only replay slice. This version replays transcript-shaped canonical events and uses the Fano drawing as a coordinate adapter.</div>
+      <div class="proof" id="proof">䷁ | ⠁ | 01/0101 | m/orbit/0/part/0/dialect/default/chain/0</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="body">
+      <div class="row">
+        <button id="prev">◀ Prev</button>
+        <button id="next">Next ▶</button>
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+      </div>
+      <div class="mono muted" id="event-meta" style="margin-top:10px"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="body">
+      <svg id="plane" viewBox="0 0 420 300" width="420" height="300" xmlns="http://www.w3.org/2000/svg">
+        <rect width="420" height="300" rx="12" fill="#fff" stroke="#d7dde5"/>
+        <text x="16" y="24" font-size="14" fill="#222">Fano coordinate adapter</text>
+        <path id="L1" d="M200 60 L120 220 L140 140 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <path id="L2" d="M200 60 L280 220 L200 180 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <path id="L3" d="M200 60 L200 220 L260 140 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <path id="L4" d="M120 220 L280 220 L200 220 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <path id="L5" d="M120 220 L260 140 L200 180 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <path id="L6" d="M280 220 L140 140 L260 140 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <path id="L7" d="M140 140 L200 220 L200 180 Z" fill="none" stroke="#bbb" stroke-width="4" opacity=".25"/>
+        <g fill="#fff" stroke="#444" stroke-width="2">
+          <circle cx="200" cy="60" r="12"/><circle cx="120" cy="220" r="12"/><circle cx="280" cy="220" r="12"/><circle cx="140" cy="140" r="12"/><circle cx="200" cy="220" r="12"/><circle cx="260" cy="140" r="12"/><circle cx="200" cy="180" r="12"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+<script>
+const EVENTS = [
+  {seq:1,braille:'⠁',hexagram:'䷁',header8:'01',pattern16:'0101',path:'m/orbit/0/part/0/dialect/default/chain/0',line:1},
+  {seq:2,braille:'⠓',hexagram:'䷍',header8:'13',pattern16:'1303',path:'m/orbit/0/part/0/dialect/default/chain/1',line:3},
+  {seq:3,braille:'⠉',hexagram:'䷊',header8:'09',pattern16:'0901',path:'m/orbit/0/part/0/dialect/default/chain/2',line:5},
+  {seq:4,braille:'⣀',hexagram:'䷿',header8:'40',pattern16:'4000',path:'m/orbit/0/part/0/dialect/default/chain/3',line:7}
+];
+let idx = 0, timer = null;
+function render(){
+  const event = EVENTS[idx];
+  document.getElementById('proof').textContent = `${event.hexagram} | ${event.braille} | ${event.header8}/${event.pattern16} | ${event.path}`;
+  document.getElementById('event-meta').textContent = JSON.stringify(event, null, 2);
+  for(let i=1;i<=7;i++){
+    const el=document.getElementById(`L${i}`);
+    el.setAttribute('stroke', i===event.line ? '#111' : '#bbb');
+    el.setAttribute('opacity', i===event.line ? '.9' : '.25');
+  }
+}
+document.getElementById('prev').onclick=()=>{idx=Math.max(0,idx-1);render();};
+document.getElementById('next').onclick=()=>{idx=Math.min(EVENTS.length-1,idx+1);render();};
+document.getElementById('play').onclick=()=>{ if(timer) return; timer=setInterval(()=>{idx=(idx+1)%EVENTS.length;render();},700); };
+document.getElementById('pause').onclick=()=>{ clearInterval(timer); timer=null; };
+render();
+</script>
+</body>
+</html>

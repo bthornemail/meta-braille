@@ -259,6 +259,17 @@ The same unification can also be read as an axis model:
 256-axis = observer window and projection
 ```
 
+Artifact realizations belong on that projection side as well. The clean rule is:
+
+```text
+artifact realizations are projections along a realization axis
+all valid realizations must resolve to the same canonical identity
+```
+
+So witness and scanner surfaces are not separate artifact truths. They are
+projection choices whose decode path must resolve back to the same payload,
+transcript, and path.
+
 For that higher-level framing, continue to [Axis Model](./98-axis-model.md).
 
 ## 4. Canonical Address Contract

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "artifact.demo.manifest",
+  "artifact_class": "aztec-surface",
+  "transport_class": "standard-aztec-envelope",
+  "realization_axis": {
+    "witness_realization": "deterministic-27x27-aztec-surface",
+    "scanner_realization": "standard-aztec-envelope",
+    "equivalence_rule": "decode(witness_realization) == decode(scanner_realization)"
+  },
+  "title": "Composition Aztec Demo",
+  "transcript": "䷁ | ⠁ | 01/0101 | artifact://demo/composition",
+  "path": "artifact://demo/composition",
+  "payload_source": "../templates/artifact-demo.html",
+  "embodiments": {
+    "svg": "./composition_aztec_sheet.svg",
+    "viewer": "./composition_aztec_viewer.html"
+  },
+  "notes": [
+    "Witness and scanner surfaces are two positions on the same realization axis for one canonical artifact.",
+    "Payload, transcript, and symbol order remain identical across realizations."
+  ]
+}

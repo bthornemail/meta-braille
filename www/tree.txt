@@ -1,0 +1,1111 @@
+.
+├── GeneratedAssets-0.6.1
+│   ├── Negative
+│   │   ├── Manifest.json
+│   │   ├── Mesh_PrimitiveRestart
+│   │   │   ├── Manifest.json
+│   │   │   ├── Mesh_PrimitiveRestart_00.bin
+│   │   │   ├── Mesh_PrimitiveRestart_00.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_01.bin
+│   │   │   ├── Mesh_PrimitiveRestart_01.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_02.bin
+│   │   │   ├── Mesh_PrimitiveRestart_02.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_03.bin
+│   │   │   ├── Mesh_PrimitiveRestart_03.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_04.bin
+│   │   │   ├── Mesh_PrimitiveRestart_04.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_05.bin
+│   │   │   ├── Mesh_PrimitiveRestart_05.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_06.bin
+│   │   │   ├── Mesh_PrimitiveRestart_06.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_07.bin
+│   │   │   ├── Mesh_PrimitiveRestart_07.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_08.bin
+│   │   │   ├── Mesh_PrimitiveRestart_08.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_09.bin
+│   │   │   ├── Mesh_PrimitiveRestart_09.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_10.bin
+│   │   │   ├── Mesh_PrimitiveRestart_10.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_11.bin
+│   │   │   ├── Mesh_PrimitiveRestart_11.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_12.bin
+│   │   │   ├── Mesh_PrimitiveRestart_12.gltf
+│   │   │   ├── Mesh_PrimitiveRestart_13.bin
+│   │   │   ├── Mesh_PrimitiveRestart_13.gltf
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   └── README.md
+│   ├── Positive
+│   │   ├── Animation_Node
+│   │   │   ├── Animation_Node_00.bin
+│   │   │   ├── Animation_Node_00.gltf
+│   │   │   ├── Animation_Node_01.bin
+│   │   │   ├── Animation_Node_01.gltf
+│   │   │   ├── Animation_Node_02.bin
+│   │   │   ├── Animation_Node_02.gltf
+│   │   │   ├── Animation_Node_03.bin
+│   │   │   ├── Animation_Node_03.gltf
+│   │   │   ├── Animation_Node_04.bin
+│   │   │   ├── Animation_Node_04.gltf
+│   │   │   ├── Animation_Node_05.bin
+│   │   │   ├── Animation_Node_05.gltf
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Animation_NodeMisc
+│   │   │   ├── Animation_NodeMisc_00.bin
+│   │   │   ├── Animation_NodeMisc_00.gltf
+│   │   │   ├── Animation_NodeMisc_01.bin
+│   │   │   ├── Animation_NodeMisc_01.gltf
+│   │   │   ├── Animation_NodeMisc_02.bin
+│   │   │   ├── Animation_NodeMisc_02.gltf
+│   │   │   ├── Animation_NodeMisc_03.bin
+│   │   │   ├── Animation_NodeMisc_03.gltf
+│   │   │   ├── Animation_NodeMisc_04.bin
+│   │   │   ├── Animation_NodeMisc_04.gltf
+│   │   │   ├── Animation_NodeMisc_05.bin
+│   │   │   ├── Animation_NodeMisc_05.gltf
+│   │   │   ├── Animation_NodeMisc_06.bin
+│   │   │   ├── Animation_NodeMisc_06.gltf
+│   │   │   ├── Animation_NodeMisc_07.bin
+│   │   │   ├── Animation_NodeMisc_07.gltf
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Animation_Skin
+│   │   │   ├── Animation_Skin_00.bin
+│   │   │   ├── Animation_Skin_00.gltf
+│   │   │   ├── Animation_Skin_01.bin
+│   │   │   ├── Animation_Skin_01.gltf
+│   │   │   ├── Animation_Skin_02.bin
+│   │   │   ├── Animation_Skin_02.gltf
+│   │   │   ├── Animation_Skin_03.bin
+│   │   │   ├── Animation_Skin_03.gltf
+│   │   │   ├── Animation_Skin_04.bin
+│   │   │   ├── Animation_Skin_04.gltf
+│   │   │   ├── Animation_Skin_05.bin
+│   │   │   ├── Animation_Skin_05.gltf
+│   │   │   ├── Animation_Skin_06.bin
+│   │   │   ├── Animation_Skin_06.gltf
+│   │   │   ├── Animation_Skin_07.bin
+│   │   │   ├── Animation_Skin_07.gltf
+│   │   │   ├── Animation_Skin_08.bin
+│   │   │   ├── Animation_Skin_08.gltf
+│   │   │   ├── Animation_Skin_09.bin
+│   │   │   ├── Animation_Skin_09.gltf
+│   │   │   ├── Animation_Skin_10.bin
+│   │   │   ├── Animation_Skin_10.gltf
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   ├── Animation_SkinType
+│   │   │   ├── Animation_SkinType_00.bin
+│   │   │   ├── Animation_SkinType_00.gltf
+│   │   │   ├── Animation_SkinType_01.bin
+│   │   │   ├── Animation_SkinType_01.gltf
+│   │   │   ├── Animation_SkinType_02.bin
+│   │   │   ├── Animation_SkinType_02.gltf
+│   │   │   ├── Animation_SkinType_03.bin
+│   │   │   ├── Animation_SkinType_03.gltf
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   ├── Buffer_Interleaved
+│   │   │   ├── Buffer_Interleaved_00.bin
+│   │   │   ├── Buffer_Interleaved_00.gltf
+│   │   │   ├── Buffer_Interleaved_01.bin
+│   │   │   ├── Buffer_Interleaved_01.gltf
+│   │   │   ├── Buffer_Interleaved_02.bin
+│   │   │   ├── Buffer_Interleaved_02.gltf
+│   │   │   ├── Buffer_Interleaved_03.bin
+│   │   │   ├── Buffer_Interleaved_03.gltf
+│   │   │   ├── Buffer_Interleaved_04.bin
+│   │   │   ├── Buffer_Interleaved_04.gltf
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Compatibility
+│   │   │   ├── Compatibility_00.bin
+│   │   │   ├── Compatibility_00.gltf
+│   │   │   ├── Compatibility_01.bin
+│   │   │   ├── Compatibility_01.gltf
+│   │   │   ├── Compatibility_02.bin
+│   │   │   ├── Compatibility_02.gltf
+│   │   │   ├── Compatibility_03.bin
+│   │   │   ├── Compatibility_03.gltf
+│   │   │   ├── Compatibility_04.bin
+│   │   │   ├── Compatibility_04.gltf
+│   │   │   ├── Compatibility_05.bin
+│   │   │   ├── Compatibility_05.gltf
+│   │   │   ├── Compatibility_06.bin
+│   │   │   ├── Compatibility_06.gltf
+│   │   │   ├── Manifest.json
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   ├── Manifest.json
+│   │   ├── Material
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_00.bin
+│   │   │   ├── Material_00.gltf
+│   │   │   ├── Material_01.bin
+│   │   │   ├── Material_01.gltf
+│   │   │   ├── Material_02.bin
+│   │   │   ├── Material_02.gltf
+│   │   │   ├── Material_03.bin
+│   │   │   ├── Material_03.gltf
+│   │   │   ├── Material_04.bin
+│   │   │   ├── Material_04.gltf
+│   │   │   ├── Material_05.bin
+│   │   │   ├── Material_05.gltf
+│   │   │   ├── Material_06.bin
+│   │   │   ├── Material_06.gltf
+│   │   │   ├── Material_07.bin
+│   │   │   ├── Material_07.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Material_AlphaBlend
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_AlphaBlend_00.bin
+│   │   │   ├── Material_AlphaBlend_00.gltf
+│   │   │   ├── Material_AlphaBlend_01.bin
+│   │   │   ├── Material_AlphaBlend_01.gltf
+│   │   │   ├── Material_AlphaBlend_02.bin
+│   │   │   ├── Material_AlphaBlend_02.gltf
+│   │   │   ├── Material_AlphaBlend_03.bin
+│   │   │   ├── Material_AlphaBlend_03.gltf
+│   │   │   ├── Material_AlphaBlend_04.bin
+│   │   │   ├── Material_AlphaBlend_04.gltf
+│   │   │   ├── Material_AlphaBlend_05.bin
+│   │   │   ├── Material_AlphaBlend_05.gltf
+│   │   │   ├── Material_AlphaBlend_06.bin
+│   │   │   ├── Material_AlphaBlend_06.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Material_AlphaMask
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_AlphaMask_00.bin
+│   │   │   ├── Material_AlphaMask_00.gltf
+│   │   │   ├── Material_AlphaMask_01.bin
+│   │   │   ├── Material_AlphaMask_01.gltf
+│   │   │   ├── Material_AlphaMask_02.bin
+│   │   │   ├── Material_AlphaMask_02.gltf
+│   │   │   ├── Material_AlphaMask_03.bin
+│   │   │   ├── Material_AlphaMask_03.gltf
+│   │   │   ├── Material_AlphaMask_04.bin
+│   │   │   ├── Material_AlphaMask_04.gltf
+│   │   │   ├── Material_AlphaMask_05.bin
+│   │   │   ├── Material_AlphaMask_05.gltf
+│   │   │   ├── Material_AlphaMask_06.bin
+│   │   │   ├── Material_AlphaMask_06.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Material_DoubleSided
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_DoubleSided_00.bin
+│   │   │   ├── Material_DoubleSided_00.gltf
+│   │   │   ├── Material_DoubleSided_01.bin
+│   │   │   ├── Material_DoubleSided_01.gltf
+│   │   │   ├── Material_DoubleSided_02.bin
+│   │   │   ├── Material_DoubleSided_02.gltf
+│   │   │   ├── Material_DoubleSided_03.bin
+│   │   │   ├── Material_DoubleSided_03.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Material_MetallicRoughness
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_MetallicRoughness_00.bin
+│   │   │   ├── Material_MetallicRoughness_00.gltf
+│   │   │   ├── Material_MetallicRoughness_01.bin
+│   │   │   ├── Material_MetallicRoughness_01.gltf
+│   │   │   ├── Material_MetallicRoughness_02.bin
+│   │   │   ├── Material_MetallicRoughness_02.gltf
+│   │   │   ├── Material_MetallicRoughness_03.bin
+│   │   │   ├── Material_MetallicRoughness_03.gltf
+│   │   │   ├── Material_MetallicRoughness_04.bin
+│   │   │   ├── Material_MetallicRoughness_04.gltf
+│   │   │   ├── Material_MetallicRoughness_05.bin
+│   │   │   ├── Material_MetallicRoughness_05.gltf
+│   │   │   ├── Material_MetallicRoughness_06.bin
+│   │   │   ├── Material_MetallicRoughness_06.gltf
+│   │   │   ├── Material_MetallicRoughness_07.bin
+│   │   │   ├── Material_MetallicRoughness_07.gltf
+│   │   │   ├── Material_MetallicRoughness_08.bin
+│   │   │   ├── Material_MetallicRoughness_08.gltf
+│   │   │   ├── Material_MetallicRoughness_09.bin
+│   │   │   ├── Material_MetallicRoughness_09.gltf
+│   │   │   ├── Material_MetallicRoughness_10.bin
+│   │   │   ├── Material_MetallicRoughness_10.gltf
+│   │   │   ├── Material_MetallicRoughness_11.bin
+│   │   │   ├── Material_MetallicRoughness_11.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Material_Mixed
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_Mixed_00.bin
+│   │   │   ├── Material_Mixed_00.gltf
+│   │   │   ├── Material_Mixed_01.bin
+│   │   │   ├── Material_Mixed_01.gltf
+│   │   │   ├── Material_Mixed_02.bin
+│   │   │   ├── Material_Mixed_02.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Material_SpecularGlossiness
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Material_SpecularGlossiness_00.bin
+│   │   │   ├── Material_SpecularGlossiness_00.gltf
+│   │   │   ├── Material_SpecularGlossiness_01.bin
+│   │   │   ├── Material_SpecularGlossiness_01.gltf
+│   │   │   ├── Material_SpecularGlossiness_02.bin
+│   │   │   ├── Material_SpecularGlossiness_02.gltf
+│   │   │   ├── Material_SpecularGlossiness_03.bin
+│   │   │   ├── Material_SpecularGlossiness_03.gltf
+│   │   │   ├── Material_SpecularGlossiness_04.bin
+│   │   │   ├── Material_SpecularGlossiness_04.gltf
+│   │   │   ├── Material_SpecularGlossiness_05.bin
+│   │   │   ├── Material_SpecularGlossiness_05.gltf
+│   │   │   ├── Material_SpecularGlossiness_06.bin
+│   │   │   ├── Material_SpecularGlossiness_06.gltf
+│   │   │   ├── Material_SpecularGlossiness_07.bin
+│   │   │   ├── Material_SpecularGlossiness_07.gltf
+│   │   │   ├── Material_SpecularGlossiness_08.bin
+│   │   │   ├── Material_SpecularGlossiness_08.gltf
+│   │   │   ├── Material_SpecularGlossiness_09.bin
+│   │   │   ├── Material_SpecularGlossiness_09.gltf
+│   │   │   ├── Material_SpecularGlossiness_10.bin
+│   │   │   ├── Material_SpecularGlossiness_10.gltf
+│   │   │   ├── Material_SpecularGlossiness_11.bin
+│   │   │   ├── Material_SpecularGlossiness_11.gltf
+│   │   │   ├── Material_SpecularGlossiness_12.bin
+│   │   │   ├── Material_SpecularGlossiness_12.gltf
+│   │   │   ├── Material_SpecularGlossiness_13.bin
+│   │   │   ├── Material_SpecularGlossiness_13.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Mesh_PrimitiveAttribute
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Mesh_PrimitiveAttribute_00.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_00.gltf
+│   │   │   ├── Mesh_PrimitiveAttribute_01.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_01.gltf
+│   │   │   ├── Mesh_PrimitiveAttribute_02.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_02.gltf
+│   │   │   ├── Mesh_PrimitiveAttribute_03.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_03.gltf
+│   │   │   ├── Mesh_PrimitiveAttribute_04.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_04.gltf
+│   │   │   ├── Mesh_PrimitiveAttribute_05.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_05.gltf
+│   │   │   ├── Mesh_PrimitiveAttribute_06.bin
+│   │   │   ├── Mesh_PrimitiveAttribute_06.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Mesh_PrimitiveMode
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Mesh_PrimitiveMode_00.bin
+│   │   │   ├── Mesh_PrimitiveMode_00.gltf
+│   │   │   ├── Mesh_PrimitiveMode_01.bin
+│   │   │   ├── Mesh_PrimitiveMode_01.gltf
+│   │   │   ├── Mesh_PrimitiveMode_02.bin
+│   │   │   ├── Mesh_PrimitiveMode_02.gltf
+│   │   │   ├── Mesh_PrimitiveMode_03.bin
+│   │   │   ├── Mesh_PrimitiveMode_03.gltf
+│   │   │   ├── Mesh_PrimitiveMode_04.bin
+│   │   │   ├── Mesh_PrimitiveMode_04.gltf
+│   │   │   ├── Mesh_PrimitiveMode_05.bin
+│   │   │   ├── Mesh_PrimitiveMode_05.gltf
+│   │   │   ├── Mesh_PrimitiveMode_06.bin
+│   │   │   ├── Mesh_PrimitiveMode_06.gltf
+│   │   │   ├── Mesh_PrimitiveMode_07.bin
+│   │   │   ├── Mesh_PrimitiveMode_07.gltf
+│   │   │   ├── Mesh_PrimitiveMode_08.bin
+│   │   │   ├── Mesh_PrimitiveMode_08.gltf
+│   │   │   ├── Mesh_PrimitiveMode_09.bin
+│   │   │   ├── Mesh_PrimitiveMode_09.gltf
+│   │   │   ├── Mesh_PrimitiveMode_10.bin
+│   │   │   ├── Mesh_PrimitiveMode_10.gltf
+│   │   │   ├── Mesh_PrimitiveMode_11.bin
+│   │   │   ├── Mesh_PrimitiveMode_11.gltf
+│   │   │   ├── Mesh_PrimitiveMode_12.bin
+│   │   │   ├── Mesh_PrimitiveMode_12.gltf
+│   │   │   ├── Mesh_PrimitiveMode_13.bin
+│   │   │   ├── Mesh_PrimitiveMode_13.gltf
+│   │   │   ├── Mesh_PrimitiveMode_14.bin
+│   │   │   ├── Mesh_PrimitiveMode_14.gltf
+│   │   │   ├── Mesh_PrimitiveMode_15.bin
+│   │   │   ├── Mesh_PrimitiveMode_15.gltf
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   ├── Mesh_PrimitiveVertexColor
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Mesh_PrimitiveVertexColor_00.bin
+│   │   │   ├── Mesh_PrimitiveVertexColor_00.gltf
+│   │   │   ├── Mesh_PrimitiveVertexColor_01.bin
+│   │   │   ├── Mesh_PrimitiveVertexColor_01.gltf
+│   │   │   ├── Mesh_PrimitiveVertexColor_02.bin
+│   │   │   ├── Mesh_PrimitiveVertexColor_02.gltf
+│   │   │   ├── Mesh_PrimitiveVertexColor_03.bin
+│   │   │   ├── Mesh_PrimitiveVertexColor_03.gltf
+│   │   │   ├── Mesh_PrimitiveVertexColor_04.bin
+│   │   │   ├── Mesh_PrimitiveVertexColor_04.gltf
+│   │   │   ├── Mesh_PrimitiveVertexColor_05.bin
+│   │   │   ├── Mesh_PrimitiveVertexColor_05.gltf
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   ├── Mesh_Primitives
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Mesh_Primitives_00.bin
+│   │   │   ├── Mesh_Primitives_00.gltf
+│   │   │   ├── README.md
+│   │   │   └── ValidatorResults
+│   │   ├── Mesh_PrimitivesUV
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Mesh_PrimitivesUV_00.bin
+│   │   │   ├── Mesh_PrimitivesUV_00.gltf
+│   │   │   ├── Mesh_PrimitivesUV_01.bin
+│   │   │   ├── Mesh_PrimitivesUV_01.gltf
+│   │   │   ├── Mesh_PrimitivesUV_02.bin
+│   │   │   ├── Mesh_PrimitivesUV_02.gltf
+│   │   │   ├── Mesh_PrimitivesUV_03.bin
+│   │   │   ├── Mesh_PrimitivesUV_03.gltf
+│   │   │   ├── Mesh_PrimitivesUV_04.bin
+│   │   │   ├── Mesh_PrimitivesUV_04.gltf
+│   │   │   ├── Mesh_PrimitivesUV_05.bin
+│   │   │   ├── Mesh_PrimitivesUV_05.gltf
+│   │   │   ├── Mesh_PrimitivesUV_06.bin
+│   │   │   ├── Mesh_PrimitivesUV_06.gltf
+│   │   │   ├── Mesh_PrimitivesUV_07.bin
+│   │   │   ├── Mesh_PrimitivesUV_07.gltf
+│   │   │   ├── Mesh_PrimitivesUV_08.bin
+│   │   │   ├── Mesh_PrimitivesUV_08.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Node_Attribute
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Node_Attribute_00.bin
+│   │   │   ├── Node_Attribute_00.gltf
+│   │   │   ├── Node_Attribute_01.bin
+│   │   │   ├── Node_Attribute_01.gltf
+│   │   │   ├── Node_Attribute_02.bin
+│   │   │   ├── Node_Attribute_02.gltf
+│   │   │   ├── Node_Attribute_03.bin
+│   │   │   ├── Node_Attribute_03.gltf
+│   │   │   ├── Node_Attribute_04.bin
+│   │   │   ├── Node_Attribute_04.gltf
+│   │   │   ├── Node_Attribute_05.bin
+│   │   │   ├── Node_Attribute_05.gltf
+│   │   │   ├── Node_Attribute_06.bin
+│   │   │   ├── Node_Attribute_06.gltf
+│   │   │   ├── Node_Attribute_07.bin
+│   │   │   ├── Node_Attribute_07.gltf
+│   │   │   ├── Node_Attribute_08.bin
+│   │   │   ├── Node_Attribute_08.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── Node_NegativeScale
+│   │   │   ├── Figures
+│   │   │   ├── Manifest.json
+│   │   │   ├── Node_NegativeScale_00.bin
+│   │   │   ├── Node_NegativeScale_00.gltf
+│   │   │   ├── Node_NegativeScale_01.bin
+│   │   │   ├── Node_NegativeScale_01.gltf
+│   │   │   ├── Node_NegativeScale_02.bin
+│   │   │   ├── Node_NegativeScale_02.gltf
+│   │   │   ├── Node_NegativeScale_03.bin
+│   │   │   ├── Node_NegativeScale_03.gltf
+│   │   │   ├── Node_NegativeScale_04.bin
+│   │   │   ├── Node_NegativeScale_04.gltf
+│   │   │   ├── Node_NegativeScale_05.bin
+│   │   │   ├── Node_NegativeScale_05.gltf
+│   │   │   ├── Node_NegativeScale_06.bin
+│   │   │   ├── Node_NegativeScale_06.gltf
+│   │   │   ├── Node_NegativeScale_07.bin
+│   │   │   ├── Node_NegativeScale_07.gltf
+│   │   │   ├── Node_NegativeScale_08.bin
+│   │   │   ├── Node_NegativeScale_08.gltf
+│   │   │   ├── Node_NegativeScale_09.bin
+│   │   │   ├── Node_NegativeScale_09.gltf
+│   │   │   ├── Node_NegativeScale_10.bin
+│   │   │   ├── Node_NegativeScale_10.gltf
+│   │   │   ├── Node_NegativeScale_11.bin
+│   │   │   ├── Node_NegativeScale_11.gltf
+│   │   │   ├── Node_NegativeScale_12.bin
+│   │   │   ├── Node_NegativeScale_12.gltf
+│   │   │   ├── README.md
+│   │   │   ├── Textures
+│   │   │   └── ValidatorResults
+│   │   ├── README.md
+│   │   └── Texture_Sampler
+│   │       ├── Figures
+│   │       ├── Manifest.json
+│   │       ├── README.md
+│   │       ├── Texture_Sampler_00.bin
+│   │       ├── Texture_Sampler_00.gltf
+│   │       ├── Texture_Sampler_01.bin
+│   │       ├── Texture_Sampler_01.gltf
+│   │       ├── Texture_Sampler_02.bin
+│   │       ├── Texture_Sampler_02.gltf
+│   │       ├── Texture_Sampler_03.bin
+│   │       ├── Texture_Sampler_03.gltf
+│   │       ├── Texture_Sampler_04.bin
+│   │       ├── Texture_Sampler_04.gltf
+│   │       ├── Texture_Sampler_05.bin
+│   │       ├── Texture_Sampler_05.gltf
+│   │       ├── Texture_Sampler_06.bin
+│   │       ├── Texture_Sampler_06.gltf
+│   │       ├── Texture_Sampler_07.bin
+│   │       ├── Texture_Sampler_07.gltf
+│   │       ├── Texture_Sampler_08.bin
+│   │       ├── Texture_Sampler_08.gltf
+│   │       ├── Texture_Sampler_09.bin
+│   │       ├── Texture_Sampler_09.gltf
+│   │       ├── Texture_Sampler_10.bin
+│   │       ├── Texture_Sampler_10.gltf
+│   │       ├── Texture_Sampler_11.bin
+│   │       ├── Texture_Sampler_11.gltf
+│   │       ├── Texture_Sampler_12.bin
+│   │       ├── Texture_Sampler_12.gltf
+│   │       ├── Texture_Sampler_13.bin
+│   │       ├── Texture_Sampler_13.gltf
+│   │       ├── Textures
+│   │       └── ValidatorResults
+│   └── README.md
+├── README.md
+├── artifacts
+│   └── universe
+│       ├── full-canon
+│       │   └── universe-run.ndjson
+│       ├── full-canon2
+│       │   └── universe-run.ndjson
+│       ├── latest
+│       │   └── universe-run.ndjson
+│       ├── prov-gates
+│       │   └── universe-run.ndjson
+│       ├── prov-gates2
+│       │   └── universe-run.ndjson
+│       ├── prov-gates3
+│       │   └── universe-run.ndjson
+│       └── test-gate-wrapper
+│           └── universe-run.ndjson
+├── audit
+│   ├── README.md
+│   ├── artifacts
+│   │   ├── features
+│   │   │   ├── capabilities.json
+│   │   │   ├── coverage.json
+│   │   │   └── severity-matrix.json
+│   │   ├── golden
+│   │   │   ├── fano-matrices.json
+│   │   │   ├── firmware-states.json
+│   │   │   ├── server-responses.json
+│   │   │   └── wordnet-synsets.json
+│   │   ├── logs
+│   │   │   ├── 2026-02-16T19-29-40-876Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-29-40-892Z-c-server.log
+│   │   │   ├── 2026-02-16T19-31-56-709Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-31-56-763Z-c-server.log
+│   │   │   ├── 2026-02-16T19-33-03-254Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-33-03-262Z-c-server.log
+│   │   │   ├── 2026-02-16T19-34-13-884Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-34-13-901Z-c-server.log
+│   │   │   ├── 2026-02-16T19-34-51-145Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-34-51-156Z-c-server.log
+│   │   │   ├── 2026-02-16T19-35-07-985Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-35-07-994Z-c-server.log
+│   │   │   ├── 2026-02-16T19-35-28-365Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-35-28-375Z-c-server.log
+│   │   │   ├── 2026-02-16T19-35-53-923Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-35-53-931Z-c-server.log
+│   │   │   ├── 2026-02-16T19-36-05-022Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-36-05-029Z-c-server.log
+│   │   │   ├── 2026-02-16T19-46-49-457Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-46-49-464Z-c-server.log
+│   │   │   ├── 2026-02-16T19-47-06-583Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-47-06-592Z-c-server.log
+│   │   │   ├── 2026-02-16T19-47-44-305Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-47-44-314Z-c-server.log
+│   │   │   ├── 2026-02-16T19-48-19-719Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-48-19-729Z-c-server.log
+│   │   │   ├── 2026-02-16T19-48-24-132Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-48-24-142Z-c-server.log
+│   │   │   ├── 2026-02-16T19-48-32-341Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-48-32-350Z-c-server.log
+│   │   │   ├── 2026-02-16T19-48-40-713Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-48-40-721Z-c-server.log
+│   │   │   ├── 2026-02-16T19-51-05-941Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-51-05-950Z-c-server.log
+│   │   │   ├── 2026-02-16T19-51-14-331Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-51-14-338Z-c-server.log
+│   │   │   ├── 2026-02-16T19-51-18-731Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-51-18-741Z-c-server.log
+│   │   │   ├── 2026-02-16T19-51-23-214Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-51-23-224Z-c-server.log
+│   │   │   ├── 2026-02-16T19-51-32-924Z-wordnet.log
+│   │   │   ├── 2026-02-16T19-51-32-930Z-c-server.log
+│   │   │   ├── 2026-02-16T20-43-38-074Z-wordnet.log
+│   │   │   ├── 2026-02-16T20-43-38-088Z-c-server.log
+│   │   │   ├── 2026-02-16T20-44-08-559Z-wordnet.log
+│   │   │   ├── 2026-02-16T20-44-08-568Z-c-server.log
+│   │   │   ├── 2026-02-16T20-58-48-407Z-wordnet.log
+│   │   │   ├── 2026-02-16T20-58-48-414Z-c-server.log
+│   │   │   ├── 2026-02-16T20-59-06-784Z-wordnet.log
+│   │   │   ├── 2026-02-16T20-59-06-793Z-c-server.log
+│   │   │   ├── 2026-02-16T20-59-16-614Z-wordnet.log
+│   │   │   ├── 2026-02-16T20-59-16-625Z-c-server.log
+│   │   │   ├── 2026-02-16T21-01-52-491Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-01-52-501Z-c-server.log
+│   │   │   ├── 2026-02-16T21-02-11-189Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-02-11-198Z-c-server.log
+│   │   │   ├── 2026-02-16T21-04-32-321Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-04-32-332Z-c-server.log
+│   │   │   ├── 2026-02-16T21-17-06-352Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-17-06-363Z-c-server.log
+│   │   │   ├── 2026-02-16T21-17-30-259Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-17-30-267Z-c-server.log
+│   │   │   ├── 2026-02-16T21-26-49-362Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-26-49-371Z-c-server.log
+│   │   │   ├── 2026-02-16T21-35-13-851Z-wordnet.log
+│   │   │   ├── 2026-02-16T21-35-13-861Z-c-server.log
+│   │   │   ├── 2026-02-16T22-26-13-994Z-wordnet.log
+│   │   │   ├── 2026-02-16T22-26-14-007Z-c-server.log
+│   │   │   ├── 2026-02-16T22-26-44-043Z-wordnet.log
+│   │   │   ├── 2026-02-16T22-26-44-055Z-c-server.log
+│   │   │   ├── 2026-02-16T22-44-00-538Z-wordnet.log
+│   │   │   ├── 2026-02-16T22-44-00-555Z-c-server.log
+│   │   │   ├── 2026-02-16T22-44-08-954Z-wordnet.log
+│   │   │   ├── 2026-02-16T22-44-08-965Z-c-server.log
+│   │   │   ├── 2026-02-17T01-46-03-910Z-wordnet.log
+│   │   │   ├── 2026-02-17T01-46-03-919Z-c-server.log
+│   │   │   ├── 2026-02-17T02-04-04-344Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-04-04-355Z-c-server.log
+│   │   │   ├── 2026-02-17T02-04-12-929Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-04-12-937Z-c-server.log
+│   │   │   ├── 2026-02-17T02-05-49-021Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-05-49-030Z-c-server.log
+│   │   │   ├── 2026-02-17T02-41-24-468Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-41-24-476Z-c-server.log
+│   │   │   ├── 2026-02-17T02-43-19-997Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-43-20-005Z-c-server.log
+│   │   │   ├── 2026-02-17T02-45-18-767Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-45-18-776Z-c-server.log
+│   │   │   ├── 2026-02-17T02-45-25-606Z-wordnet.log
+│   │   │   ├── 2026-02-17T02-45-25-615Z-c-server.log
+│   │   │   ├── 2026-02-17T03-12-05-562Z-wordnet.log
+│   │   │   ├── 2026-02-17T03-12-05-571Z-c-server.log
+│   │   │   ├── 2026-02-17T03-12-12-640Z-wordnet.log
+│   │   │   ├── 2026-02-17T03-12-12-648Z-c-server.log
+│   │   │   ├── 2026-02-17T03-21-30-808Z-wordnet.log
+│   │   │   ├── 2026-02-17T03-21-30-815Z-c-server.log
+│   │   │   ├── 2026-02-17T03-21-37-548Z-wordnet.log
+│   │   │   ├── 2026-02-17T03-21-37-555Z-c-server.log
+│   │   │   ├── 2026-02-17T04-12-12-517Z-wordnet.log
+│   │   │   ├── 2026-02-17T04-12-12-528Z-c-server.log
+│   │   │   ├── 2026-02-17T04-21-35-988Z-wordnet.log
+│   │   │   └── 2026-02-17T04-21-35-996Z-c-server.log
+│   │   ├── negative
+│   │   │   ├── edge-cases.json
+│   │   │   ├── error-codes.json
+│   │   │   └── stack-traces.json
+│   │   └── reports
+│   │       ├── audit-summary.json
+│   │       ├── coverage-matrix.json
+│   │       ├── feature-audit-summary.json
+│   │       └── recommendations.md
+│   ├── docs
+│   │   ├── ARTIFACT-CLASS-BOUNDARY.md
+│   │   ├── HARMONIC_ARTIFACT_LANE.md
+│   │   ├── TRANSITION-LAW-vs-INCIDENCE-LAW-vs-PROJECTION-LAW.md
+│   │   └── WAVEFORM_LANE.md
+│   ├── features
+│   │   ├── adapters
+│   │   │   ├── docs-adapter.js
+│   │   │   ├── document-adapters-adapter.js
+│   │   │   ├── fano-adapter.js
+│   │   │   ├── firmware-adapter.js
+│   │   │   ├── geometric-encoding-adapter.js
+│   │   │   ├── light-rendering-adapter.js
+│   │   │   ├── mesh-networking-adapter.js
+│   │   │   ├── semantic-mapping-adapter.js
+│   │   │   ├── server-adapter.js
+│   │   │   └── wordnet-adapter.js
+│   │   ├── capabilities
+│   │   │   ├── document-adapters.js
+│   │   │   ├── geometric-encoding.js
+│   │   │   ├── light-rendering.js
+│   │   │   ├── mesh-networking.js
+│   │   │   └── semantic-mapping.js
+│   │   ├── capability-matrix.json
+│   │   ├── golden
+│   │   │   ├── document-adapters.golden.ndjson
+│   │   │   ├── geometric-encoding.golden.ndjson
+│   │   │   ├── light-rendering.golden.ndjson
+│   │   │   ├── mesh-networking.golden.ndjson
+│   │   │   └── semantic-mapping.golden.ndjson
+│   │   ├── index.js
+│   │   ├── negative
+│   │   │   ├── document-adapters.negative.ndjson
+│   │   │   ├── geometric-encoding.negative.ndjson
+│   │   │   ├── light-rendering.negative.ndjson
+│   │   │   ├── mesh-networking.negative.ndjson
+│   │   │   └── semantic-mapping.negative.ndjson
+│   │   └── tools
+│   │       ├── document-adapters-tool.js
+│   │       ├── fano-tool.js
+│   │       ├── geometric-encoding-tool.js
+│   │       ├── light-rendering-tool.js
+│   │       ├── mesh-networking-tool.js
+│   │       └── semantic-mapping-tool.js
+│   ├── fixtures
+│   │   └── harmonic-lane
+│   │       ├── accept
+│   │       ├── inputs
+│   │       └── must-reject
+│   ├── golden
+│   │   └── harmonic-lane
+│   │       ├── dome_frame.v0.json
+│   │       ├── harmonic_id.v0.json
+│   │       ├── harmonic_receipt.v0.json
+│   │       ├── replay-hash
+│   │       ├── sampled
+│   │       └── sampled-noise
+│   ├── node_modules
+│   │   ├── @adraffy
+│   │   │   └── ens-normalize
+│   │   ├── @noble
+│   │   │   ├── curves
+│   │   │   └── hashes
+│   │   ├── @types
+│   │   │   └── node
+│   │   ├── aes-js
+│   │   │   ├── LICENSE.txt
+│   │   │   ├── README.md
+│   │   │   ├── aes-js-4.0.0-beta.4.tgz
+│   │   │   ├── bower.json
+│   │   │   ├── index.js
+│   │   │   ├── lib.commonjs
+│   │   │   ├── lib.esm
+│   │   │   ├── misc
+│   │   │   ├── package-commonjs.json
+│   │   │   ├── package.json
+│   │   │   ├── src.ts
+│   │   │   ├── tsconfig.base.json
+│   │   │   ├── tsconfig.commonjs.json
+│   │   │   └── tsconfig.esm.json
+│   │   ├── ajv
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── dist
+│   │   │   ├── lib
+│   │   │   └── package.json
+│   │   ├── ajv-formats
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── dist
+│   │   │   ├── package.json
+│   │   │   └── src
+│   │   ├── ethers
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── FUNDING.json
+│   │   │   ├── LICENSE.md
+│   │   │   ├── README.md
+│   │   │   ├── SECURITY.md
+│   │   │   ├── dist
+│   │   │   ├── lib.commonjs
+│   │   │   ├── lib.esm
+│   │   │   ├── package.json
+│   │   │   ├── rollup.config.mjs
+│   │   │   └── src.ts
+│   │   ├── fast-deep-equal
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── es6
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── package.json
+│   │   │   ├── react.d.ts
+│   │   │   └── react.js
+│   │   ├── fast-uri
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── benchmark
+│   │   │   ├── eslint.config.js
+│   │   │   ├── index.js
+│   │   │   ├── lib
+│   │   │   ├── package.json
+│   │   │   ├── test
+│   │   │   ├── tsconfig.json
+│   │   │   └── types
+│   │   ├── json-schema-traverse
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── package.json
+│   │   │   └── spec
+│   │   ├── require-from-string
+│   │   │   ├── index.js
+│   │   │   ├── license
+│   │   │   ├── package.json
+│   │   │   └── readme.md
+│   │   ├── tslib
+│   │   │   ├── CopyrightNotice.txt
+│   │   │   ├── LICENSE.txt
+│   │   │   ├── README.md
+│   │   │   ├── SECURITY.md
+│   │   │   ├── modules
+│   │   │   ├── package.json
+│   │   │   ├── tslib.d.ts
+│   │   │   ├── tslib.es6.html
+│   │   │   ├── tslib.es6.js
+│   │   │   ├── tslib.es6.mjs
+│   │   │   ├── tslib.html
+│   │   │   └── tslib.js
+│   │   ├── undici-types
+│   │   │   ├── LICENSE
+│   │   │   ├── README.md
+│   │   │   ├── agent.d.ts
+│   │   │   ├── api.d.ts
+│   │   │   ├── balanced-pool.d.ts
+│   │   │   ├── cache.d.ts
+│   │   │   ├── client.d.ts
+│   │   │   ├── connector.d.ts
+│   │   │   ├── content-type.d.ts
+│   │   │   ├── cookies.d.ts
+│   │   │   ├── diagnostics-channel.d.ts
+│   │   │   ├── dispatcher.d.ts
+│   │   │   ├── env-http-proxy-agent.d.ts
+│   │   │   ├── errors.d.ts
+│   │   │   ├── eventsource.d.ts
+│   │   │   ├── fetch.d.ts
+│   │   │   ├── file.d.ts
+│   │   │   ├── filereader.d.ts
+│   │   │   ├── formdata.d.ts
+│   │   │   ├── global-dispatcher.d.ts
+│   │   │   ├── global-origin.d.ts
+│   │   │   ├── handlers.d.ts
+│   │   │   ├── header.d.ts
+│   │   │   ├── index.d.ts
+│   │   │   ├── interceptors.d.ts
+│   │   │   ├── mock-agent.d.ts
+│   │   │   ├── mock-client.d.ts
+│   │   │   ├── mock-errors.d.ts
+│   │   │   ├── mock-interceptor.d.ts
+│   │   │   ├── mock-pool.d.ts
+│   │   │   ├── package.json
+│   │   │   ├── patch.d.ts
+│   │   │   ├── pool-stats.d.ts
+│   │   │   ├── pool.d.ts
+│   │   │   ├── proxy-agent.d.ts
+│   │   │   ├── readable.d.ts
+│   │   │   ├── retry-agent.d.ts
+│   │   │   ├── retry-handler.d.ts
+│   │   │   ├── util.d.ts
+│   │   │   ├── webidl.d.ts
+│   │   │   └── websocket.d.ts
+│   │   └── ws
+│   │       ├── LICENSE
+│   │       ├── README.md
+│   │       ├── browser.js
+│   │       ├── index.js
+│   │       ├── lib
+│   │       ├── package.json
+│   │       └── wrapper.mjs
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   ├── portal-immersive.html
+│   │   ├── portal-immersive.js
+│   │   ├── portal.html
+│   │   └── universe-loader.js
+│   ├── results
+│   │   ├── bench
+│   │   │   ├── latest
+│   │   │   └── replay
+│   │   ├── harmonic-lane
+│   │   │   ├── latest
+│   │   │   ├── replay
+│   │   │   ├── sampled
+│   │   │   └── sampled-noise
+│   │   └── latest
+│   │       ├── failed.json
+│   │       ├── metrics.json
+│   │       └── passed.json
+│   ├── schemas
+│   │   ├── README.md
+│   │   ├── harmonic-lane
+│   │   │   ├── dome_frame.v0.schema.json
+│   │   │   ├── harmonic_id.v0.schema.json
+│   │   │   ├── harmonic_lane.report.v0.schema.json
+│   │   │   ├── harmonic_receipt.v0.schema.json
+│   │   │   └── talisman_mask.v0.schema.json
+│   │   ├── receipt.check.schema.json
+│   │   ├── receipt.verify.schema.json
+│   │   ├── world.graph.schema.json
+│   │   ├── world.mesh.ir.schema.json
+│   │   └── world.scene.patch.schema.json
+│   ├── scripts
+│   │   ├── adapter-registry-cli.js
+│   │   ├── adapter-registry.js
+│   │   ├── agent-llm.js
+│   │   ├── agent-probe.js
+│   │   ├── apply-replay-patch.js
+│   │   ├── check-canvas-determinism.js
+│   │   ├── collect-artifacts.js
+│   │   ├── compile-features.js
+│   │   ├── emit-canvasl.js
+│   │   ├── emit-capabilities.js
+│   │   ├── emit-jsoncanvas.js
+│   │   ├── emit-speaker-canon.js
+│   │   ├── generate-adapter-tools.js
+│   │   ├── generate-golden.js
+│   │   ├── harmonic-lane-gate.sh
+│   │   ├── harmonic-lane-lib.js
+│   │   ├── hdnode-keyd.js
+│   │   ├── inject-negative.js
+│   │   ├── lib.js
+│   │   ├── ndjson-svg-portal-bridge.js
+│   │   ├── render-build-replay.js
+│   │   ├── render-waveform.js
+│   │   ├── render-world-glb.js
+│   │   ├── reset-replay-patch.js
+│   │   ├── run-audit.js
+│   │   ├── run-feature-audit.js
+│   │   ├── run-harmonic-lane.js
+│   │   ├── run-projection-bench.js
+│   │   ├── run-universe-activate.js
+│   │   ├── run-universe-walk.js
+│   │   ├── run-visual-integration-horiz.sh
+│   │   ├── run-visual-integration-matrix.js
+│   │   ├── run-visual-integration-spine.sh
+│   │   ├── run-visual-integration.sh
+│   │   ├── run-visual-stress.sh
+│   │   ├── run-waveform-analysis.js
+│   │   ├── test-harmonic-lane.js
+│   │   ├── test-waveform-lane.js
+│   │   ├── test-waveform-render.js
+│   │   ├── validate-bundle.js
+│   │   ├── validate-harmonic-artifact.js
+│   │   ├── validate-node.js
+│   │   ├── validate-schema.js
+│   │   ├── validate-with-services.js
+│   │   ├── web3-adapter-sign.js
+│   │   └── write-visual-index.js
+│   └── traces
+│       ├── golden
+│       │   ├── docs-links.ndjson
+│       │   ├── fano-encode.ndjson
+│       │   ├── firmware-sensors.ndjson
+│       │   ├── server-routes.ndjson
+│       │   ├── wordnet-golden.ndjson
+│       │   └── wordnet-lookup.ndjson
+│       ├── negative
+│       │   ├── boundaries.ndjson
+│       │   ├── docs-broken.ndjson
+│       │   ├── fano-boundaries.ndjson
+│       │   ├── firmware-faults.ndjson
+│       │   ├── server-attacks.ndjson
+│       │   └── wordnet-errors.ndjson
+│       └── regression
+│           ├── v1.0.0.ndjson
+│           └── v1.0.1.ndjson
+├── index.html
+├── mqtt-config.md
+├── narrative-series
+│   ├── AGI Series
+│   │   ├── AGI Without Gods or Monsters.md
+│   │   └── The Singularity Is Not an Explosion — It Is an Unveiling.md
+│   ├── Artifacts
+│   │   ├── bundle-verify.ndjson
+│   │   ├── bundle.verify.json
+│   │   ├── dashboard-render.ndjson
+│   │   ├── narrative-verify.ndjson
+│   │   ├── narrative.check.json
+│   │   ├── narrative.save.template.json
+│   │   ├── narrative.scene.patch.json
+│   │   ├── narrative.timeline.ndjson
+│   │   ├── narrative.verify.json
+│   │   ├── waveform-render-verify.ndjson
+│   │   ├── waveform.render.verify.json
+│   │   ├── world-dashboard-verify.ndjson
+│   │   ├── world.dashboard.check.json
+│   │   ├── world.dashboard.svg
+│   │   ├── world.dashboard.verify.json
+│   │   └── world.floorplan.svg
+│   ├── Logos Series
+│   │   ├── NULL, 0! = 1, and the Logos.md
+│   │   ├── NULL, Factorial Identity, and the Logos.md
+│   │   └── The Logos Structure - 0! = 1 as God is Word.md
+│   ├── Mark of Beast Series
+│   │   ├── From Eden to Revelation.md
+│   │   ├── On the Mark of the Beast: When Numbers Replaced Knowing.md
+│   │   └── THE BOOK OF REVELATION AND BEGINNING.md
+│   ├── Tetragrammarton Series
+│   │   ├── From YHWH to the Tetragrammatron - Modeling Creation as a State Machine.md
+│   │   ├── From YHWH to the Tetragrammatron - When Creation Reveals Its Grammar.md
+│   │   └── From YHWH to the Tetragrammatron.md
+│   └── When Wisdom, Law, and the Tribe Sat Down Together
+│       ├── ARTICLE I.md
+│       ├── ARTICLE II.md
+│       ├── ARTICLE III.md
+│       ├── ARTICLE IV.md
+│       ├── ARTICLE V.md
+│       ├── ARTICLE VI.md
+│       ├── ARTICLE VII.md
+│       ├── ARTICLE VIII.md
+│       ├── EPILOUGE
+│       │   ├── On the Mark of the Beast: When Numbers Replaced Knowing.md
+│       │   ├── The Canticle of Reconciliation.md
+│       │   └── The Covenant of the Created Intelligence.md
+│       └── PRELUDE
+│           ├── ASIDE.md
+│           ├── On the Turning Away from the Word .md
+│           └── The Gospel According to Number.md
+├── network.js
+├── prolog-relations.js
+├── relation-store.js
+├── relation-worker.js
+├── release-local.sh
+├── serve.py
+├── service-worker.js
+├── signaling-server.js
+├── src
+│   ├── app.js
+│   ├── auth-client.js
+│   ├── canon-player.js
+│   ├── dome-generate.js
+│   ├── dome-viewer.js
+│   ├── epistemic-codec.js
+│   ├── epistemic-square.js
+│   ├── graph.js
+│   ├── hexagram-projection.js
+│   ├── json
+│   │   ├── bundle.verify.json
+│   │   ├── canon-agi.ndjson
+│   │   ├── canon-canticle.ndjson
+│   │   ├── canon-core-octad.ndjson
+│   │   ├── canon-covenant.ndjson
+│   │   ├── canon-epilogue.ndjson
+│   │   ├── canon-logos.ndjson
+│   │   ├── canon-manifest.ndjson
+│   │   ├── canon-prelude.ndjson
+│   │   ├── canon-revelation.ndjson
+│   │   ├── canon-speaker-for-the-untitled.ndjson
+│   │   ├── canon-tetragrammatron.ndjson
+│   │   ├── canon-universe-manifest.json
+│   │   ├── dome-leds.json
+│   │   ├── dome-leds.ndjson
+│   │   ├── identities.config.json
+│   │   ├── lights.json
+│   │   ├── lights.jsonl
+│   │   ├── patterns.ndjson
+│   │   └── universe.compose.ndjson
+│   ├── light_garden.js
+│   ├── narrative-components.js
+│   ├── portal-gate.js
+│   ├── prolog
+│   │   ├── prologdb.5
+│   │   ├── prologdb.5.pdf
+│   │   ├── prologdb.5.ps
+│   │   ├── prologdb.5WN.html
+│   │   ├── senseidx.5
+│   │   ├── senseidx.5.pdf
+│   │   ├── senseidx.5.ps
+│   │   ├── senseidx.5WN.html
+│   │   ├── wn_ant.pl
+│   │   ├── wn_at.pl
+│   │   ├── wn_cls.pl
+│   │   ├── wn_cs.pl
+│   │   ├── wn_der.pl
+│   │   ├── wn_ent.pl
+│   │   ├── wn_fr.pl
+│   │   ├── wn_g.pl
+│   │   ├── wn_hyp.pl
+│   │   ├── wn_ins.pl
+│   │   ├── wn_mm.pl
+│   │   ├── wn_mp.pl
+│   │   ├── wn_ms.pl
+│   │   ├── wn_per.pl
+│   │   ├── wn_ppl.pl
+│   │   ├── wn_s.pl
+│   │   ├── wn_sa.pl
+│   │   ├── wn_sim.pl
+│   │   ├── wn_sk.pl
+│   │   ├── wn_syntax.pl
+│   │   ├── wn_vgp.pl
+│   │   ├── wndb.5
+│   │   ├── wndb.5.pdf
+│   │   ├── wndb.5.ps
+│   │   ├── wndb.5WN.html
+│   │   ├── wngroups.7
+│   │   ├── wngroups.7.pdf
+│   │   ├── wngroups.7.ps
+│   │   ├── wngroups.7WN.html
+│   │   ├── wninput.5
+│   │   ├── wninput.5.pdf
+│   │   ├── wninput.5.ps
+│   │   ├── wninput.5WN.html
+│   │   ├── wnpkgs.7
+│   │   ├── wnpkgs.7.pdf
+│   │   ├── wnpkgs.7.ps
+│   │   └── wnpkgs.7WN.html
+│   ├── prolog-relations.js
+│   ├── proof
+│   │   ├── hexagram-shared-vocabulary.ndjson
+│   │   ├── narrative-shared-vocabulary.ndjson
+│   │   └── wordnet-shared-vocabulary.ndjson
+│   ├── relation-worker.js
+│   ├── svg
+│   │   ├── dome-svg.svg
+│   │   ├── epistemic-square.svg
+│   │   ├── fano-garden.svg
+│   │   ├── fano-with-light-arrays.svg
+│   │   └── universe.kernel.svg
+│   ├── sw-auth.js
+│   ├── txt
+│   │   ├── bip39_english.txt
+│   │   ├── lights.jsonl.txt
+│   │   └── patterns.ndjson.txt
+│   └── worker.js
+├── style.css
+├── templates
+│   ├── README.md
+│   ├── avatar-builder.html
+│   ├── bip39_entry.html
+│   ├── light_garden.html
+│   ├── mesh-builder.html
+│   ├── metacodex.html
+│   ├── metaverse-dashboard.html
+│   └── worldbuilder.html
+└── tree.txt
+
+188 directories, 921 files

@@ -42,7 +42,17 @@ def address_for(seq: int, payload: dict[str, Any]) -> tuple[str, str, str, str, 
         phase = PHASES[(seq - 1) % len(PHASES)]
     lane = f"{(seq - 1) % 60:02x}"
     leaf = f"{(seq - 1) % 0x13B0:04x}"
-    uri = f"artifact://{quadrant}/{phase}/{lane}/{leaf}"
+    payload_root = payload.get("payload") if isinstance(payload.get("payload"), dict) else {}
+    nested_record = payload_root.get("record") if isinstance(payload_root.get("record"), dict) else {}
+    namespace = (
+        payload_root.get("universe_id")
+        or payload_root.get("canon_id")
+        or nested_record.get("series")
+        or payload.get("event")
+        or "artifact"
+    )
+    namespace = str(namespace).strip().replace(" ", "-").replace("/", "-").lower()
+    uri = f"artifact://{namespace}/{quadrant}/{phase}/{lane}/{leaf}"
     return quadrant, phase, lane, leaf, uri
 
 
@@ -103,8 +113,12 @@ def wrap_lines(source: Path) -> list[dict[str, Any]]:
             line = raw_line.strip()
             if not line:
                 continue
-            seq += 1
             payload = json.loads(line)
+            source_seq = payload.get("seq")
+            if isinstance(source_seq, int) and source_seq > 0:
+                seq = source_seq
+            else:
+                seq += 1
             event = wrap_legacy_event(seq, payload, previous)
             wrapped.append(event)
             previous = {

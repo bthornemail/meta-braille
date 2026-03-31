@@ -108,6 +108,16 @@ In current language:
 This axis is allowed to change freely as long as it does not redefine the
 240-axis identity or the 7-axis stepping law.
 
+One important subspace inside the 256-axis is the realization axis for
+artifact surfaces.
+
+That subspace currently includes two important realization positions:
+
+- witness realization = canonical internal artifact placement
+- scanner realization = external scanner-compatible placement
+
+These are related by an offset transform while preserving canonical identity.
+
 ## 4. Canonical Reading Order
 
 The axis model should be read like this:
@@ -215,6 +225,16 @@ They are:
 
 Geometry can host or arrange the system, but the canonical emitted language is
 still Braille and transcript.
+
+### witness vs scanner
+
+These are not separate artifact systems.
+
+They are:
+
+- two positions on the realization axis inside the 256-axis
+- related by an offset transform
+- required to decode to the same canonical payload and transcript
 
 ### old world runtime vs new canonical runtime
 

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artifact Demo · Symbolic Web</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap');
+:root{
+  --bg:#10151d;
+  --panel:#17212c;
+  --panel2:#0e141b;
+  --ink:#e8eef6;
+  --dim:#9fb3c8;
+  --line:#314455;
+  --blue:#57a2ff;
+  --teal:#4fd1c5;
+  --gold:#f3c969;
+  --green:#66d17a;
+  --red:#ff7c7c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#1a2633 0%,#0b1016 65%);
+  color:var(--ink);
+  font-family:'IBM Plex Sans',sans-serif;
+}
+.shell{
+  max-width:1380px;
+  margin:0 auto;
+  padding:20px;
+}
+.head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:16px;
+  margin-bottom:16px;
+}
+.title{
+  font:600 28px 'IBM Plex Mono',monospace;
+  letter-spacing:.04em;
+}
+.sub{
+  color:var(--dim);
+  max-width:720px;
+  font-size:14px;
+}
+.proof{
+  margin-top:8px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--gold);
+  font:600 12px 'IBM Plex Mono',monospace;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1.15fr .95fr;
+  gap:16px;
+}
+.col{
+  display:grid;
+  gap:16px;
+}
+.card{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+  box-shadow:0 14px 30px rgba(0,0,0,.24);
+}
+.card h2{
+  margin:0;
+  padding:12px 14px 0;
+  font:600 14px 'IBM Plex Mono',monospace;
+  letter-spacing:.08em;
+  color:var(--teal);
+}
+.card .body{
+  padding:14px;
+}
+textarea,input,button,select{
+  font:12px 'IBM Plex Mono',monospace;
+}
+textarea,input{
+  width:100%;
+  color:var(--ink);
+  background:var(--panel2);
+  border:1px solid var(--line);
+  padding:10px;
+}
+textarea{min-height:170px;resize:vertical}
+.row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+button{
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--ink);
+  padding:9px 12px;
+  cursor:pointer;
+}
+button:hover{border-color:var(--blue);color:var(--blue)}
+button.primary{background:rgba(87,162,255,.12);border-color:rgba(87,162,255,.45)}
+button.good{background:rgba(102,209,122,.12);border-color:rgba(102,209,122,.45)}
+button.warn{background:rgba(243,201,105,.12);border-color:rgba(243,201,105,.45)}
+.mono{
+  font:12px 'IBM Plex Mono',monospace;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.kv{
+  display:grid;
+  grid-template-columns:140px 1fr;
+  gap:8px;
+  font:12px 'IBM Plex Mono',monospace;
+  margin-top:8px;
+}
+.kv div:nth-child(odd){color:var(--dim)}
+.surface{
+  max-height:420px;
+  overflow:auto;
+  background:#f7f1e6;
+  padding:10px;
+}
+.transport{
+  min-height:84px;
+}
+video,canvas,img{
+  width:100%;
+  max-width:100%;
+  background:#000;
+  border:1px solid var(--line);
+}
+.status{
+  margin-top:10px;
+  font:12px 'IBM Plex Mono',monospace;
+  color:var(--dim);
+}
+.status.good{color:var(--green)}
+.status.bad{color:var(--red)}
+.hint{
+  color:var(--dim);
+  font-size:12px;
+  line-height:1.5;
+}
+@media (max-width: 1100px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="head">
+    <div>
+      <div class="title">ARTIFACT DEMO</div>
+      <div class="sub">One canonical artifact across a realization axis: the deterministic witness surface on the left and the scanner-compatible Aztec surface on the right are two positions on that axis. Payload, transcript, symbol order, and identity stay the same; only realization coordinates change by offset transform.</div>
+      <div class="proof" id="proof-strip">䷁ | ⠁ | 01/0101 | artifact://demo/default</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col">
+      <div class="card">
+        <h2>Canonical Payload</h2>
+        <div class="body">
+          <textarea id="payload-json"></textarea>
+          <div class="row" style="margin-top:10px">
+            <button class="primary" id="render-all">Render Witness + Transport</button>
+            <button id="load-sample">Load Sample</button>
+            <button id="export-svg">Export SVG</button>
+            <button id="export-png">Export PNG</button>
+          </div>
+          <div class="kv">
+            <div>transcript</div><div id="meta-transcript">-</div>
+            <div>realization axis</div><div id="meta-transport">witness ↔ scanner</div>
+            <div>artifact class</div><div>aztec-surface</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Witness Realization</h2>
+        <div class="body">
+          <div class="surface" id="svg-surface"></div>
+          <div class="status" id="surface-status">Waiting for render.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>Scanner Realization</h2>
+        <div class="body">
+          <textarea id="transport-text" class="transport" readonly></textarea>
+          <div class="row" style="margin-top:10px">
+            <button class="warn" id="render-barcode">Render Standard Aztec</button>
+            <button id="decode-text">Decode Text</button>
+          </div>
+          <canvas id="barcode-canvas" width="420" height="420"></canvas>
+          <div class="status" id="barcode-status">Scanner realization is optional and uses a standard Aztec barcode transport envelope under the offset transform.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Scan / Import Demo</h2>
+        <div class="body">
+          <div class="row">
+            <button class="good" id="start-camera">Start Camera Scan</button>
+            <button id="stop-camera">Stop Camera</button>
+            <button id="scan-file-btn">Scan Image File</button>
+            <input id="scan-file-input" type="file" accept="image/*" style="display:none">
+          </div>
+          <div class="hint" style="margin:10px 0 12px">
+            Camera/file scanning uses the browser Barcode Detector API and expects a real standardized Aztec barcode whose payload is the `mbaz1:` transport envelope. SVG and PNG artifact import remain the deterministic witness realization. Both surfaces are positions on the same realization axis for one canonical artifact.
+          </div>
+          <video id="scan-video" autoplay playsinline muted></video>
+          <div class="status" id="scan-status">Scanner idle.</div>
+          <div class="mono" id="scan-output" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../src/aztec-artifact.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bwip-js@4.5.1/dist/bwip-js-min.js"></script>
+<script>
+const samplePayload = {
+  schema_version: 1,
+  kind: 'artifact.demo',
+  transcript: '䷁ | ⠁ | 01/0101 | artifact://demo/default',
+  path: 'artifact://demo/default',
+  entity: {
+    id: 'demo-node',
+    name: 'Demo Artifact',
+    cat: 'artifact',
+    desc: 'Canonical artifact payload for witness and transport demos.',
+    tags: ['demo','artifact','transport'],
+    artifactState: 'inactive'
+  }
+};
+
+let currentPayload = samplePayload;
+let currentSvg = '';
+let cameraStream = null;
+let cameraTimer = null;
+
+function setStatus(id, message, cls='') {
+  const el = document.getElementById(id);
+  el.textContent = message;
+  el.className = `status ${cls}`.trim();
+}
+
+function readPayload() {
+  return JSON.parse(document.getElementById('payload-json').value);
+}
+
+function writePayload(payload) {
+  currentPayload = payload;
+  document.getElementById('payload-json').value = JSON.stringify(payload, null, 2);
+  const transcript = payload.transcript || payload.entity?.transcript || `${payload.hexagram || '䷁'} | ${payload.braille || '⠁'} | ${payload.header8 || '01'}/${payload.pattern16 || '0101'} | ${payload.path || 'artifact://demo/default'}`;
+  document.getElementById('proof-strip').textContent = transcript;
+  document.getElementById('meta-transcript').textContent = transcript;
+}
+
+function renderAll() {
+  const payload = readPayload();
+  writePayload(payload);
+  currentSvg = window.AztecArtifact.renderPayloadAsSvg(payload, {
+    label: payload.entity?.name || payload.kind || 'artifact-demo'
+  });
+  document.getElementById('svg-surface').innerHTML = currentSvg;
+  document.getElementById('transport-text').value = window.AztecArtifact.transportTextFromPayload(payload);
+  setStatus('surface-status', 'Deterministic witness surface rendered.', 'good');
+  setStatus('barcode-status', 'Transport text ready. Render a standard Aztec code to scan it with the browser API.', '');
+}
+
+function renderBarcode() {
+  const transport = document.getElementById('transport-text').value.trim();
+  if (!transport) {
+    setStatus('barcode-status', 'Render the payload first.', 'bad');
+    return;
+  }
+  if (!window.bwipjs) {
+    setStatus('barcode-status', 'bwip-js did not load, so the transport barcode cannot be rendered here.', 'bad');
+    return;
+  }
+  try {
+    window.bwipjs.toCanvas(document.getElementById('barcode-canvas'), {
+      bcid: 'azteccode',
+      text: transport,
+      scale: 4,
+      eclevel: 5
+    });
+    setStatus('barcode-status', 'Standard Aztec barcode rendered for transport scanning.', 'good');
+  } catch (error) {
+    setStatus('barcode-status', `Barcode render failed: ${error.message}`, 'bad');
+  }
+}
+
+async function decodeTransportText() {
+  try {
+    const payload = window.AztecArtifact.payloadObjectFromTransportText(document.getElementById('transport-text').value);
+    writePayload(payload);
+    renderAll();
+    document.getElementById('scan-output').textContent = 'Decoded transport envelope from text.';
+    setStatus('scan-status', 'Transport text decoded.', 'good');
+  } catch (error) {
+    setStatus('scan-status', error.message, 'bad');
+  }
+}
+
+function stopCamera() {
+  if (cameraTimer) {
+    clearInterval(cameraTimer);
+    cameraTimer = null;
+  }
+  if (cameraStream) {
+    cameraStream.getTracks().forEach((track) => track.stop());
+    cameraStream = null;
+  }
+  document.getElementById('scan-video').srcObject = null;
+}
+
+async function handleDetectedBarcode(rawValue, source='scanner') {
+  try {
+    const payload = window.AztecArtifact.payloadObjectFromTransportText(rawValue);
+    writePayload(payload);
+    renderAll();
+    document.getElementById('scan-output').textContent = `${source}: ${rawValue.slice(0, 180)}${rawValue.length > 180 ? '…' : ''}`;
+    setStatus('scan-status', `Decoded standardized Aztec transport from ${source}.`, 'good');
+    stopCamera();
+  } catch (error) {
+    setStatus('scan-status', `Detected barcode but decode failed: ${error.message}`, 'bad');
+  }
+}
+
+async function startCameraScan() {
+  if (!('BarcodeDetector' in window)) {
+    setStatus('scan-status', 'Barcode Detector API is not available in this browser.', 'bad');
+    return;
+  }
+  const formats = await window.BarcodeDetector.getSupportedFormats();
+  if (!formats.includes('aztec')) {
+    setStatus('scan-status', 'This browser Barcode Detector does not support Aztec format.', 'bad');
+    return;
+  }
+  stopCamera();
+  const detector = new window.BarcodeDetector({ formats: ['aztec'] });
+  cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+  const video = document.getElementById('scan-video');
+  video.srcObject = cameraStream;
+  setStatus('scan-status', 'Camera running. Point it at a standard Aztec barcode carrying the mbaz1 transport text.', '');
+  cameraTimer = setInterval(async () => {
+    try {
+      const codes = await detector.detect(video);
+      if (codes && codes.length) {
+        await handleDetectedBarcode(codes[0].rawValue || '', 'camera');
+      }
+    } catch (error) {
+      setStatus('scan-status', `Camera scan failed: ${error.message}`, 'bad');
+      stopCamera();
+    }
+  }, 500);
+}
+
+async function scanImageFile(file) {
+  if (!('BarcodeDetector' in window)) {
+    setStatus('scan-status', 'Barcode Detector API is not available in this browser.', 'bad');
+    return;
+  }
+  const formats = await window.BarcodeDetector.getSupportedFormats();
+  if (!formats.includes('aztec')) {
+    setStatus('scan-status', 'This browser Barcode Detector does not support Aztec format.', 'bad');
+    return;
+  }
+  const detector = new window.BarcodeDetector({ formats: ['aztec'] });
+  const bitmap = await createImageBitmap(file);
+  const codes = await detector.detect(bitmap);
+  if (!codes.length) {
+    setStatus('scan-status', 'No Aztec barcode found in selected image.', 'bad');
+    return;
+  }
+  await handleDetectedBarcode(codes[0].rawValue || '', file.name || 'image');
+}
+
+function exportSvg() {
+  if (!currentSvg) renderAll();
+  const blob = new Blob([currentSvg], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'artifact-demo.svg';
+  a.click();
+}
+
+async function exportPng() {
+  const pngBlob = await window.AztecArtifact.renderPayloadAsPngBlob(readPayload(), {
+    label: readPayload().entity?.name || readPayload().kind || 'artifact-demo'
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(pngBlob);
+  a.download = 'artifact-demo.png';
+  a.click();
+}
+
+document.getElementById('load-sample').addEventListener('click', () => {
+  writePayload(samplePayload);
+  renderAll();
+});
+document.getElementById('render-all').addEventListener('click', renderAll);
+document.getElementById('render-barcode').addEventListener('click', renderBarcode);
+document.getElementById('decode-text').addEventListener('click', decodeTransportText);
+document.getElementById('start-camera').addEventListener('click', () => startCameraScan().catch((error) => setStatus('scan-status', error.message, 'bad')));
+document.getElementById('stop-camera').addEventListener('click', () => {
+  stopCamera();
+  setStatus('scan-status', 'Camera stopped.', '');
+});
+document.getElementById('scan-file-btn').addEventListener('click', () => document.getElementById('scan-file-input').click());
+document.getElementById('scan-file-input').addEventListener('change', (event) => {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (file) {
+    scanImageFile(file).catch((error) => setStatus('scan-status', error.message, 'bad'));
+  }
+});
+document.getElementById('export-svg').addEventListener('click', exportSvg);
+document.getElementById('export-png').addEventListener('click', () => exportPng().catch((error) => setStatus('surface-status', error.message, 'bad')));
+window.addEventListener('beforeunload', stopCamera);
+
+writePayload(samplePayload);
+renderAll();
+</script>
+</body>
+</html>

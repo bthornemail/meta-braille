@@ -183,6 +183,25 @@ This means a Symbolic Web system can produce an artifact that is:
 - replay-compatible
 - still subordinate to transcript authority
 
+The current project now states this more strongly as a realization-axis rule:
+
+```text
+canonical artifact
+-> witness realization
+-> scanner realization
+```
+
+These are not separate artifact types. They are positions on the same
+realization axis, related by an offset transform that preserves:
+
+- payload
+- transcript
+- symbol order
+- identity
+
+Only realization coordinates, scanner constraints, and wrapper conventions may
+change.
+
 So the artifact lane is not a separate theory. It is one way the Symbolic Web
 becomes portable across environments.
 
@@ -204,6 +223,14 @@ This keeps:
 - geometry subordinate to proof
 - observer layers non-authoritative
 - adapters interoperable
+
+The same constraint applies to artifact realizations:
+
+```text
+decode(witness realization) == decode(scanner realization)
+```
+
+so the artifact does not change when its realization coordinates do.
 
 ## 9. Current Project Stack
 

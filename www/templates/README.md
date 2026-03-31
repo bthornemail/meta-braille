@@ -26,6 +26,8 @@ consume or emit stream-shaped records.
   Higher-level entity and relation editor.
 - `avatar-builder.html`
   Specialized SVG and NDJSON composition tool.
+- `artifact-demo.html`
+  Deterministic artifact witness and barcode transport demo.
 
 ## Usage Rule
 
@@ -47,6 +49,7 @@ If these are exposed on a public site, the clearest route names are:
 - `/schema`
 - `/world`
 - `/avatar`
+- `/artifact`
 
 ## Base Convention
 

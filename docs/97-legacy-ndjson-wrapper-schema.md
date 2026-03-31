@@ -240,7 +240,30 @@ contain:
 
 The wrapper schema lets those programs run under the newer canonical law.
 
-## 10. One-Sentence Freeze
+## 10. Template And World-Surface Interpretation
+
+Wrapped world-program events may also be consumed directly by world-building and
+projection templates.
+
+The rule is:
+
+```text
+wrapped canonical event
+-> trust Braille and transcript fields
+-> read legacy world payload as projection input
+-> derive entity, graph, mesh, or scene records
+```
+
+This means user-facing world templates may ingest wrapped NDJSON without
+promoting legacy projection data to protocol authority.
+
+In practical terms:
+
+- canonical fields establish replay and identity
+- wrapped legacy payload provides world-building detail
+- templates remain projection surfaces over the same symbolic law
+
+## 11. One-Sentence Freeze
 
 Legacy NDJSON traces remain reusable as replayable world-generation programs,
 but they must be wrapped in a canonical Braille-and-transcript event layer so

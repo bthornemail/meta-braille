@@ -534,7 +534,10 @@ footer span{color:var(--blue2);font-weight:600;}
       <input class="tb-search" id="search-input" type="text" placeholder="search entities…" oninput="renderGrid()"/>
       <button class="tb-btn" onclick="sortBy('name')">↑↓ Name</button>
       <button class="tb-btn" onclick="sortBy('cat')">↑↓ Type</button>
+      <button class="tb-btn" onclick="openWrappedImport()">Import Wrapped</button>
       <button class="tb-btn primary" onclick="openCreateModal()">+ Add</button>
+      <input id="wrapped-import-input" type="file" accept=".ndjson,application/x-ndjson,.jsonl" style="display:none"/>
+      <input id="artifact-import-input" type="file" accept=".svg,.png,image/svg+xml,image/png" style="display:none"/>
     </div>
     <div class="card-grid" id="card-grid">
       <div class="empty-state">Your world is empty.<br>Select a category and add entities, or import from Aave.</div>
@@ -745,6 +748,7 @@ footer span{color:var(--blue2);font-weight:600;}
   </div>
 </div>
 
+<script src="../src/aztec-artifact.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
 // ENTITY DEFINITIONS
@@ -838,6 +842,8 @@ let worldEra = '';
 let selectedEntity = null;
 let linkFromId = null;
 let ndEvents = 0;
+let importedWrappedEvents = [];
+let pendingArtifactImportTargetId = null;
 
 function uid(){ return 'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function hashStr(s){
@@ -863,6 +869,16 @@ function emit(event, payload, cls='ev-world'){
   log.appendChild(d);
   log.scrollTop=log.scrollHeight;
   updateHeader();
+}
+
+function appendExternalStreamRecord(record, cls='ev-world'){
+  const log=document.getElementById('stream-log');
+  if(ndEvents===0 && !log.dataset.externalLoaded) log.innerHTML='';
+  const d=document.createElement('div');
+  d.className=`nd-line ${cls}`;
+  d.innerHTML=colorJSON(JSON.stringify(record));
+  log.appendChild(d);
+  log.scrollTop=log.scrollHeight;
 }
 function colorJSON(s){
   return s
@@ -907,6 +923,293 @@ function renderGrid(){
   grid.innerHTML='';
   list.forEach(e=>grid.appendChild(makeCard(e)));
   updateCounts();
+}
+
+function openWrappedImport(){
+  document.getElementById('wrapped-import-input').click();
+}
+
+async function handleWrappedImportFile(file){
+  const text=await file.text();
+  const records=text.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>JSON.parse(line));
+  importWrappedEvents(records, file.name || 'wrapped.ndjson');
+}
+
+function importWrappedEvents(records, sourceName='wrapped.ndjson'){
+  const wrapped=records.filter(isWrappedCanonicalEvent);
+  if(!wrapped.length){
+    emit('world.compose.import.reject',{source:sourceName,reason:'no wrapped canonical events found'},'ev-remove');
+    return;
+  }
+
+  importedWrappedEvents=wrapped;
+  const importedIds=[];
+  const seenIds=new Set(allEntities.map(e=>e.id));
+  const streamLog=document.getElementById('stream-log');
+  streamLog.innerHTML='';
+  streamLog.dataset.externalLoaded='true';
+
+  wrapped.slice(0,256).forEach(event=>{
+    appendExternalStreamRecord({
+      seq:event.seq,
+      braille:event.braille,
+      hexagram:event.hexagram,
+      transcript:event.transcript,
+      path:event.path,
+      legacy_event:event.legacy_projection?.event || event.legacy_projection?.payload?.canon_event || '-'
+    },'ev-world');
+  });
+
+  wrapped.forEach(event=>{
+    const entity=entityFromWrappedEvent(event);
+    if(!entity || seenIds.has(entity.id)) return;
+    allEntities.push(entity);
+    worldEntities.add(entity.id);
+    seenIds.add(entity.id);
+    importedIds.push(entity.id);
+  });
+
+  const importedName=deriveWrappedWorldName(wrapped, sourceName);
+  worldName=importedName;
+  document.getElementById('world-name-crumb').textContent=worldName;
+  document.getElementById('ws-name').textContent=worldName;
+  document.getElementById('ft-world').textContent=worldName;
+
+  const priorSeq=seqN;
+  seqN=Math.max(seqN, wrapped[wrapped.length-1]?.seq || seqN);
+  ndEvents=Math.max(ndEvents, wrapped.length);
+  updateHeader();
+  renderGrid();
+  updateCounts();
+  renderWorldPanel();
+  emit('world.compose.import',{
+    source:sourceName,
+    world_name:worldName,
+    wrapped_events:wrapped.length,
+    imported_entities:importedIds.length,
+    prior_seq:priorSeq,
+    final_seq:seqN
+  },'ev-place');
+}
+
+function isWrappedCanonicalEvent(record){
+  return record && typeof record==='object' &&
+    'braille' in record &&
+    'curr8' in record &&
+    'curr6' in record &&
+    'rel16' in record &&
+    'path' in record &&
+    'transcript' in record &&
+    'legacy_projection' in record;
+}
+
+function deriveWrappedWorldName(records, fallback){
+  const first=records[0]||{};
+  const legacy=first.legacy_projection||{};
+  const payload=legacy.payload||{};
+  const nestedRecord=payload.record||{};
+  return payload.universe_id || payload.canon_id || nestedRecord.series || nestedRecord.name || first.path?.split('/').filter(Boolean).slice(-1)[0] || fallback.replace(/\.[^.]+$/,'');
+}
+
+function entityFromWrappedEvent(event){
+  const legacy=event.legacy_projection || {};
+  const payload=legacy.payload || {};
+  const nestedRecord=payload.record || {};
+  const nestedPayload=nestedRecord.payload || {};
+  const label=deriveWrappedLabel(event, legacy, payload, nestedRecord, nestedPayload);
+  if(!label) return null;
+  const cat=deriveWrappedCategory(legacy, payload, nestedRecord, nestedPayload);
+  const tags=deriveWrappedTags(event, legacy, payload, nestedRecord, nestedPayload);
+  const desc=deriveWrappedDescription(legacy, payload, nestedRecord, nestedPayload);
+  return {
+    id: `wrapped:${event.path || event.seq}`,
+    cat,
+    name: label,
+    desc,
+    tags,
+    source: 'wrapped-canonical',
+    transcript: event.transcript,
+    braille: event.braille,
+    hexagram: event.hexagram,
+    path: event.path,
+  };
+}
+
+function deriveWrappedLabel(event, legacy, payload, nestedRecord, nestedPayload){
+  return nestedRecord.title ||
+    nestedRecord.name ||
+    nestedPayload.chapter_id ||
+    nestedPayload.source ||
+    payload.canon_id ||
+    payload.canon_event ||
+    legacy.event ||
+    `wrapped-${event.seq}`;
+}
+
+function deriveWrappedDescription(legacy, payload, nestedRecord, nestedPayload){
+  const text = nestedRecord.text || nestedPayload.text || payload.manifest_path || nestedPayload.source || '';
+  if(text) return String(text).slice(0,240);
+  return `Canonical transcript-backed import for ${legacy.event || payload.canon_event || 'world program'}`
+}
+
+function deriveWrappedCategory(legacy, payload, nestedRecord, nestedPayload){
+  const probe = [
+    legacy.event,
+    payload.canon_event,
+    nestedRecord.event,
+    nestedRecord.title,
+    nestedPayload.chapter_id,
+    nestedPayload.kind,
+    nestedPayload.text,
+  ].filter(Boolean).join(' ').toLowerCase();
+  if(/treaty|accord/.test(probe)) return 'treaty';
+  if(/law|act|legal|constitution|formal/.test(probe)) return 'law';
+  if(/govern|proposal|senate|council/.test(probe)) return 'governance';
+  if(/market|trade|reserve|protocol|vault|liquidation/.test(probe)) return /reserve/.test(probe) ? 'reserve' : /protocol/.test(probe) ? 'protocol' : 'market';
+  if(/speaker|canon|series|paragraph|insight|contrast|warning|confession|heading|culture|narrative/.test(probe)) return 'culture';
+  if(/archive|institution/.test(probe)) return 'institution';
+  return 'institution';
+}
+
+function deriveWrappedTags(event, legacy, payload, nestedRecord, nestedPayload){
+  const values = [
+    'wrapped',
+    legacy.event,
+    payload.canon_id,
+    payload.canon_event,
+    nestedRecord.event,
+    nestedPayload.kind,
+    `braille:${event.braille}`,
+    `hex:${event.hexagram}`,
+  ].filter(Boolean);
+  return [...new Set(values)].slice(0,6);
+}
+
+function canonicalEntityPayload(entity){
+  return {
+    schema_version: 1,
+    kind: 'world.entity.artifact',
+    world_name: worldName,
+    entity: {
+      id: entity.id,
+      cat: entity.cat,
+      name: entity.name,
+      desc: entity.desc,
+      tags: entity.tags || [],
+      source: entity.source || 'custom',
+      symbol: entity.symbol || null,
+      liquidityRate: entity.liquidityRate || null,
+      borrowRate: entity.borrowRate || null,
+      chain: entity.chain || null,
+      status: entity.status || null,
+      transcript: entity.transcript || null,
+      braille: entity.braille || null,
+      hexagram: entity.hexagram || null,
+      path: entity.path || null,
+      artifactState: entity.artifactState || 'active',
+    },
+  };
+}
+
+function buildArtifactSvgMarkup(entity){
+  const payload=canonicalEntityPayload(entity);
+  return window.AztecArtifact.renderPayloadAsSvg(payload, {
+    label: entity.name || entity.id || 'artifact',
+    cellSize: 8,
+    padding: 12,
+    gap: 14,
+  });
+}
+
+function renderArtifactPreview(entity){
+  return buildArtifactSvgMarkup(entity);
+}
+
+function toggleArtifactState(entityId){
+  const entity=allEntities.find(item=>item.id===entityId);
+  if(!entity) return;
+  entity.artifactState = entity.artifactState === 'inactive' ? 'active' : 'inactive';
+  emit(
+    entity.artifactState === 'inactive' ? 'world.entity.artifact.freeze' : 'world.entity.artifact.activate',
+    {
+      entity_id: entity.id,
+      name: entity.name,
+      cat: entity.cat,
+      artifact_class: 'aztec-surface',
+      artifact_state: entity.artifactState,
+      sha256: `sha256:${hashStr(JSON.stringify(canonicalEntityPayload(entity))).slice(0,32)}`
+    },
+    entity.artifactState === 'inactive' ? 'ev-label' : 'ev-place'
+  );
+  if(selectedEntity?.id===entity.id) renderDetail(entity);
+  renderGrid();
+  renderWorldPanel();
+}
+
+function exportArtifactSVG(entityId){
+  const entity=allEntities.find(item=>item.id===entityId);
+  if(!entity) return;
+  const svg=buildArtifactSvgMarkup(entity);
+  const blob=new Blob([svg],{type:'image/svg+xml'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${(entity.name || entity.id).replace(/[^a-z0-9_-]+/gi,'-').toLowerCase()}-artifact.svg`;
+  a.click();
+  emit('world.entity.artifact.export',{entity_id:entity.id,format:'svg',artifact_class:'aztec-surface'},'ev-label');
+}
+
+function exportArtifactPNG(entityId){
+  const entity=allEntities.find(item=>item.id===entityId);
+  if(!entity) return;
+  window.AztecArtifact.renderPayloadAsPngBlob(canonicalEntityPayload(entity), {
+    label: entity.name || entity.id || 'artifact',
+    classes: ['world-entity-artifact']
+  }).then((pngBlob)=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(pngBlob);
+    a.download=`${(entity.name || entity.id).replace(/[^a-z0-9_-]+/gi,'-').toLowerCase()}-artifact.png`;
+    a.click();
+    emit('world.entity.artifact.export',{entity_id:entity.id,format:'png',artifact_class:'aztec-surface'},'ev-label');
+  }).catch((error)=>{
+    emit('world.entity.artifact.export.reject',{entity_id:entity.id,format:'png',reason:error.message},'ev-remove');
+  });
+}
+
+function openArtifactImport(entityId=null){
+  pendingArtifactImportTargetId=entityId;
+  document.getElementById('artifact-import-input').click();
+}
+
+async function handleArtifactImportFile(file){
+  const payload=await window.AztecArtifact.payloadObjectFromBlob(file);
+  instantiateEntityFromArtifactPayload(payload, file.name || 'artifact.svg');
+}
+
+function instantiateEntityFromArtifactPayload(payload, sourceName='artifact.svg'){
+  const entityData=payload?.entity;
+  if(!entityData || !entityData.id) throw new Error('invalid artifact payload');
+  const targetId=pendingArtifactImportTargetId;
+  let entity=allEntities.find(item=>item.id===targetId) || allEntities.find(item=>item.id===entityData.id);
+  if(entity){
+    Object.assign(entity, entityData);
+  }else{
+    entity={...entityData, source:'artifact-scan'};
+    allEntities.push(entity);
+  }
+  worldEntities.add(entity.id);
+  selectedEntity=entity;
+  emit('world.entity.artifact.instantiate',{
+    entity_id: entity.id,
+    name: entity.name,
+    cat: entity.cat,
+    source: sourceName,
+    artifact_class: 'aztec-surface',
+    artifact_state: entity.artifactState || 'inactive'
+  },'ev-place');
+  renderGrid();
+  updateCounts();
+  renderWorldPanel();
+  renderDetail(entity);
 }
 
 function makeCard(e){
@@ -1015,6 +1318,7 @@ function renderDetail(e){
   const inWorld=worldEntities.has(e.id);
   const dc=document.getElementById('detail-content');
   const tags=(e.tags||[]).map(t=>`<span class="tag" style="background:${(CAT_META[e.cat]?.tag||'#444')}22;color:${CAT_META[e.cat]?.tag||'#444'};">${t}</span>`).join(' ');
+  const artifactState=e.artifactState || 'active';
   let extra='';
   if(e.symbol) extra+=`<div class="dv-field"><span class="dv-field-key">Symbol</span><span class="dv-field-val">${e.symbol}</span></div>`;
   if(e.liquidityRate) extra+=`<div class="dv-field"><span class="dv-field-key">Liquidity Rate</span><span class="dv-field-val">${e.liquidityRate}</span></div>`;
@@ -1023,6 +1327,8 @@ function renderDetail(e){
   if(e.status) extra+=`<div class="dv-field"><span class="dv-field-key">Status</span><span class="dv-field-val">${e.status}</span></div>`;
   if(e.votes_for) extra+=`<div class="dv-field"><span class="dv-field-key">Votes For</span><span class="dv-field-val">${Number(e.votes_for).toLocaleString()}</span></div>`;
   if(e.votes_against) extra+=`<div class="dv-field"><span class="dv-field-key">Votes Against</span><span class="dv-field-val">${Number(e.votes_against).toLocaleString()}</span></div>`;
+  if(e.path) extra+=`<div class="dv-field"><span class="dv-field-key">Path</span><span class="dv-field-val" style="font-size:8px;">${e.path}</span></div>`;
+  if(e.transcript) extra+=`<div class="dv-field"><span class="dv-field-key">Transcript</span><span class="dv-field-val" style="font-size:8px;">${e.transcript}</span></div>`;
 
   const eLinks=links.filter(l=>l.fromId===e.id||l.toId===e.id);
   const linkHtml=eLinks.length?eLinks.map(l=>{
@@ -1042,6 +1348,10 @@ function renderDetail(e){
     <div class="dv-section-head">ID</div>
     <div class="dv-field"><span class="dv-field-key">entity_id</span><span class="dv-field-val" style="font-size:8px;">${e.id}</span></div>
     <div class="dv-field"><span class="dv-field-key">sha256</span><span class="dv-field-val" style="font-size:8px;">sha256:${hashStr(e.id).slice(0,16)}…</span></div>
+    <div class="dv-section-head">Artifact Surface</div>
+    <div class="dv-field"><span class="dv-field-key">Class</span><span class="dv-field-val">aztec-surface</span></div>
+    <div class="dv-field"><span class="dv-field-key">State</span><span class="dv-field-val">${artifactState}</span></div>
+    <div style="border:1px solid var(--border);padding:8px;background:#fff;margin:8px 0 10px;overflow:auto;max-height:240px;">${renderArtifactPreview(e)}</div>
     <div class="dv-section-head">Relations</div>
     ${linkHtml}
     <button class="dv-add-btn ${inWorld?'added':''}" onclick="toggleWorld(event,'${e.id}')">
@@ -1049,6 +1359,18 @@ function renderDetail(e){
     </button>
     <button class="dv-add-btn" style="background:var(--violet);margin-top:6px;" onclick="openLinkModal('${e.id}')">
       ⟷ LINK TO ANOTHER ENTITY
+    </button>
+    <button class="dv-add-btn" style="background:${artifactState==='inactive'?'var(--green)':'var(--gold)'};margin-top:6px;" onclick="toggleArtifactState('${e.id}')">
+      ${artifactState==='inactive'?'● ACTIVATE ENTITY':'◼ FREEZE AS ARTIFACT'}
+    </button>
+    <button class="dv-add-btn" style="background:var(--teal);margin-top:6px;" onclick="exportArtifactSVG('${e.id}')">
+      ↓ EXPORT AZTEC SVG
+    </button>
+    <button class="dv-add-btn" style="background:var(--blue);margin-top:6px;" onclick="exportArtifactPNG('${e.id}')">
+      ↓ EXPORT AZTEC PNG
+    </button>
+    <button class="dv-add-btn" style="background:var(--orange);margin-top:6px;" onclick="openArtifactImport('${e.id}')">
+      ↑ INSTANTIATE FROM ARTIFACT
     </button>
   `;
 }
@@ -1274,6 +1596,29 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{
   m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open')); });
+document.getElementById('wrapped-import-input').addEventListener('change', async (event)=>{
+  const [file]=event.target.files||[];
+  if(!file) return;
+  try{
+    await handleWrappedImportFile(file);
+  }catch(error){
+    emit('world.compose.import.reject',{source:file.name,reason:error.message},'ev-remove');
+  }finally{
+    event.target.value='';
+  }
+});
+document.getElementById('artifact-import-input').addEventListener('change', async (event)=>{
+  const [file]=event.target.files||[];
+  if(!file) return;
+  try{
+    await handleArtifactImportFile(file);
+  }catch(error){
+    emit('world.entity.artifact.import.reject',{source:file.name,reason:error.message},'ev-remove');
+  }finally{
+    pendingArtifactImportTargetId=null;
+    event.target.value='';
+  }
+});
 
 // ─── INIT ────────────────────────────────────────────────────
 renderGrid();

@@ -23,6 +23,7 @@ Together they prove that:
 - the shared vocabulary projector can normalize WordNet, narrative, and hexagram proof slices into one canonical concept surface
 - the signal-first event path can project stable hexagram fields, witness fields, and dump lines from the Braille stream
 - the signal transcript is frozen as a golden replay witness shared across AWK, Python, and JS
+- the artifact realization helpers preserve payload identity across witness and scanner realizations
 
 ## What The Runtime Tests Prove
 
@@ -114,6 +115,31 @@ The same file now also checks the signal-first projection helpers:
 - rolling dump-line rendering from the event stream
 - golden transcript equality against a fixed fixture
 
+### Artifact realization invariant
+
+The current proof surface also includes an artifact realization check.
+
+It verifies the same canonical payload can survive:
+
+```text
+payload
+-> witness realization
+-> canonical payload
+
+payload
+-> scanner realization
+-> canonical payload
+```
+
+and therefore proves the narrow but critical invariant:
+
+```text
+decode(witness realization) == decode(scanner realization)
+```
+
+This is the current executable proof that witness and scanner are coordinate
+positions on the same realization axis rather than separate artifact systems.
+
 ## What The Relation Importer Tests Prove
 
 ### WordNet import
@@ -178,6 +204,7 @@ The current proof surface is intentionally limited. Important gaps remain:
 - No automated WebRTC peer-to-peer browser test
 - No A-Frame projection test
 - No proof that `FS`, `GS`, `US`, and `RS` are full interactive state owners yet
+- No browser automation proof that a camera-scanned commodity Aztec symbol round-trips on every target browser/device yet
 
 These are not failures; they are simply outside the current proof-of-concept boundary.
 
