@@ -182,7 +182,54 @@ But hierarchy must remain reducible back to canonical event state plus stable id
 Hierarchy is attached to the stream.
 It does not replace the stream.
 
-## 8. Worker Rule
+## 8. Pascal Lattice And Wormhole Rule
+
+Pascal lattice mode is the visible dependency field of the canonical runtime.
+
+This dependency field is now surfaced consistently across the main browser explanation layers:
+
+- shadow canvas / mesh builder
+- runtime dashboard
+- world composition surface
+
+It should be read as:
+
+```text
+Braille event
+-> canonical address
+-> Pascal dependency lattice
+-> JSON Canvas projection
+-> runtime / artifact / observer overlays
+```
+
+In this mode:
+
+- Pascal nodes express merge and dependency structure
+- node identity still comes from canonical path or address
+- JSON Canvas remains a projection of canonical references
+- visual position does not become authority
+
+Structure mode means:
+
+```text
+Pascal lattice = visible dependency field
+```
+
+Runtime mode means:
+
+```text
+wormhole propagation = temporal flow and backpressure over that field
+```
+
+So:
+
+- Pascal explains dependency and merge
+- dashboard and world views reuse the same dependency law
+- wormhole explains movement and blocking
+- the same lattice may host artifact and observer overlays
+- none of those overlays may redefine canonical identity
+
+## 9. Worker Rule
 
 Workers compute and normalize.
 They do not redefine canonical law.
@@ -193,7 +240,7 @@ The correct split is:
 - DOM mirrors it
 - canvas projects it
 
-## 9. Service Worker Rule
+## 10. Service Worker Rule
 
 The service worker is a local mirror, not authority.
 
@@ -206,7 +253,7 @@ It may:
 
 It may not become canonical truth.
 
-## 10. UI Rule
+## 11. UI Rule
 
 The visible public proof surface remains the transcript:
 
@@ -228,7 +275,7 @@ not:
 a second independent protocol
 ```
 
-## 11. React Rule
+## 12. React Rule
 
 React may be added only as an adapter and view layer.
 
@@ -251,7 +298,7 @@ React component tree
 
 Canonical state must remain usable without React.
 
-## 12. Implementation Priority
+## 13. Implementation Priority
 
 Build in this order:
 

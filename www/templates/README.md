@@ -14,20 +14,43 @@ They should be understood with the current naming law:
 These files are not protocol authority. They are browser-side tools that can
 consume or emit stream-shaped records.
 
-## Current Mapping
+## Public Showing Split
 
+For a public showing, it helps to separate these surfaces into three groups:
+
+- public surfaces: stable pages that explain or demonstrate the current system
+- demo surfaces: showcase pages that are intentionally more exploratory
+- internal surfaces: utility or setup pages that should not be treated as the
+  main product
+
+## Public Surfaces
+
+- `../index.html`
+  Main Symbolic Web runtime shell.
 - `mesh-builder.html`
   Shadow-canvas builder for node and edge projection.
+- `worldbuilder.html`
+  Higher-level entity and relation editor with artifact mode.
+- `artifact-demo.html`
+  Artifact realization showcase for witness and scanner surfaces.
+
+## Demo Surfaces
+
+- `../demos/index.html`
+  Curated gallery of demo views over the current runtime.
 - `metacodex.html`
   Schema and authoring surface for stream-shaped records and templates.
 - `metaverse-dashboard.html`
   Replay dashboard / portal shell for transcript, narrative, and scene views.
-- `worldbuilder.html`
-  Higher-level entity and relation editor.
 - `avatar-builder.html`
   Specialized SVG and NDJSON composition tool.
-- `artifact-demo.html`
-  Deterministic artifact witness and barcode transport demo.
+
+## Internal / Operator Surfaces
+
+- `bip39_entry.html`
+  Universe gate and setup utility.
+- `light_garden.html`
+  Historical projection/operator surface retained for continuity.
 
 ## Usage Rule
 
@@ -44,12 +67,11 @@ No template here should redefine identity or replace canonical runtime state.
 
 If these are exposed on a public site, the clearest route names are:
 
-- `/signal`
+- `/`
 - `/shadow`
-- `/schema`
 - `/world`
-- `/avatar`
 - `/artifact`
+- `/demos/`
 
 ## Base Convention
 

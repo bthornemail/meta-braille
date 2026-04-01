@@ -265,6 +265,15 @@ shared Aztec surface
 -> continue runtime or projection
 ```
 
+## 8. Transport Consequence
+
+This note defines the artifact surface and realization axis.
+
+[Artifact-First Transport And Sharing](./104-artifact-first-transport-and-sharing.md)
+defines the transport consequence of that rule: people should share artifacts,
+not mutable UI state, and readable witness plus scannable realization should be
+treated as deterministic transport surfaces over the same payload.
+
 This is why the Aztec surface belongs inside the Symbolic Web: it allows a
 materialized artifact to leave one environment and re-enter another without
 requiring meaning-level agreement.

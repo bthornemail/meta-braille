@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Builder · Relation Engine</title>
+<meta name="theme-color" content="#0055a5">
+<link rel="manifest" href="/manifest.json">
+<title>World Builder · Symbolic Web</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&family=IBM+Plex+Serif:ital,wght@0,300;1,300&display=swap');
 
@@ -32,7 +34,7 @@
   --orange:   #b84c00;
   --orange-bg:#faf0e8;
 
-  /* Aave/DeFi accent */
+  /* Protocol / liquidity accent */
   --aave:     #b6509e;
   --aave-bg:  #fdf0fa;
 }
@@ -48,7 +50,7 @@ body{
 }
 
 /* ════════════════════════════════
-   SHELL: classic Craigslist grid
+   SHELL: classic listing grid
    Header / [sidebar | main | panel]
    ════════════════════════════════ */
 .shell{
@@ -119,7 +121,7 @@ body{
 
 /* ════════════════════════════════
    LEFT: CATEGORY SIDEBAR
-   (Craigslist-style section list)
+   (listing-style section list)
    ════════════════════════════════ */
 .sidebar{
   border-right:1px solid var(--border);
@@ -159,7 +161,7 @@ body{
 }
 .sb-link.active .count{background:var(--blue);color:white;}
 
-/* ── AAVE connector in sidebar ── */
+/* ── external input connector in sidebar ── */
 .aave-connector{
   padding:10px 12px;background:var(--aave-bg);border:1px solid #e0b0d8;
   margin:8px;border-radius:2px;font-size:11px;
@@ -313,6 +315,43 @@ body{
 .world-view.active{display:block;}
 .world-section{border-bottom:1px solid var(--border);padding:10px 12px;}
 .ws-head{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.world-mode-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 10px;}
+.world-mode-btn{
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--ink2);
+  font:600 9px/1 'IBM Plex Mono',monospace;
+  letter-spacing:.12em;
+  padding:6px 8px;
+  cursor:pointer;
+  text-transform:uppercase;
+}
+.world-mode-btn.active{background:var(--blue2);border-color:var(--blue2);color:#fff;}
+.world-mode-btn.runtime-active{background:var(--violet);border-color:var(--violet);color:#fff;}
+.world-pascal-meta{
+  font:400 9px/1.4 'IBM Plex Mono',monospace;
+  color:var(--ink3);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.world-pascal-shell{
+  border:1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,246,250,.98)),
+    radial-gradient(circle at top right, rgba(58,123,213,.08), transparent 38%);
+  min-height:250px;
+  overflow:auto;
+  padding:8px;
+}
+.world-pascal-shell svg{width:100%;height:auto;display:block;}
+.world-pascal-empty{
+  color:var(--ink3);
+  font-style:italic;
+  font-size:11px;
+  padding:6px 4px;
+  font-family:'IBM Plex Serif',serif;
+}
 .world-entity-row{
   display:flex;align-items:center;justify-content:space-between;
   padding:5px 6px;border:1px solid var(--border);margin-bottom:3px;
@@ -486,9 +525,9 @@ footer span{color:var(--blue2);font-weight:600;}
       </div>
     </div>
 
-    <!-- DEFI / AAVE -->
+    <!-- PROTOCOL / FINANCE -->
     <div class="sb-section">
-      <div class="sb-section-head" style="color:var(--aave);">⬡ DeFi Protocol</div>
+      <div class="sb-section-head" style="color:var(--aave);">⬡ Protocol & Finance</div>
       <div class="sb-links">
         <div class="sb-link" data-cat="reserve" onclick="filterCat('reserve')"><span>Reserves</span><span class="count" id="cnt-reserve">0</span></div>
         <div class="sb-link" data-cat="protocol" onclick="filterCat('protocol')"><span>Protocols</span><span class="count" id="cnt-protocol">0</span></div>
@@ -509,9 +548,9 @@ footer span{color:var(--blue2);font-weight:600;}
       </div>
     </div>
 
-    <!-- AAVE CONNECTOR -->
+    <!-- WORLD INPUT SOURCES -->
     <div class="aave-connector">
-      <div class="head">⬡ Aave Subgraph</div>
+      <div class="head">⬡ World Input Sources</div>
       <select id="aave-network">
         <option value="eth-v3">ETH Mainnet V3</option>
         <option value="polygon-v3">Polygon V3</option>
@@ -520,9 +559,9 @@ footer span{color:var(--blue2);font-weight:600;}
         <option value="base-v3">Base V3</option>
         <option value="optimism-v3">Optimism V3</option>
       </select>
-      <button onclick="importAaveReserves()">↓ Import Reserves</button>
-      <button onclick="importAaveGovernance()" style="margin-top:3px;background:#6b3fa0;">↓ Import Proposals</button>
-      <div class="aave-status" id="aave-status">Select network · click to import</div>
+      <button onclick="importAaveReserves()">↓ Import Event Stream</button>
+      <button onclick="importAaveGovernance()" style="margin-top:3px;background:#6b3fa0;">↓ Import External Input</button>
+      <div class="aave-status" id="aave-status">Select a source · import reference events</div>
     </div>
 
   </div><!-- /sidebar -->
@@ -534,13 +573,13 @@ footer span{color:var(--blue2);font-weight:600;}
       <input class="tb-search" id="search-input" type="text" placeholder="search entities…" oninput="renderGrid()"/>
       <button class="tb-btn" onclick="sortBy('name')">↑↓ Name</button>
       <button class="tb-btn" onclick="sortBy('cat')">↑↓ Type</button>
-      <button class="tb-btn" onclick="openWrappedImport()">Import Wrapped</button>
+      <button class="tb-btn" onclick="openWrappedImport()">Import Event Stream</button>
       <button class="tb-btn primary" onclick="openCreateModal()">+ Add</button>
       <input id="wrapped-import-input" type="file" accept=".ndjson,application/x-ndjson,.jsonl" style="display:none"/>
       <input id="artifact-import-input" type="file" accept=".svg,.png,image/svg+xml,image/png" style="display:none"/>
     </div>
     <div class="card-grid" id="card-grid">
-      <div class="empty-state">Your world is empty.<br>Select a category and add entities, or import from Aave.</div>
+      <div class="empty-state">Your world is empty.<br>Select a category, add entities, or import an event stream.</div>
     </div>
   </div>
 
@@ -557,11 +596,27 @@ footer span{color:var(--blue2);font-weight:600;}
     <div class="world-view active" id="dp-world">
       <div class="world-section">
         <div class="ws-head">World Stats</div>
+        <div style="font-size:11px;color:var(--ink2);font-family:'IBM Plex Serif',serif;font-style:italic;line-height:1.45;padding:2px 0 10px;">
+          World composition operates on the same dependency field as the shadow and portal surfaces. Entities are projections of canonical events, not independent objects.
+        </div>
         <div class="dv-field"><span class="dv-field-key">Name</span><span class="dv-field-val" id="ws-name">untitled-world-1</span></div>
         <div class="dv-field"><span class="dv-field-key">Entities</span><span class="dv-field-val" id="ws-entities">0</span></div>
         <div class="dv-field"><span class="dv-field-key">Links</span><span class="dv-field-val" id="ws-links">0</span></div>
         <div class="dv-field"><span class="dv-field-key">NDJSON seq</span><span class="dv-field-val" id="ws-seq">0</span></div>
         <div class="dv-field"><span class="dv-field-key">run_id</span><span class="dv-field-val" id="ws-runid" style="font-size:8px;">—</span></div>
+        <div class="dv-field"><span class="dv-field-key">Identity</span><span class="dv-field-val">Derived from canonical path/address</span></div>
+      </div>
+      <div class="world-section">
+        <div class="ws-head">Pascal Dependency Field</div>
+        <div class="world-mode-row">
+          <button class="world-mode-btn active" id="world-structure-btn" onclick="setWorldPascalMode('structure')">Structure</button>
+          <button class="world-mode-btn" id="world-runtime-btn" onclick="setWorldPascalMode('runtime')">Runtime</button>
+          <button class="world-mode-btn" id="world-wormhole-btn" onclick="toggleWorldWormhole()">Wormhole</button>
+        </div>
+        <div class="world-pascal-meta" id="world-pascal-meta">Braille event -> canonical address -> Pascal dependency lattice -> world projection</div>
+        <div class="world-pascal-shell" id="world-pascal-shell">
+          <div class="world-pascal-empty">Add entities to reveal the visible dependency field.</div>
+        </div>
       </div>
       <div class="world-section">
         <div class="ws-head">
@@ -664,15 +719,16 @@ footer span{color:var(--blue2);font-weight:600;}
         <textarea class="form-textarea" id="form-desc" placeholder="Describe this entity…"></textarea>
       </div>
       <div class="form-field" id="aave-fields" style="display:none;">
-        <label class="form-label">Aave Fields (DeFi)</label>
-        <input class="form-input" id="form-symbol" type="text" placeholder="Token symbol e.g. USDC"/>
-        <input class="form-input" id="form-liquidity" type="text" placeholder="Liquidity rate (RAY)" style="margin-top:4px;"/>
-        <input class="form-input" id="form-borrow" type="text" placeholder="Borrow rate (RAY)" style="margin-top:4px;"/>
+        <label class="form-label">Structured Fields</label>
+        <input class="form-input" id="form-symbol" type="text" placeholder="Short code / symbol"/>
+        <input class="form-input" id="form-liquidity" type="text" placeholder="Primary metric" style="margin-top:4px;"/>
+        <input class="form-input" id="form-borrow" type="text" placeholder="Secondary metric" style="margin-top:4px;"/>
       </div>
       <div class="form-field">
         <label class="form-label">Tags (comma separated)</label>
         <input class="form-input" id="form-tags" type="text" placeholder="e.g. sovereign, coastal, trading"/>
       </div>
+      <div class="form-note" id="form-note" style="display:none;color:var(--red);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-top:6px;"></div>
       <button class="form-submit" onclick="submitCreate()">CREATE & ADD TO LIBRARY</button>
     </div>
   </div>
@@ -791,7 +847,7 @@ const SEED_ENTITIES = [
   {id:'s6',cat:'governance',name:'Algorithmic Senate',desc:'AI-assisted legislative body that drafts laws based on citizen preference signals.',tags:['AI','legislative','digital'],source:'seed'},
   {id:'s7',cat:'market',name:'Aethon Commodity Exchange',desc:'Primary exchange for futures on grain, oil, and rare metals. Settlement in dual-currency.',tags:['commodities','exchange','futures'],source:'seed'},
   {id:'s8',cat:'treasury',name:'Varek National Reserve',desc:'State treasury controlling 2.4B in gold-backed reserves. Manages monetary policy.',tags:['monetary-policy','reserves','gold'],source:'seed'},
-  {id:'s9',cat:'protocol',name:'LendNet Protocol v3',desc:'Decentralized lending protocol across 14 chains. Inspired by Aave V3 architecture with cross-chain liquidity.',tags:['defi','lending','cross-chain','aave-like'],source:'seed'},
+  {id:'s9',cat:'protocol',name:'LendNet Protocol v3',desc:'Decentralized lending protocol across 14 chains with shared liquidity and cross-network settlement.',tags:['defi','lending','cross-chain','liquidity'],source:'seed'},
   {id:'s10',cat:'reserve',name:'USDS Stablecoin Reserve',desc:'Overcollateralized stablecoin reserve. Backed by ETH, wBTC, and USDC collateral. Liquidation threshold 82%.',tags:['stablecoin','collateral','defi'],source:'seed'},
   {id:'s11',cat:'citizen',name:'Yara Chen-Okafor',desc:'Lead economist at the World Arbitration Council. Former central banker. Known for crypto-skeptic views.',tags:['economist','influential','policy'],source:'seed'},
   {id:'s12',cat:'culture',name:'The Reclamation Movement',desc:'Cultural movement advocating return to local production, anti-globalist. Dominant in rural Varek.',tags:['localism','anti-globalist','rural'],source:'seed'},
@@ -805,13 +861,13 @@ const SEED_ENTITIES = [
   {id:'s20',cat:'corporation',name:'Synthos Group',desc:'Multinational conglomerate controlling synthetic biology patents and agri-tech across 8 nations.',tags:['biotech','monopoly','multinational'],source:'seed'},
 ];
 
-// ─── AAVE-INSPIRED RESERVES ───────────────────────────────────
+// ─── PROTOCOL MARKET RESERVES ─────────────────────────────────
 const AAVE_RESERVES_TEMPLATE = [
   {symbol:'WETH',name:'Wrapped Ether Reserve',liq:'0.03',borrow:'0.045',chain:'eth-v3',tags:['collateral','eth','defi']},
   {symbol:'USDC',name:'USD Coin Reserve',liq:'0.055',borrow:'0.07',chain:'eth-v3',tags:['stablecoin','collateral','defi']},
   {symbol:'WBTC',name:'Wrapped Bitcoin Reserve',liq:'0.02',borrow:'0.035',chain:'eth-v3',tags:['collateral','btc','defi']},
   {symbol:'DAI', name:'DAI Stablecoin Reserve',liq:'0.048',borrow:'0.065',chain:'eth-v3',tags:['stablecoin','collateral','defi']},
-  {symbol:'AAVE',name:'AAVE Governance Token',liq:'0.0',borrow:'0.0',chain:'eth-v3',tags:['governance','collateral','defi']},
+  {symbol:'GOVX',name:'Governance Reserve Token',liq:'0.0',borrow:'0.0',chain:'eth-v3',tags:['governance','collateral','defi']},
   {symbol:'LINK',name:'Chainlink Reserve',liq:'0.025',borrow:'0.04',chain:'eth-v3',tags:['oracle','collateral','defi']},
   {symbol:'MATIC',name:'Polygon Reserve',liq:'0.03',borrow:'0.05',chain:'polygon-v3',tags:['l2','collateral','defi']},
   {symbol:'OP',  name:'Optimism Reserve',liq:'0.0',borrow:'0.0',chain:'optimism-v3',tags:['l2','governance','defi']},
@@ -844,6 +900,9 @@ let linkFromId = null;
 let ndEvents = 0;
 let importedWrappedEvents = [];
 let pendingArtifactImportTargetId = null;
+let worldPascalMode = 'structure';
+let worldWormholeTimer = null;
+let worldWormholeStep = 0;
 
 function uid(){ return 'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function hashStr(s){
@@ -1111,6 +1170,174 @@ function canonicalEntityPayload(entity){
   };
 }
 
+function canonicalEntityPath(entity, index=0){
+  return entity.path || `artifact://world/${encodeURIComponent(worldName)}/entity/${encodeURIComponent(entity.id || `node-${index}`)}`;
+}
+
+function canonicalEntityTranscript(entity, index=0){
+  if(entity.transcript) return entity.transcript;
+  const braille=entity.braille || '⠿';
+  const hex=entity.hexagram || String((index % 64) + 1).padStart(2,'0');
+  const header8=String((index + 1) % 256).padStart(3,'0');
+  const pattern16=String(((index + 1) * 17) % 65536).padStart(5,'0');
+  return `${hex} | ${braille} | ${header8}/${pattern16} | ${canonicalEntityPath(entity, index)}`;
+}
+
+function escapeHtml(value){
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function buildWorldPascalProjection(worldArr){
+  const nodes=worldArr.map((entity,index)=>({
+    entity,
+    sortKey: canonicalEntityPath(entity, index),
+    path: canonicalEntityPath(entity, index),
+    transcript: canonicalEntityTranscript(entity, index),
+    braille: entity.braille || '⠿',
+    hexagram: entity.hexagram || String((index % 64) + 1).padStart(2,'0'),
+    artifactState: entity.artifactState || 'active',
+  })).sort((a,b)=>a.sortKey.localeCompare(b.sortKey));
+
+  if(!nodes.length) return {nodes:[], links:[], rows:0};
+
+  const projectionNodes=[];
+  const projectionLinks=[];
+  let cursor=0;
+  let row=0;
+  while(cursor < nodes.length){
+    const count=Math.min(row + 1, nodes.length - cursor);
+    for(let k=0;k<count;k++){
+      const base=nodes[cursor + k];
+      projectionNodes.push({
+        ...base,
+        row,
+        k,
+        canonicalId: base.path,
+        id: `${base.path}#r${row}k${k}`
+      });
+    }
+    cursor += count;
+    row += 1;
+  }
+
+  const byRK=new Map(projectionNodes.map(node=>[`${node.row}:${node.k}`, node]));
+  projectionNodes.forEach(node=>{
+    if(node.row===0) return;
+    const left=byRK.get(`${node.row - 1}:${node.k - 1}`);
+    const right=byRK.get(`${node.row - 1}:${node.k}`);
+    if(left) projectionLinks.push({from:left.id,to:node.id,type:'merge-left'});
+    if(right) projectionLinks.push({from:right.id,to:node.id,type:'merge-right'});
+  });
+
+  return {nodes:projectionNodes, links:projectionLinks, rows:row};
+}
+
+function worldNodeState(node){
+  const active = worldPascalMode === 'runtime' && node.row === worldWormholeStep;
+  const blocked = worldPascalMode === 'runtime' && node.artifactState === 'inactive' && node.row <= worldWormholeStep;
+  return {active, blocked};
+}
+
+function renderWorldPascal(worldArr){
+  const shell=document.getElementById('world-pascal-shell');
+  const meta=document.getElementById('world-pascal-meta');
+  const projection=buildWorldPascalProjection(worldArr);
+  if(!projection.nodes.length){
+    shell.innerHTML='<div class="world-pascal-empty">Add entities to reveal the visible dependency field.</div>';
+    meta.textContent='Braille event -> canonical address -> Pascal dependency lattice -> world projection';
+    return;
+  }
+
+  const xGap=96;
+  const yGap=82;
+  const marginX=40;
+  const marginY=28;
+  const maxCols=Math.max(...projection.nodes.map(node=>node.row + 1));
+  const width=Math.max(360, marginX * 2 + (maxCols - 1) * xGap + 84);
+  const height=Math.max(220, marginY * 2 + Math.max(0, projection.rows - 1) * yGap + 72);
+  const coords=new Map();
+
+  projection.nodes.forEach(node=>{
+    const rowWidth=node.row * xGap;
+    const x=(width / 2) - (rowWidth / 2) + node.k * xGap;
+    const y=marginY + node.row * yGap;
+    coords.set(node.id,{x,y});
+  });
+
+  const edgeSvg=projection.links.map(link=>{
+    const from=coords.get(link.from);
+    const to=coords.get(link.to);
+    if(!from || !to) return '';
+    const stroke=worldPascalMode === 'runtime' && to.y <= marginY + worldWormholeStep * yGap ? '#7b61ff' : '#d2d8e4';
+    const dash=worldPascalMode === 'runtime' && to.y <= marginY + worldWormholeStep * yGap ? '0' : '4 4';
+    return `<path d="M ${from.x} ${from.y + 16} C ${from.x} ${(from.y + to.y) / 2}, ${to.x} ${(from.y + to.y) / 2}, ${to.x} ${to.y - 18}" fill="none" stroke="${stroke}" stroke-width="2" stroke-dasharray="${dash}" opacity=".92"/>`;
+  }).join('');
+
+  const nodeSvg=projection.nodes.map((node,index)=>{
+    const {x,y}=coords.get(node.id);
+    const state=worldNodeState(node);
+    const fill=state.blocked ? '#fff1f0' : state.active ? '#f0ecff' : '#ffffff';
+    const stroke=state.blocked ? '#d8584a' : state.active ? '#7b61ff' : '#bcc6d6';
+    const accent=state.blocked ? '#d8584a' : state.active ? '#7b61ff' : '#3a7bd5';
+    const label=(node.entity.name || node.entity.id || `entity-${index}`).slice(0,20);
+    return `
+      <g transform="translate(${x},${y})">
+        <rect x="-38" y="-18" width="76" height="36" rx="12" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+        <text x="0" y="-4" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="${accent}">${node.braille} · ${node.hexagram}</text>
+        <text x="0" y="10" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="8" fill="#1f2430">${escapeHtml(label)}</text>
+        <title>${escapeHtml(node.transcript)}</title>
+      </g>`;
+  }).join('');
+
+  shell.innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="World Pascal dependency field">${edgeSvg}${nodeSvg}</svg>`;
+  meta.textContent = worldPascalMode === 'runtime'
+    ? `Wormhole mode overlays propagation and backpressure across ${projection.rows} Pascal rows`
+    : `Pascal lattice mode makes ${projection.nodes.length} canonical world references legible as dependency and merge structure`;
+}
+
+function setWorldPascalMode(mode){
+  worldPascalMode=mode;
+  document.getElementById('world-structure-btn').classList.toggle('active', mode==='structure');
+  document.getElementById('world-runtime-btn').classList.toggle('active', mode==='runtime');
+  document.getElementById('world-wormhole-btn').classList.toggle('runtime-active', !!worldWormholeTimer);
+  const worldArr=[...worldEntities].map(id=>allEntities.find(e=>e.id===id)).filter(Boolean);
+  renderWorldPascal(worldArr);
+}
+
+function tickWorldWormhole(){
+  const worldArr=[...worldEntities].map(id=>allEntities.find(e=>e.id===id)).filter(Boolean);
+  const projection=buildWorldPascalProjection(worldArr);
+  if(!projection.rows){
+    toggleWorldWormhole(false);
+    return;
+  }
+  worldPascalMode='runtime';
+  worldWormholeStep=(worldWormholeStep + 1) % projection.rows;
+  setWorldPascalMode('runtime');
+}
+
+function toggleWorldWormhole(force){
+  const next = typeof force === 'boolean' ? force : !worldWormholeTimer;
+  if(worldWormholeTimer){
+    clearInterval(worldWormholeTimer);
+    worldWormholeTimer=null;
+  }
+  if(next){
+    worldPascalMode='runtime';
+    setWorldPascalMode('runtime');
+    worldWormholeTimer=setInterval(tickWorldWormhole, 900);
+  }else{
+    worldWormholeStep=0;
+    setWorldPascalMode(worldPascalMode);
+  }
+  document.getElementById('world-wormhole-btn').classList.toggle('runtime-active', !!worldWormholeTimer);
+}
+
 function buildArtifactSvgMarkup(entity){
   const payload=canonicalEntityPayload(entity);
   return window.AztecArtifact.renderPayloadAsSvg(payload, {
@@ -1261,6 +1488,7 @@ function toggleWorld(ev, id){
 function renderWorldPanel(){
   const list=document.getElementById('world-entity-list');
   const worldArr=[...worldEntities].map(id=>allEntities.find(e=>e.id===id)).filter(Boolean);
+  renderWorldPascal(worldArr);
   document.getElementById('world-entity-count').textContent=worldArr.length;
   document.getElementById('ws-entities').textContent=worldArr.length;
   document.getElementById('ws-links').textContent=links.length;
@@ -1344,7 +1572,7 @@ function renderDetail(e){
     <div style="text-align:center;margin-bottom:10px;">${tags}</div>
     <div class="dv-section-head">Description</div>
     <div style="font-size:11px;color:var(--ink2);line-height:1.5;font-family:'IBM Plex Serif',serif;font-style:italic;padding:4px 0 10px;">${e.desc}</div>
-    ${extra?'<div class="dv-section-head">Protocol Fields</div>'+extra:''}
+    ${extra?'<div class="dv-section-head">Structured Fields</div>'+extra:''}
     <div class="dv-section-head">ID</div>
     <div class="dv-field"><span class="dv-field-key">entity_id</span><span class="dv-field-val" style="font-size:8px;">${e.id}</span></div>
     <div class="dv-field"><span class="dv-field-key">sha256</span><span class="dv-field-val" style="font-size:8px;">sha256:${hashStr(e.id).slice(0,16)}…</span></div>
@@ -1425,7 +1653,7 @@ function renderLinksTab(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// AAVE IMPORT
+// PROTOCOL FEED IMPORT
 // ═══════════════════════════════════════════════════════════════
 function importAaveReserves(){
   const net=document.getElementById('aave-network').value;
@@ -1441,18 +1669,18 @@ function importAaveReserves(){
       id,cat:'reserve',
       name:r.name,
       symbol:r.symbol,
-      desc:`Aave V3 ${r.symbol} reserve on ${net}. Liquidity rate ${r.liq}, borrow rate ${r.borrow}. Imported from aave/protocol-subgraphs.`,
-      tags:[...r.tags,'aave-v3',net],
+      desc:`${r.symbol} reserve on ${net}. Liquidity rate ${r.liq}, borrow rate ${r.borrow}. Imported from the reference protocol feed.`,
+      tags:[...r.tags,'liquidity-market',net],
       liquidityRate:r.liq,
       borrowRate:r.borrow,
       chain:net,
-      source:'aave-subgraph'
+      source:'protocol-feed'
     };
     allEntities.push(entity);
-    emit('world.entity.import',{entity_id:id,name:entity.name,symbol:r.symbol,chain:net,cat:'reserve',source:'aave/protocol-subgraphs',subgraph_entity:'Reserve',sha256:`sha256:${hashStr(id+r.symbol+net)}`},'ev-aave');
+    emit('world.entity.import',{entity_id:id,name:entity.name,symbol:r.symbol,chain:net,cat:'reserve',source:'reference/protocol-feed',feed_entity:'Reserve',sha256:`sha256:${hashStr(id+r.symbol+net)}`},'ev-aave');
     added++;
   });
-  status.textContent=`✓ Imported ${added} reserves from ${net}`;
+  status.textContent=`✓ Imported ${added} market records from ${net}`;
   renderGrid();
   updateCounts();
 }
@@ -1468,18 +1696,18 @@ function importAaveGovernance(){
       id,cat:'proposal',
       name:p.title,
       aave_proposal_id:p.id,
-      desc:`Aave Governance V3 proposal. Status: ${p.status}. Votes for: ${p.votes_for}, against: ${p.votes_against}. Imported from aave/protocol-subgraphs governance subgraph.`,
-      tags:[...p.tags,'aave-gov','governance'],
+      desc:`Governance proposal. Status: ${p.status}. Votes for: ${p.votes_for}, against: ${p.votes_against}. Imported from the reference governance feed.`,
+      tags:[...p.tags,'governance-feed','governance'],
       status:p.status,
       votes_for:p.votes_for,
       votes_against:p.votes_against,
-      source:'aave-governance-subgraph'
+      source:'governance-feed'
     };
     allEntities.push(entity);
-    emit('world.entity.import',{entity_id:id,name:p.title,proposal_id:p.id,status:p.status,cat:'proposal',source:'aave/protocol-subgraphs',subgraph_entity:'GovernanceProposal',sha256:`sha256:${hashStr(id+p.id)}`},'ev-aave');
+    emit('world.entity.import',{entity_id:id,name:p.title,proposal_id:p.id,status:p.status,cat:'proposal',source:'reference/governance-feed',feed_entity:'GovernanceProposal',sha256:`sha256:${hashStr(id+p.id)}`},'ev-aave');
     added++;
   });
-  status.textContent=`✓ Imported ${added} governance proposals`;
+  status.textContent=`✓ Imported ${added} governance records`;
   renderGrid();
   updateCounts();
 }
@@ -1493,7 +1721,14 @@ document.getElementById('form-cat').addEventListener('change',function(){
 });
 function submitCreate(){
   const name=document.getElementById('form-name').value.trim();
-  if(!name){alert('Name required');return;}
+  const note=document.getElementById('form-note');
+  if(!name){
+    note.textContent='Name required.';
+    note.style.display='block';
+    document.getElementById('form-name').focus();
+    return;
+  }
+  note.style.display='none';
   const cat=document.getElementById('form-cat').value;
   const desc=document.getElementById('form-desc').value.trim();
   const tags=document.getElementById('form-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
@@ -1547,7 +1782,7 @@ function exportNDJSON(){
   links.forEach(l=>{
     lines.push(JSON.stringify({schema_version:1,kind:'world.link',lane:'world',seq:++s,event:'world.link.record',payload:{link_id:l.id,from_id:l.fromId,to_id:l.toId,type:l.type,notes:l.notes}}));
   });
-  lines.push(JSON.stringify({schema_version:1,kind:'world.manifest',lane:'world',seq:++s,event:'world.compose.end',run_id:rid,payload:{pass:true,world_name:worldName,entity_ids:[...worldEntities],link_ids:links.map(l=>l.id),aave_subgraph_ref:'https://github.com/aave/protocol-subgraphs'}}));
+  lines.push(JSON.stringify({schema_version:1,kind:'world.manifest',lane:'world',seq:++s,event:'world.compose.end',run_id:rid,payload:{pass:true,world_name:worldName,entity_ids:[...worldEntities],link_ids:links.map(l=>l.id),protocol_feed_ref:'https://example.org/reference/protocol-feed'}}));
   const blob=new Blob([lines.join('\n')+'\n'],{type:'application/x-ndjson'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${worldName}-${Date.now()}.ndjson`;a.click();
   emit('world.compose.export',{world_name:worldName,lines:lines.length},'ev-world');
@@ -1624,7 +1859,7 @@ document.getElementById('artifact-import-input').addEventListener('change', asyn
 renderGrid();
 updateCounts();
 renderWorldPanel();
-emit('world.compose.start',{world_name:worldName,schema_version:1,aave_subgraph_ref:'https://github.com/aave/protocol-subgraphs',generated_at:'1970-01-01T00:00:00Z'},'ev-world');
+emit('world.compose.start',{world_name:worldName,schema_version:1,protocol_feed_ref:'https://example.org/reference/protocol-feed',generated_at:'1970-01-01T00:00:00Z'},'ev-world');
 
 // Fix dp tab display
 document.getElementById('dp-world').style.display='flex';

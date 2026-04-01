@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#8b4513">
+<link rel="manifest" href="/manifest.json">
+<title>Handbook Index · Symbolic Web</title>
+<style>
+  :root { --bg:#f6f2ea; --panel:#fffaf2; --ink:#1f1b16; --line:#d9c8b3; --accent:#8b4513; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"IBM Plex Sans","Segoe UI",sans-serif; background:linear-gradient(180deg,#fcfaf5,var(--bg)); color:var(--ink); }
+  main { max-width:960px; margin:0 auto; padding:32px 20px 48px; display:grid; gap:18px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  h1,h2 { margin:0 0 10px; }
+  p { margin:0; line-height:1.6; }
+  .proof { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent); margin-top:8px; }
+  ul { margin:0; padding-left:20px; }
+  li { margin:6px 0; }
+  a { color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px; }
+</style>
+</head>
+<body>
+<main>
+  <section class="panel">
+    <h1>Symbolic Web Handbook</h1>
+    <p>This public handbook defines the current protocol stack, realization model, and proof surfaces for the Meta-Braille runtime.</p>
+    <div class="proof">䷁ | ⠁ | 01/0101 | artifact://public/handbook</div>
+  </section>
+  <section class="panel">
+    <h2>Core Reading Order</h2>
+    <ul>
+      <li><a href="./00-overview.md">00-overview.md</a></li>
+      <li><a href="./01-symbolic-web-definition.md">01-symbolic-web-definition.md</a></li>
+      <li><a href="./98-axis-model.md">98-axis-model.md</a></li>
+      <li><a href="./99-braille-axis-contract.md">99-braille-axis-contract.md</a></li>
+      <li><a href="./100-braille-kernel-codec.md">100-braille-kernel-codec.md</a></li>
+      <li><a href="./101-meta-circular-interpreter.md">101-meta-circular-interpreter.md</a></li>
+      <li><a href="./102-matroid-emergence.md">102-matroid-emergence.md</a></li>
+      <li><a href="./103-aztec-artifact-surface.md">103-aztec-artifact-surface.md</a></li>
+    </ul>
+  </section>
+  <section class="panel">
+    <h2>Additional Notes</h2>
+    <ul>
+      <li><a href="./90-canonical-projection-and-resolution.md">90-canonical-projection-and-resolution.md</a></li>
+      <li><a href="./96-coordinate-adapters-and-traversal.md">96-coordinate-adapters-and-traversal.md</a></li>
+      <li><a href="./97-legacy-ndjson-wrapper-schema.md">97-legacy-ndjson-wrapper-schema.md</a></li>
+      <li><a href="./30-proof-and-tests.md">30-proof-and-tests.md</a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

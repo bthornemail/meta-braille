@@ -21,17 +21,19 @@ proof docs = confidence boundary
 7. [Shared Vocabulary](./50-shared-vocabulary.md)
 8. [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md)
 9. [Public Release](./70-public-release.md)
-10. [matroid-garden.com Deployment](./80-matroid-garden-deploy.md)
-11. [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md)
-12. [Shadow Canvas Law](./95-shadow-canvas-law.md)
-13. [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md)
-14. [Legacy NDJSON Wrapper Schema](./97-legacy-ndjson-wrapper-schema.md)
-15. [Axis Model](./98-axis-model.md)
-16. [Braille Axis Contract](./99-braille-axis-contract.md)
-17. [Braille Kernel Codec](./100-braille-kernel-codec.md)
-18. [Meta-Circular Interpreter](./101-meta-circular-interpreter.md)
-19. [Matroid Emergence](./102-matroid-emergence.md)
-20. [Aztec Artifact Surface](./103-aztec-artifact-surface.md)
+10. [Public Route Smoke Checklist](./71-public-route-smoke-checklist.md)
+11. [matroid-garden.com Deployment](./80-matroid-garden-deploy.md)
+12. [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md)
+13. [Shadow Canvas Law](./95-shadow-canvas-law.md)
+14. [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md)
+15. [Legacy NDJSON Wrapper Schema](./97-legacy-ndjson-wrapper-schema.md)
+16. [Axis Model](./98-axis-model.md)
+17. [Braille Axis Contract](./99-braille-axis-contract.md)
+18. [Braille Kernel Codec](./100-braille-kernel-codec.md)
+19. [Meta-Circular Interpreter](./101-meta-circular-interpreter.md)
+20. [Matroid Emergence](./102-matroid-emergence.md)
+21. [Aztec Artifact Surface](./103-aztec-artifact-surface.md)
+22. [Artifact-First Transport And Sharing](./104-artifact-first-transport-and-sharing.md)
 
 ## What This System Is
 
@@ -96,6 +98,22 @@ Those selectors are emitted as both `rows` and `selectors` in the event stream, 
 
 The browser currently projects recent event history into a JSON Canvas-shaped document, not as a complete graph engine but as a lightweight projection helper.
 
+The current shadow-canvas lane can also be read through a Pascal dependency field:
+
+```text
+Braille event
+-> canonical address
+-> Pascal dependency lattice
+-> JSON Canvas projection
+-> runtime / artifact / observer overlays
+```
+
+That same dependency field now appears across the main browser explanation surfaces:
+
+- shadow canvas / mesh builder
+- runtime dashboard
+- world composition surface
+
 ### Shadow scene graph
 
 The browser registers a service worker that mirrors recent event state into a local shadow scene graph. This is a control-plane mirror, not canonical truth.
@@ -135,6 +153,7 @@ This handbook is intentionally self-contained. The rest of the repo still contai
 - For the proof surface and current test limits, go to [Proof And Tests](./30-proof-and-tests.md).
 - For the small cross-domain anchor vocabulary, go to [Shared Vocabulary](./50-shared-vocabulary.md).
 - For the signal-first upgrade, go to [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md).
+- For the final go/no-go pass across the public routes, go to [Public Route Smoke Checklist](./71-public-route-smoke-checklist.md).
 - For the full address / projection / materialization stack, go to [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md).
 - For the browser-side substrate and projection law, go to [Shadow Canvas Law](./95-shadow-canvas-law.md).
 - For the coordinate-space, traversal, and tap-code-style reduction, go to [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md).
@@ -145,3 +164,4 @@ This handbook is intentionally self-contained. The rest of the repo still contai
 - For the token, block, and execution-unit layer above the codec, go to [Meta-Circular Interpreter](./101-meta-circular-interpreter.md).
 - For why closure, basis, and dependence become unavoidable in the system, go to [Matroid Emergence](./102-matroid-emergence.md).
 - For the portable 2D artifact and scan/re-entry lane inside the same system, go to [Aztec Artifact Surface](./103-aztec-artifact-surface.md).
+- For the artifact-first transport and PWA/file/share rule above the same artifact law, go to [Artifact-First Transport And Sharing](./104-artifact-first-transport-and-sharing.md).

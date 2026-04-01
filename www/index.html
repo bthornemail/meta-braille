@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Meta Braille Stream</title>
+    <meta name="theme-color" content="#8b4513">
+    <link rel="manifest" href="/manifest.json">
+    <title>Symbolic Web - Live Dependency Runtime</title>
     <style>
       :root {
         --bg: #f4f0e8;
@@ -49,6 +51,37 @@
         gap: 8px;
         flex-wrap: wrap;
         align-items: center;
+      }
+      .intro-stack {
+        display: grid;
+        gap: 10px;
+      }
+      .intro-copy {
+        max-width: 760px;
+        color: #5a4a3a;
+        font-size: 0.98rem;
+      }
+      .entry-links {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .entry-links a {
+        text-decoration: none;
+      }
+      .entry-links a button {
+        background: #f5ead7;
+        color: var(--ink);
+      }
+      .entry-links a button:hover {
+        background: var(--accent);
+        color: white;
+      }
+      .grounding-line {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.86rem;
+        color: #6d5843;
+        white-space: pre-wrap;
       }
       .scope-strip,
       .control-strip {
@@ -317,8 +350,19 @@
   <body>
     <main>
       <section class="panel">
-        <h1>Meta-Braille Symbolic Web Runtime</h1>
-        <p id="status">symbolic web: booting…</p>
+        <div class="intro-stack">
+          <h1>Symbolic Web - Live Dependency Runtime</h1>
+          <p class="intro-copy">A signal-first system where canonical events form a dependency lattice, visualized and executed through shared projection surfaces.</p>
+          <div class="entry-links">
+            <a href="/shadow"><button type="button">Shadow</button></a>
+            <a href="/portal"><button type="button">Portal</button></a>
+            <a href="/world"><button type="button">World</button></a>
+            <a href="/artifact"><button type="button">Artifact</button></a>
+            <a href="/docs/"><button type="button">Docs</button></a>
+          </div>
+          <div class="grounding-line">Braille -> Address -> Pascal lattice -> Projection -> Runtime overlays</div>
+          <p id="status">showcase: booting live dependency runtime…</p>
+        </div>
         <div class="toolbar">
           <input id="peer-target" type="text" placeholder="peer id">
           <button id="connect-peer" type="button">Connect Peer</button>

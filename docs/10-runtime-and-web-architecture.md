@@ -121,6 +121,11 @@ The HTTP server exposes:
 
 and also serves the browser shell and service worker.
 
+Those runtime continuity surfaces should be read together with
+[Artifact-First Transport And Sharing](./104-artifact-first-transport-and-sharing.md):
+service workers and browser transport helpers may coordinate or defer
+participation, but they do not replace the artifact codec as the truth layer.
+
 ## 4. Browser Runtime
 
 The main browser control logic lives in the browser shell and its helper modules.

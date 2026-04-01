@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artifact Demo · Symbolic Web</title>
+<meta name="theme-color" content="#10151d">
+<link rel="manifest" href="/manifest.json">
+<title>Artifact Surface · Symbolic Web</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap');
 :root{
@@ -155,9 +157,9 @@ video,canvas,img{
 <div class="shell">
   <div class="head">
     <div>
-      <div class="title">ARTIFACT DEMO</div>
+      <div class="title">ARTIFACT SURFACE</div>
       <div class="sub">One canonical artifact across a realization axis: the deterministic witness surface on the left and the scanner-compatible Aztec surface on the right are two positions on that axis. Payload, transcript, symbol order, and identity stay the same; only realization coordinates change by offset transform.</div>
-      <div class="proof" id="proof-strip">䷁ | ⠁ | 01/0101 | artifact://demo/default</div>
+      <div class="proof" id="proof-strip">䷁ | ⠁ | 01/0101 | artifact://public/showcase</div>
     </div>
   </div>
 
@@ -169,9 +171,12 @@ video,canvas,img{
           <textarea id="payload-json"></textarea>
           <div class="row" style="margin-top:10px">
             <button class="primary" id="render-all">Render Witness + Transport</button>
-            <button id="load-sample">Load Sample</button>
+            <button id="load-sample">Load Example Artifact</button>
+            <button id="open-artifact">Open Artifact File</button>
+            <button id="share-artifact">Share Artifact</button>
             <button id="export-svg">Export SVG</button>
             <button id="export-png">Export PNG</button>
+            <input id="artifact-file-input" type="file" accept=".svg,.png,.json,image/svg+xml,image/png,application/json" style="display:none">
           </div>
           <div class="kv">
             <div>transcript</div><div id="meta-transcript">-</div>
@@ -185,7 +190,7 @@ video,canvas,img{
         <h2>Witness Realization</h2>
         <div class="body">
           <div class="surface" id="svg-surface"></div>
-          <div class="status" id="surface-status">Waiting for render.</div>
+          <div class="status" id="surface-status">Ready to render a witness surface.</div>
         </div>
       </div>
     </div>
@@ -200,7 +205,7 @@ video,canvas,img{
             <button id="decode-text">Decode Text</button>
           </div>
           <canvas id="barcode-canvas" width="420" height="420"></canvas>
-          <div class="status" id="barcode-status">Scanner realization is optional and uses a standard Aztec barcode transport envelope under the offset transform.</div>
+          <div class="status" id="barcode-status">Scanner realization is optional. Use it when a browser or device supports standard Aztec barcode transport under the offset transform.</div>
         </div>
       </div>
 
@@ -214,10 +219,10 @@ video,canvas,img{
             <input id="scan-file-input" type="file" accept="image/*" style="display:none">
           </div>
           <div class="hint" style="margin:10px 0 12px">
-            Camera/file scanning uses the browser Barcode Detector API and expects a real standardized Aztec barcode whose payload is the `mbaz1:` transport envelope. SVG and PNG artifact import remain the deterministic witness realization. Both surfaces are positions on the same realization axis for one canonical artifact.
+            Camera or file scanning uses the browser Barcode Detector API when available and expects a real standardized Aztec barcode whose payload is the `mbaz1:` transport envelope. If barcode scanning is unavailable on this device, SVG and PNG artifact import remain the deterministic witness realization. Both surfaces are positions on the same realization axis for one canonical artifact.
           </div>
           <video id="scan-video" autoplay playsinline muted></video>
-          <div class="status" id="scan-status">Scanner idle.</div>
+          <div class="status" id="scan-status">Scanner lane ready when barcode support is available. SVG and PNG witness import always remain available.</div>
           <div class="mono" id="scan-output" style="margin-top:10px"></div>
         </div>
       </div>
@@ -230,15 +235,15 @@ video,canvas,img{
 <script>
 const samplePayload = {
   schema_version: 1,
-  kind: 'artifact.demo',
-  transcript: '䷁ | ⠁ | 01/0101 | artifact://demo/default',
-  path: 'artifact://demo/default',
+  kind: 'artifact.surface',
+  transcript: '䷁ | ⠁ | 01/0101 | artifact://public/showcase',
+  path: 'artifact://public/showcase',
   entity: {
-    id: 'demo-node',
-    name: 'Demo Artifact',
+    id: 'showcase-node',
+    name: 'Showcase Artifact',
     cat: 'artifact',
-    desc: 'Canonical artifact payload for witness and transport demos.',
-    tags: ['demo','artifact','transport'],
+    desc: 'Canonical artifact payload for witness and scanner realization showcases.',
+    tags: ['showcase','artifact','transport'],
     artifactState: 'inactive'
   }
 };
@@ -247,6 +252,20 @@ let currentPayload = samplePayload;
 let currentSvg = '';
 let cameraStream = null;
 let cameraTimer = null;
+let artifactShareChannel = null;
+
+function bytesToBase64(bytes) {
+  let binary = '';
+  bytes.forEach((value) => {
+    binary += String.fromCharCode(value);
+  });
+  return btoa(binary);
+}
+
+function base64ToBytes(text) {
+  const binary = atob(String(text || ''));
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
 
 function setStatus(id, message, cls='') {
   const el = document.getElementById(id);
@@ -261,21 +280,169 @@ function readPayload() {
 function writePayload(payload) {
   currentPayload = payload;
   document.getElementById('payload-json').value = JSON.stringify(payload, null, 2);
-  const transcript = payload.transcript || payload.entity?.transcript || `${payload.hexagram || '䷁'} | ${payload.braille || '⠁'} | ${payload.header8 || '01'}/${payload.pattern16 || '0101'} | ${payload.path || 'artifact://demo/default'}`;
+  const transcript = payload.transcript || payload.entity?.transcript || `${payload.hexagram || '䷁'} | ${payload.braille || '⠁'} | ${payload.header8 || '01'}/${payload.pattern16 || '0101'} | ${payload.path || 'artifact://public/showcase'}`;
   document.getElementById('proof-strip').textContent = transcript;
   document.getElementById('meta-transcript').textContent = transcript;
+}
+
+function artifactFileNameForPayload(payload, ext) {
+  const stem = String(payload.path || payload.entity?.id || payload.kind || 'artifact-surface')
+    .replace(/^[a-z]+:\/\//i, '')
+    .replace(/[^a-z0-9._-]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase() || 'artifact-surface';
+  return `${stem}.${ext}`;
 }
 
 function renderAll() {
   const payload = readPayload();
   writePayload(payload);
   currentSvg = window.AztecArtifact.renderPayloadAsSvg(payload, {
-    label: payload.entity?.name || payload.kind || 'artifact-demo'
+    label: payload.entity?.name || payload.kind || 'artifact-surface'
   });
   document.getElementById('svg-surface').innerHTML = currentSvg;
   document.getElementById('transport-text').value = window.AztecArtifact.transportTextFromPayload(payload);
   setStatus('surface-status', 'Deterministic witness surface rendered.', 'good');
   setStatus('barcode-status', 'Transport text ready. Render a standard Aztec code to scan it with the browser API.', '');
+}
+
+async function ensureServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  const registration = await navigator.serviceWorker.register('/service-worker.js');
+  await navigator.serviceWorker.ready;
+  return registration;
+}
+
+async function deserializeSharedFile(fileRecord) {
+  return new File([base64ToBytes(fileRecord.base64)], fileRecord.name || 'artifact', {
+    type: fileRecord.type || 'application/octet-stream',
+    lastModified: fileRecord.lastModified || Date.now()
+  });
+}
+
+async function processArtifactFile(file, source='file') {
+  const name = String(file.name || '').toLowerCase();
+  const type = String(file.type || '').toLowerCase();
+  let payload;
+  if (type.includes('svg') || name.endsWith('.svg') || type.includes('png') || name.endsWith('.png')) {
+    payload = await window.AztecArtifact.payloadObjectFromBlob(file);
+  } else {
+    const text = await file.text();
+    if (text.trim().startsWith('mbaz1:')) {
+      payload = window.AztecArtifact.payloadObjectFromTransportText(text.trim());
+    } else {
+      payload = JSON.parse(text);
+    }
+  }
+  writePayload(payload);
+  renderAll();
+  document.getElementById('scan-output').textContent = `${source}: ${file.name || 'artifact'}`;
+  setStatus('surface-status', `Artifact imported from ${source}.`, 'good');
+  setStatus('scan-status', `Decoded deterministic artifact from ${source}.`, 'good');
+}
+
+async function consumeSharedRecord(record, source='share-target') {
+  if (!record || !record.id) return false;
+  if (sessionStorage.getItem(`artifact-share:${record.id}`)) return false;
+  let consumed = false;
+  if (Array.isArray(record.files) && record.files.length) {
+    const file = await deserializeSharedFile(record.files[0]);
+    await processArtifactFile(file, source);
+    consumed = true;
+  } else {
+    const transport = [record.text, record.url].find((value) => String(value || '').trim().startsWith('mbaz1:'));
+    if (transport) {
+      const payload = window.AztecArtifact.payloadObjectFromTransportText(transport);
+      writePayload(payload);
+      renderAll();
+      document.getElementById('scan-output').textContent = `${source}: transport envelope`;
+      setStatus('scan-status', `Decoded shared transport from ${source}.`, 'good');
+      consumed = true;
+    }
+  }
+  if (consumed) {
+    sessionStorage.setItem(`artifact-share:${record.id}`, '1');
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'artifact-share-clear' });
+    }
+  }
+  return consumed;
+}
+
+async function loadPendingArtifactShare() {
+  try {
+    const response = await fetch('/api/artifact-share/latest', { cache: 'no-store' });
+    if (!response.ok) return false;
+    const data = await response.json();
+    return consumeSharedRecord(data.share, 'share-target');
+  } catch (error) {
+    setStatus('scan-status', `Share inbox unavailable: ${error.message}`, 'bad');
+    return false;
+  }
+}
+
+function setupArtifactShareChannel() {
+  if ('BroadcastChannel' in window) {
+    artifactShareChannel = new BroadcastChannel('artifact-share');
+    artifactShareChannel.addEventListener('message', (event) => {
+      if (event.data?.type === 'artifact-share') {
+        consumeSharedRecord(event.data.share, 'broadcast').catch((error) => setStatus('scan-status', error.message, 'bad'));
+      }
+    });
+  }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'artifact-share') {
+        consumeSharedRecord(event.data.share, 'service-worker').catch((error) => setStatus('scan-status', error.message, 'bad'));
+      }
+    });
+  }
+}
+
+function setupLaunchQueue() {
+  if (!('launchQueue' in window) || typeof window.launchQueue.setConsumer !== 'function') return;
+  window.launchQueue.setConsumer(async (launchParams) => {
+    const files = launchParams?.files || [];
+    for (const handle of files) {
+      const file = await handle.getFile();
+      await processArtifactFile(file, 'launch');
+    }
+  });
+}
+
+async function shareArtifact() {
+  const payload = readPayload();
+  const transcript = payload.transcript || payload.path || 'Symbolic Web artifact';
+  if (!('share' in navigator)) {
+    setStatus('scan-status', 'Web Share is not available in this browser. Export SVG or PNG instead.', 'bad');
+    return;
+  }
+  const svgText = currentSvg || window.AztecArtifact.renderPayloadAsSvg(payload, {
+    label: payload.entity?.name || payload.kind || 'artifact-surface'
+  });
+  const svgFile = new File([svgText], artifactFileNameForPayload(payload, 'svg'), { type: 'image/svg+xml' });
+  const shareData = {
+    title: payload.entity?.name || 'Symbolic Web Artifact',
+    text: transcript,
+    files: [svgFile]
+  };
+  try {
+    if (navigator.canShare && navigator.canShare(shareData)) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.share({
+        title: shareData.title,
+        text: `${transcript}\n\n${window.AztecArtifact.transportTextFromPayload(payload)}`
+      });
+    }
+    setStatus('scan-status', 'Artifact shared through the browser participation layer.', 'good');
+  } catch (error) {
+    if (error && error.name === 'AbortError') {
+      setStatus('scan-status', 'Artifact share dismissed.', '');
+      return;
+    }
+    setStatus('scan-status', `Artifact share failed: ${error.message}`, 'bad');
+  }
 }
 
 function renderBarcode() {
@@ -285,7 +452,7 @@ function renderBarcode() {
     return;
   }
   if (!window.bwipjs) {
-    setStatus('barcode-status', 'bwip-js did not load, so the transport barcode cannot be rendered here.', 'bad');
+    setStatus('barcode-status', 'The local barcode renderer did not load, so the transport barcode cannot be rendered in this page.', 'bad');
     return;
   }
   try {
@@ -340,12 +507,12 @@ async function handleDetectedBarcode(rawValue, source='scanner') {
 
 async function startCameraScan() {
   if (!('BarcodeDetector' in window)) {
-    setStatus('scan-status', 'Barcode Detector API is not available in this browser.', 'bad');
+    setStatus('scan-status', 'Barcode scanning is not available in this browser. Use SVG or PNG witness import instead.', 'bad');
     return;
   }
   const formats = await window.BarcodeDetector.getSupportedFormats();
   if (!formats.includes('aztec')) {
-    setStatus('scan-status', 'This browser Barcode Detector does not support Aztec format.', 'bad');
+    setStatus('scan-status', 'This browser does not support Aztec barcode scanning. Use SVG or PNG witness import instead.', 'bad');
     return;
   }
   stopCamera();
@@ -369,12 +536,12 @@ async function startCameraScan() {
 
 async function scanImageFile(file) {
   if (!('BarcodeDetector' in window)) {
-    setStatus('scan-status', 'Barcode Detector API is not available in this browser.', 'bad');
+    setStatus('scan-status', 'Barcode scanning is not available in this browser. Use SVG or PNG witness import instead.', 'bad');
     return;
   }
   const formats = await window.BarcodeDetector.getSupportedFormats();
   if (!formats.includes('aztec')) {
-    setStatus('scan-status', 'This browser Barcode Detector does not support Aztec format.', 'bad');
+    setStatus('scan-status', 'This browser does not support Aztec barcode scanning. Use SVG or PNG witness import instead.', 'bad');
     return;
   }
   const detector = new window.BarcodeDetector({ formats: ['aztec'] });
@@ -392,24 +559,40 @@ function exportSvg() {
   const blob = new Blob([currentSvg], { type: 'image/svg+xml' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'artifact-demo.svg';
+  a.download = artifactFileNameForPayload(readPayload(), 'svg');
   a.click();
 }
 
 async function exportPng() {
-  const pngBlob = await window.AztecArtifact.renderPayloadAsPngBlob(readPayload(), {
-    label: readPayload().entity?.name || readPayload().kind || 'artifact-demo'
+  const payload = readPayload();
+  const pngBlob = await window.AztecArtifact.renderPayloadAsPngBlob(payload, {
+    label: payload.entity?.name || payload.kind || 'artifact-surface'
   });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(pngBlob);
-  a.download = 'artifact-demo.png';
+  a.download = artifactFileNameForPayload(payload, 'png');
   a.click();
+}
+
+async function boot() {
+  writePayload(samplePayload);
+  renderAll();
+  try {
+    await ensureServiceWorker();
+  } catch (error) {
+    setStatus('scan-status', `Service worker unavailable: ${error.message}`, 'bad');
+  }
+  setupArtifactShareChannel();
+  setupLaunchQueue();
+  await loadPendingArtifactShare();
 }
 
 document.getElementById('load-sample').addEventListener('click', () => {
   writePayload(samplePayload);
   renderAll();
 });
+document.getElementById('open-artifact').addEventListener('click', () => document.getElementById('artifact-file-input').click());
+document.getElementById('share-artifact').addEventListener('click', () => shareArtifact());
 document.getElementById('render-all').addEventListener('click', renderAll);
 document.getElementById('render-barcode').addEventListener('click', renderBarcode);
 document.getElementById('decode-text').addEventListener('click', decodeTransportText);
@@ -426,12 +609,21 @@ document.getElementById('scan-file-input').addEventListener('change', (event) =>
     scanImageFile(file).catch((error) => setStatus('scan-status', error.message, 'bad'));
   }
 });
+document.getElementById('artifact-file-input').addEventListener('change', (event) => {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (file) {
+    processArtifactFile(file, 'file').catch((error) => setStatus('scan-status', error.message, 'bad'));
+  }
+});
 document.getElementById('export-svg').addEventListener('click', exportSvg);
 document.getElementById('export-png').addEventListener('click', () => exportPng().catch((error) => setStatus('surface-status', error.message, 'bad')));
-window.addEventListener('beforeunload', stopCamera);
+window.addEventListener('beforeunload', () => {
+  stopCamera();
+  if (artifactShareChannel) artifactShareChannel.close();
+});
 
-writePayload(samplePayload);
-renderAll();
+boot().catch((error) => setStatus('scan-status', error.message, 'bad'));
 </script>
 </body>
 </html>

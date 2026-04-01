@@ -870,7 +870,11 @@ function hashStr(str) {
 // EXPORT
 // ═══════════════════════════════════════════════════════════════════
 function exportNDJSON() {
-  if (selectedParts.size === 0) { alert('Nothing to export — compose an avatar first.'); return; }
+  if (selectedParts.size === 0) {
+    const exportBtn = document.getElementById('export-btn');
+    if (exportBtn) exportBtn.title = 'Compose an avatar before exporting.';
+    return;
+  }
   const pal = PALETTES[activePalette];
   const sorted = [...selectedParts].map(id => PART_MAP[id]).filter(Boolean).sort((a,b) => a.zIndex - b.zIndex);
   const lines = [];

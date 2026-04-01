@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060810">
+<link rel="manifest" href="/manifest.json">
 <title>SHADOW CANVAS · NODE-EDGE BUILDER</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Playfair+Display:ital@0;1&display=swap');
@@ -66,6 +68,8 @@ header{
 .tool-btn.danger:hover{border-color:var(--ember);color:var(--ember);}
 .tool-btn.export{border-color:var(--gold);color:var(--gold);}
 .tool-btn.export:hover{background:rgba(232,184,64,0.08);}
+.tool-btn.special{border-color:var(--green);color:var(--green);}
+.tool-btn.special:hover{background:rgba(48,200,112,0.08);}
 .sep{width:1px;height:24px;background:var(--border);margin:0 4px;}
 .mode-label{font-size:9px;color:var(--mist);letter-spacing:0.15em;}
 
@@ -163,6 +167,12 @@ header{
   font-family:'Share Tech Mono',monospace;font-size:8px;
   fill:rgba(180,200,220,0.7);text-anchor:middle;pointer-events:none;
 }
+.edge-line.edge-active{stroke-width:2.6;}
+.edge-line.edge-backpressure{stroke:rgba(224,80,48,0.9)!important;stroke-width:2.4;}
+.node-shape.runtime-active .node-body{filter:brightness(1.55);}
+.node-shape.runtime-backpressure .node-body{filter:brightness(1.15);}
+.node-shape.runtime-backpressure .node-outline,
+.node-shape.runtime-backpressure .node-body *{stroke:rgba(224,80,48,0.95)!important;}
 
 /* ── EDGE TYPE PANEL ── */
 .edge-panel{
@@ -230,9 +240,16 @@ footer{
     <button class="tool-btn" id="btn-connect" onclick="setMode('connect')">⟶ CONNECT</button>
     <button class="tool-btn" id="btn-pan" onclick="setMode('pan')">✥ PAN</button>
     <div class="sep"></div>
+    <span class="mode-label">LATTICE:</span>
+    <button class="tool-btn special active" id="btn-structure" onclick="setPascalView('structure')">△ STRUCTURE</button>
+    <button class="tool-btn special" id="btn-runtime" onclick="setPascalView('runtime')">≈ RUNTIME</button>
+    <button class="tool-btn special" onclick="generatePascalLattice()">△ PASCAL</button>
+    <button class="tool-btn special" id="btn-wormhole" onclick="toggleWormholeRuntime()">⇄ WORMHOLE</button>
+    <div class="sep"></div>
     <button class="tool-btn" onclick="autoLayout()">⊞ AUTO LAYOUT</button>
     <button class="tool-btn danger" onclick="clearAll()">⊗ CLEAR</button>
     <div class="sep"></div>
+    <button class="tool-btn export" onclick="exportJSONCanvas()">↓ CANVAS</button>
     <button class="tool-btn export" onclick="exportNDJSON()">↓ NDJSON</button>
     <button class="tool-btn export" onclick="exportSVG()">↓ SVG</button>
   </div>
@@ -322,8 +339,10 @@ footer{
   <div class="ft">edges <span id="ft-edges">0</span></div>
   <div class="ft">seq <span id="ft-seq">0</span></div>
   <div class="ft">edge-type <span id="ft-etype">flow</span></div>
+  <div class="ft">pascal <span id="ft-pascal">structure</span></div>
+  <div class="ft">runtime <span id="ft-runtime">idle</span></div>
   <div class="ft" style="margin-left:auto;color:rgba(58,123,213,0.4);">
-    drag·drop · connect · double-click to label
+    drag·drop · pascal lattice · wormhole overlay
   </div>
 </footer>
 
@@ -767,6 +786,9 @@ let viewX=0, viewY=0, viewScale=1;
 let ctxTarget = null;
 let labelTarget = null;
 let pendingArtifactImportTargetId = null;
+let pascalView = 'structure';
+let wormholeTimer = null;
+let wormholeStep = 0;
 
 const svg = document.getElementById('main-svg');
 const nodesG = document.getElementById('nodes-group');
@@ -781,6 +803,51 @@ function hashStr(s) {
   let r=h.toString(16).padStart(8,'0');
   for(let i=0;i<7;i++){h^=(i*0xdead+s.charCodeAt(i%s.length));h=(h*0x01000193)>>>0;r+=h.toString(16).padStart(8,'0');}
   return r;
+}
+
+function formatHexByte(value){
+  return Number(value & 0xff).toString(16).padStart(2,'0').toUpperCase();
+}
+
+function brailleForValue(value){
+  return String.fromCodePoint(0x2800 + (value & 0xff));
+}
+
+function hexagramForValue(value){
+  return String.fromCodePoint(0x4DC0 + (value & 63));
+}
+
+function canonicalNodePath(node){
+  if(node.path) return node.path;
+  if(node.pascal && Number.isInteger(node.row) && Number.isInteger(node.k)){
+    return `artifact://pascal/r${node.row}/k${node.k}`;
+  }
+  return `artifact://mesh/manual/${node.id}`;
+}
+
+function canonicalNodeTranscript(node){
+  if(node.transcript) return node.transcript;
+  const curr8 = Number.isInteger(node.curr8) ? node.curr8 : (Math.abs(hashStr(node.id).charCodeAt(0)) & 0xff);
+  const curr6 = curr8 & 63;
+  const braille = node.braille || brailleForValue(curr8);
+  const hexagram = node.hexagram || hexagramForValue(curr6);
+  const header8 = node.header8 || formatHexByte(curr8);
+  const pattern16 = node.pattern16 || `${formatHexByte(curr8)}${formatHexByte(curr6)}`;
+  return `${hexagram} | ${braille} | ${header8}/${pattern16} | ${canonicalNodePath(node)}`;
+}
+
+function applyCanonicalFields(node){
+  const base = Number.isInteger(node.curr8) ? node.curr8 : ((node.row ?? 0) * 17 + (node.k ?? 0) * 5 + 1) & 0xff;
+  node.curr8 = base;
+  node.curr6 = base & 63;
+  node.braille = node.braille || brailleForValue(node.curr8);
+  node.hexagram = node.hexagram || hexagramForValue(node.curr6);
+  node.header8 = node.header8 || formatHexByte(node.curr8);
+  node.pattern16 = node.pattern16 || `${formatHexByte(node.curr8)}${formatHexByte(node.curr6)}`;
+  node.path = canonicalNodePath(node);
+  node.transcript = canonicalNodeTranscript(node);
+  node.canonicalId = node.path;
+  return node;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -828,6 +895,14 @@ function setEdgeType(et) {
   edgeType = et;
   document.querySelectorAll('.edge-type-btn').forEach(b=>b.classList.toggle('active', b.dataset.etype===et));
   document.getElementById('ft-etype').textContent = et;
+}
+
+function setPascalView(view){
+  pascalView = view;
+  document.getElementById('btn-structure').classList.toggle('active', view === 'structure');
+  document.getElementById('btn-runtime').classList.toggle('active', view === 'runtime');
+  document.getElementById('ft-pascal').textContent = view;
+  refreshRuntimeClasses();
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -891,10 +966,10 @@ function placeNode(shapeId, x, y) {
   if(!shape) return;
   const id=uid();
   const r=38;
-  const node={id, shapeId, x, y, r, label:shape.name, color:shape.color, artifactState:'active'};
+  const node=applyCanonicalFields({id, shapeId, x, y, r, label:shape.name, color:shape.color, artifactState:'active'});
   nodes.push(node);
   renderNode(node);
-  emit('mesh.node.place',{node_id:id,shape_id:shapeId,shape_name:shape.name,cat:shape.cat,x:Math.round(x),y:Math.round(y),label:node.label,artifact_state:node.artifactState,sha256:`sha256:${hashStr(id+shapeId)}`},'ev-place');
+  emit('mesh.node.place',{node_id:id,canonical_id:node.canonicalId,path:node.path,transcript:node.transcript,shape_id:shapeId,shape_name:shape.name,cat:shape.cat,x:Math.round(x),y:Math.round(y),label:node.label,artifact_state:node.artifactState,sha256:`sha256:${hashStr(id+shapeId)}`},'ev-place');
   updateFooter();
 }
 
@@ -914,11 +989,13 @@ function renderNode(node) {
   g.innerHTML=`
     <g class="node-body">${shape.svg(0,0,node.r,node.color)}</g>
     <text class="node-label-text" x="0" y="${node.r+14}" id="lbl-${node.id}">${node.label}</text>
-    <text class="node-sublabel" x="0" y="${node.r+24}" id="sub-${node.id}">${node.shapeId}</text>
+    <text class="node-sublabel" x="0" y="${node.r+24}" id="sub-${node.id}">${node.pascal ? `r${node.row}/k${node.k}` : node.shapeId}</text>
+    <text class="node-sublabel" x="0" y="${node.r+34}" id="path-${node.id}">${node.path.replace('artifact://','')}</text>
     <circle class="node-hit" cx="0" cy="0" r="${node.r+6}" fill="transparent" stroke="none"/>
   `;
   nodesG.appendChild(g);
   attachNodeEvents(g, node);
+  refreshRuntimeClasses();
 }
 
 function attachNodeEvents(g, node) {
@@ -967,7 +1044,7 @@ function addEdge(fromId, toId, type) {
   const edge={id,fromId,toId,type,label:EDGE_TYPES[type].label};
   edges.push(edge);
   renderEdge(edge);
-  emit('mesh.edge.connect',{edge_id:id,from_id:fromId,to_id:toId,type,label:edge.label,sha256:`sha256:${hashStr(id+fromId+toId+type)}`},'ev-connect');
+  emit('mesh.edge.connect',{edge_id:id,from_id:fromId,to_id:toId,from_path:from.path,to_path:to.path,type,label:edge.label,sha256:`sha256:${hashStr(id+fromId+toId+type)}`},'ev-connect');
   updateFooter();
 }
 
@@ -1043,7 +1120,19 @@ function canonicalNodePayload(node) {
       r: node.r,
       label: node.label,
       color: node.color,
-      artifactState: node.artifactState || 'active'
+      artifactState: node.artifactState || 'active',
+      path: node.path,
+      transcript: node.transcript,
+      canonicalId: node.canonicalId,
+      braille: node.braille,
+      hexagram: node.hexagram,
+      curr8: node.curr8,
+      curr6: node.curr6,
+      header8: node.header8,
+      pattern16: node.pattern16,
+      row: node.row,
+      k: node.k,
+      pascal: !!node.pascal
     },
     edges: connected.map(edge=>({
       id: edge.id,
@@ -1052,7 +1141,7 @@ function canonicalNodePayload(node) {
       type: edge.type,
       label: edge.label
     })),
-    transcript: `mesh|${node.label}|${node.shapeId}|${node.id}`
+    transcript: node.transcript
   };
 }
 
@@ -1142,6 +1231,7 @@ function instantiateNodeFromArtifactPayload(payload, sourceName='artifact.svg'){
     ...nodeData,
     artifactState: nodeData.artifactState || 'inactive'
   };
+  applyCanonicalFields(node);
   nodes.push(node);
   renderNode(node);
   if(Array.isArray(payload.edges)){
@@ -1358,6 +1448,145 @@ function autoLayout() {
   emit('mesh.layout.auto',{count:n,arrangement:'circle'},'ev-manifest');
 }
 
+function refreshRuntimeClasses(){
+  nodes.forEach((node)=>{
+    const el=document.getElementById('node-'+node.id);
+    if(!el) return;
+    el.classList.toggle('runtime-active', pascalView === 'runtime' && !!node.runtimeActive);
+    el.classList.toggle('runtime-backpressure', pascalView === 'runtime' && !!node.runtimeBlocked);
+  });
+  edges.forEach((edge)=>{
+    const el=document.getElementById('edge-'+edge.id);
+    if(!el) return;
+    const path = el.querySelector('.edge-line');
+    if(!path) return;
+    path.classList.toggle('edge-active', pascalView === 'runtime' && !!edge.runtimeActive);
+    path.classList.toggle('edge-backpressure', pascalView === 'runtime' && !!edge.runtimeBlocked);
+  });
+  document.getElementById('ft-runtime').textContent = wormholeTimer ? `step ${wormholeStep}` : 'idle';
+}
+
+function resetRuntimeState(){
+  nodes.forEach((node)=>{ node.runtimeActive = false; node.runtimeBlocked = false; });
+  edges.forEach((edge)=>{ edge.runtimeActive = false; edge.runtimeBlocked = false; });
+  refreshRuntimeClasses();
+}
+
+function clearMeshState(){
+  nodes=[]; edges=[]; selected=null; connectFrom=null;
+  nodesG.innerHTML=''; edgesG.innerHTML='';
+  preview.setAttribute('display','none');
+  stopWormholeRuntime(false);
+  updateFooter();
+}
+
+function generatePascalLattice(rows=6){
+  clearMeshState();
+  setPascalView('structure');
+  const r=svg.getBoundingClientRect();
+  const centerX=(r.width/2-viewX)/viewScale;
+  const startY=(r.height*0.16-viewY)/viewScale;
+  const stepY=96;
+  const stepX=112;
+  for(let row=0; row<rows; row++){
+    const rowWidth = row * stepX;
+    for(let k=0; k<=row; k++){
+      const x = centerX - rowWidth/2 + k*stepX;
+      const y = startY + row*stepY;
+      const curr8 = (((1 << k) + (row << 3) + k) & 0xff);
+      const node = applyCanonicalFields({
+        id: `pascal-r${row}-k${k}`,
+        shapeId: 'graph.node',
+        x, y, r: 34,
+        label: `${row}:${k}`,
+        color: SHAPES['graph.node'].color,
+        artifactState: 'active',
+        row, k, pascal: true,
+        path: `artifact://pascal/r${row}/k${k}`,
+        curr8
+      });
+      nodes.push(node);
+      renderNode(node);
+      emit('mesh.node.place',{
+        node_id: node.id,
+        canonical_id: node.canonicalId,
+        path: node.path,
+        transcript: node.transcript,
+        shape_id: node.shapeId,
+        shape_name: 'Pascal Node',
+        cat: 'pascal',
+        row, k,
+        x: Math.round(x),
+        y: Math.round(y),
+        label: node.label,
+        artifact_state: node.artifactState
+      },'ev-place');
+      if(row > 0){
+        if(k > 0) addEdge(`pascal-r${row-1}-k${k-1}`, node.id, 'dependency');
+        if(k < row) addEdge(`pascal-r${row-1}-k${k}`, node.id, 'dependency');
+      }
+    }
+  }
+  updateFooter();
+  emit('mesh.lattice.generate',{kind:'pascal',rows,node_count:nodes.length,edge_count:edges.length},'ev-manifest');
+}
+
+function tickWormholeRuntime(){
+  wormholeStep += 1;
+  resetRuntimeState();
+  const activeRows = Math.min(wormholeStep, Math.max(...nodes.map((n)=>n.row ?? 0), 0) + 1);
+  nodes.forEach((node)=>{
+    if(!node.pascal) return;
+    if((node.row ?? 0) < activeRows){
+      node.runtimeActive = true;
+    }
+    if((node.row ?? 0) === activeRows - 1 && node.artifactState === 'inactive'){
+      node.runtimeBlocked = true;
+    }
+  });
+  edges.forEach((edge)=>{
+    const from = nodes.find((n)=>n.id===edge.fromId);
+    const to = nodes.find((n)=>n.id===edge.toId);
+    if(!from || !to) return;
+    edge.runtimeActive = !!(from.runtimeActive && to.runtimeActive);
+    edge.runtimeBlocked = !!(to.runtimeBlocked && from.runtimeActive);
+  });
+  refreshRuntimeClasses();
+  emit('mesh.runtime.wormhole.tick',{
+    step: wormholeStep,
+    active_rows: activeRows,
+    blocked_nodes: nodes.filter((n)=>n.runtimeBlocked).map((n)=>n.id)
+  },'ev-move');
+  const maxRow = Math.max(...nodes.map((n)=>n.row ?? 0), 0);
+  if(activeRows > maxRow + 1){
+    stopWormholeRuntime();
+  }
+}
+
+function stopWormholeRuntime(emitEvent=true){
+  if(wormholeTimer){
+    clearInterval(wormholeTimer);
+    wormholeTimer = null;
+  }
+  if(emitEvent){
+    emit('mesh.runtime.wormhole.stop',{step: wormholeStep},'ev-manifest');
+  }
+  refreshRuntimeClasses();
+}
+
+function toggleWormholeRuntime(){
+  if(wormholeTimer){
+    stopWormholeRuntime();
+    return;
+  }
+  setPascalView('runtime');
+  wormholeStep = 0;
+  resetRuntimeState();
+  wormholeTimer = setInterval(tickWormholeRuntime, 600);
+  document.getElementById('ft-runtime').textContent = 'running';
+  emit('mesh.runtime.wormhole.start',{kind:'pascal',node_count:nodes.length,edge_count:edges.length},'ev-start');
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // EXPORT
 // ═══════════════════════════════════════════════════════════════════════
@@ -1368,14 +1597,68 @@ function exportNDJSON() {
   lines.push(JSON.stringify({schema_version:1,kind:'mesh.compose',lane:'mesh',seq:++s,event:'mesh.compose.start',run_id,payload:{node_count:nodes.length,edge_count:edges.length,generated_at:new Date().toISOString()}}));
   nodes.forEach(node=>{
     const shape=SHAPES[node.shapeId];
-    lines.push(JSON.stringify({schema_version:1,kind:'mesh.node',lane:'mesh',seq:++s,event:'mesh.node.record',payload:{node_id:node.id,shape_id:node.shapeId,shape_name:shape?.name,cat:shape?.cat,x:Math.round(node.x),y:Math.round(node.y),r:node.r,label:node.label,color:node.color,artifact_state:node.artifactState||'active',sha256:`sha256:${hashStr(node.id+node.shapeId)}`}}));
+    lines.push(JSON.stringify({schema_version:1,kind:'mesh.node',lane:'mesh',seq:++s,event:'mesh.node.record',payload:{node_id:node.id,canonical_id:node.canonicalId,path:node.path,transcript:node.transcript,pascal:!!node.pascal,row:node.row,k:node.k,shape_id:node.shapeId,shape_name:shape?.name,cat:shape?.cat,x:Math.round(node.x),y:Math.round(node.y),r:node.r,label:node.label,color:node.color,artifact_state:node.artifactState||'active',sha256:`sha256:${hashStr(node.id+node.shapeId)}`}}));
   });
   edges.forEach(edge=>{
-    lines.push(JSON.stringify({schema_version:1,kind:'mesh.edge',lane:'mesh',seq:++s,event:'mesh.edge.record',payload:{edge_id:edge.id,from_id:edge.fromId,to_id:edge.toId,type:edge.type,label:edge.label,sha256:`sha256:${hashStr(edge.id+edge.fromId+edge.toId)}`}}));
+    const from=nodes.find(n=>n.id===edge.fromId);
+    const to=nodes.find(n=>n.id===edge.toId);
+    lines.push(JSON.stringify({schema_version:1,kind:'mesh.edge',lane:'mesh',seq:++s,event:'mesh.edge.record',payload:{edge_id:edge.id,from_id:edge.fromId,to_id:edge.toId,from_path:from?.path,to_path:to?.path,type:edge.type,label:edge.label,sha256:`sha256:${hashStr(edge.id+edge.fromId+edge.toId)}`}}));
   });
   lines.push(JSON.stringify({schema_version:1,kind:'mesh.manifest',lane:'mesh',seq:++s,event:'mesh.compose.end',run_id,payload:{pass:true,node_ids:nodes.map(n=>n.id),edge_ids:edges.map(e=>e.id)}}));
   const blob=new Blob([lines.join('\n')+'\n'],{type:'application/x-ndjson'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`mesh-${Date.now()}.ndjson`;a.click();
+}
+
+function exportJSONCanvas() {
+  const doc = {
+    schema_version: 1,
+    kind: 'mesh.json_canvas',
+    metadata: {
+      view: pascalView,
+      runtime: wormholeTimer ? 'wormhole' : 'idle'
+    },
+    nodes: nodes.map((node)=>({
+      id: node.canonicalId || node.id,
+      type: 'text',
+      x: Math.round(node.x),
+      y: Math.round(node.y),
+      width: 200,
+      height: 72,
+      text: node.transcript,
+      data: {
+        node_id: node.id,
+        path: node.path,
+        transcript: node.transcript,
+        shape_id: node.shapeId,
+        label: node.label,
+        braille: node.braille,
+        hexagram: node.hexagram,
+        curr8: node.curr8,
+        curr6: node.curr6,
+        pascal: !!node.pascal,
+        row: node.row,
+        k: node.k,
+        artifact_state: node.artifactState || 'active'
+      }
+    })),
+    edges: edges.map((edge)=>({
+      id: edge.id,
+      fromNode: (nodes.find((n)=>n.id===edge.fromId)?.canonicalId) || edge.fromId,
+      toNode: (nodes.find((n)=>n.id===edge.toId)?.canonicalId) || edge.toId,
+      fromSide: 'bottom',
+      toSide: 'top',
+      label: edge.label,
+      data: {
+        type: edge.type
+      }
+    }))
+  };
+  const blob=new Blob([JSON.stringify(doc,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`mesh-canvas-${Date.now()}.json`;
+  a.click();
+  emit('mesh.canvas.export',{node_count:doc.nodes.length,edge_count:doc.edges.length,view:pascalView},'ev-manifest');
 }
 
 function exportSVG() {
@@ -1391,16 +1674,15 @@ function exportSVG() {
 }
 
 function clearAll() {
-  nodes=[]; edges=[]; selected=null; connectFrom=null;
-  nodesG.innerHTML=''; edgesG.innerHTML='';
-  preview.setAttribute('display','none');
+  clearMeshState();
   emit('mesh.compose.clear',{reason:'user'},'ev-delete');
-  updateFooter();
 }
 
 function updateFooter() {
   document.getElementById('ft-nodes').textContent=nodes.length;
   document.getElementById('ft-edges').textContent=edges.length;
+  document.getElementById('ft-pascal').textContent=pascalView;
+  document.getElementById('ft-runtime').textContent=wormholeTimer ? `step ${wormholeStep}` : 'idle';
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -1409,25 +1691,7 @@ function updateFooter() {
 buildShapeGrid();
 emit('mesh.compose.start',{schema_version:1,kind:'mesh.compose',generated_at:'1970-01-01T00:00:00Z'},'ev-start');
 
-// Seed a small starter diagram
-setTimeout(()=>{
-  const r=svg.getBoundingClientRect();
-  const cx=r.width/2, cy=r.height/2;
-  placeNode('stell.stellated-tetrahedron',cx-180,cy-60);
-  placeNode('platonic.icosahedron',cx+30,cy-100);
-  placeNode('topo.torus',cx+200,cy+40);
-  placeNode('catalan.rhombic-dodecahedron',cx-60,cy+120);
-  placeNode('topo.mobius',cx+140,cy+140);
-  setTimeout(()=>{
-    if(nodes.length>=5){
-      addEdge(nodes[0].id,nodes[1].id,'flow');
-      addEdge(nodes[1].id,nodes[2].id,'composition');
-      addEdge(nodes[0].id,nodes[3].id,'resonance');
-      addEdge(nodes[3].id,nodes[4].id,'dependency');
-      addEdge(nodes[2].id,nodes[4].id,'inheritance');
-    }
-  },100);
-},200);
+setTimeout(()=>generatePascalLattice(),200);
 </script>
 </body>
 </html>

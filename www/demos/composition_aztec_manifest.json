@@ -9,8 +9,8 @@
     "equivalence_rule": "decode(witness_realization) == decode(scanner_realization)"
   },
   "title": "Composition Aztec Demo",
-  "transcript": "䷁ | ⠁ | 01/0101 | artifact://demo/composition",
-  "path": "artifact://demo/composition",
+  "transcript": "䷁ | ⠁ | 01/0101 | artifact://public/composition",
+  "path": "artifact://public/composition",
   "payload_source": "../templates/artifact-demo.html",
   "embodiments": {
     "svg": "./composition_aztec_sheet.svg",

@@ -2,7 +2,7 @@
   <rect width="960" height="540" fill="#f8f4ea"/>
   <rect x="32" y="32" width="896" height="476" fill="#fff" stroke="#20242b" stroke-width="2"/>
   <text x="56" y="76" font-family="IBM Plex Mono, monospace" font-size="28" fill="#20242b">COMPOSITION AZTEC SHEET</text>
-  <text x="56" y="110" font-family="IBM Plex Mono, monospace" font-size="16" fill="#5a6472">䷁ | ⠁ | 01/0101 | artifact://demo/composition</text>
+  <text x="56" y="110" font-family="IBM Plex Mono, monospace" font-size="16" fill="#5a6472">䷁ | ⠁ | 01/0101 | artifact://public/composition</text>
   <text x="56" y="156" font-family="IBM Plex Sans, sans-serif" font-size="18" fill="#39424e">This updated sheet is native to the current Symbolic Web stack.</text>
   <text x="56" y="186" font-family="IBM Plex Sans, sans-serif" font-size="18" fill="#39424e">Use composition_aztec_viewer.html for the live witness surface and transport demo.</text>
   <g transform="translate(80 230)">

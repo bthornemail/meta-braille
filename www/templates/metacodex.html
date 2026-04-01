@@ -841,9 +841,9 @@ const SEED = (() => {
   ];
   entity.compiled=true; entity.source='seed';
 
-  // ── aave.reserve — inherits entity.base ──
-  const aaveRes = mkTemplate('aave.reserve','template.derived');
-  aaveRes.id='AAVERES';
+  // ── protocol.reserve — inherits entity.base ──
+  const aaveRes = mkTemplate('protocol.reserve','template.derived');
+  aaveRes.id='PROTRES';
   aaveRes.inherits=['ENTITY'];
   aaveRes.fields=[
     {id:'ar1',key:'symbol',type:'string',required:true,default:'',desc:'Token symbol'},
@@ -856,16 +856,16 @@ const SEED = (() => {
   ];
   aaveRes.compiled=true; aaveRes.source='seed';
 
-  // ── aave.proposal — governance ──
-  const aaveProp = mkTemplate('aave.proposal','template.derived');
-  aaveProp.id='AAVEPROP';
+  // ── protocol.proposal — governance ──
+  const aaveProp = mkTemplate('protocol.proposal','template.derived');
+  aaveProp.id='PROTPROP';
   aaveProp.inherits=['ENTITY'];
   aaveProp.fields=[
     {id:'ap1',key:'proposal_id',type:'string',required:true,default:'',desc:'On-chain proposal ID'},
     {id:'ap2',key:'status',type:'enum',required:true,default:'pending',desc:'Proposal status',enum_values:'pending,active,executed,cancelled,failed'},
     {id:'ap3',key:'votes_for',type:'number',required:false,default:'0',desc:'Votes in favour'},
     {id:'ap4',key:'votes_against',type:'number',required:false,default:'0',desc:'Votes against'},
-    {id:'ap5',key:'ipfs_hash',type:'sha256',required:false,default:'',desc:'IPFS content hash of AIP'},
+    {id:'ap5',key:'ipfs_hash',type:'sha256',required:false,default:'',desc:'IPFS content hash of proposal bundle'},
     {id:'ap6',key:'executor',type:'string',required:false,default:'',desc:'Executor contract address'},
   ];
   aaveProp.compiled=true; aaveProp.source='seed';
@@ -922,7 +922,7 @@ const SEED = (() => {
     {id:'wc2',key:'era',type:'string',required:false,default:'',desc:'Historical era / epoch'},
     {id:'wc3',key:'entity_count',type:'number',required:false,default:'0',desc:'Number of entities'},
     {id:'wc4',key:'link_count',type:'number',required:false,default:'0',desc:'Number of relations'},
-    {id:'wc5',key:'aave_subgraph_ref',type:'url',required:false,default:'https://github.com/aave/protocol-subgraphs',desc:'Aave subgraph reference'},
+    {id:'wc5',key:'protocol_feed_ref',type:'url',required:false,default:'https://example.org/reference/protocol-feed',desc:'Reference protocol feed'},
   ];
   world.compiled=true; world.source='seed';
 

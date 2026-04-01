@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="manifest" href="/manifest.json">
 <title>Signal Dashboard — Replayable Trace Portal</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Cinzel:wght@400;600;900&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap');
@@ -181,6 +183,16 @@
   }
   .tab-btn.active { background: rgba(200,169,81,0.1); color: var(--gold); border-color: rgba(200,169,81,0.4); }
   .tab-btn:hover { color: var(--vellum); border-color: rgba(200,169,81,0.25); }
+  .mode-cluster { display:flex; gap:2px; margin-left:12px; }
+  .mode-btn {
+    padding: 5px 10px; font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+    background: transparent; border: 1px solid rgba(61,158,110,0.2);
+    color: var(--mist); font-family: 'DM Mono', monospace;
+    transition: all 0.15s;
+  }
+  .mode-btn.active { background: rgba(61,158,110,0.12); color: var(--pass); border-color: rgba(61,158,110,0.45); }
+  .mode-btn:hover { color: var(--vellum); border-color: rgba(61,158,110,0.3); }
 
   /* ─── CANVAS VIEW ─── */
   .canvas-wrap {
@@ -394,12 +406,19 @@
     <section class="scene-panel">
       <div class="scene-header">
         <div>
-          <div class="scene-title">NARRATIVE SCENE</div>
-          <div class="scene-subtitle" id="scene-subtitle">235 entities · Braille and hexagram projection surface</div>
+          <div class="scene-title">EXAMPLE NARRATIVE STREAM</div>
+          <div class="scene-subtitle" id="scene-subtitle">235 entities · sample canonical event stream over the Braille and hexagram projection surface</div>
         </div>
+        <div style="display:flex; align-items:center;">
         <div class="view-tabs">
           <button class="tab-btn active" onclick="switchTab('canvas')">SPACE</button>
           <button class="tab-btn" onclick="switchTab('timeline')">TIMELINE</button>
+        </div>
+        <div class="mode-cluster">
+          <button class="mode-btn active" id="btn-pascal-structure" onclick="setSceneMode('structure')">△ STRUCTURE</button>
+          <button class="mode-btn" id="btn-pascal-runtime" onclick="setSceneMode('runtime')">≈ RUNTIME</button>
+          <button class="mode-btn" id="btn-pascal-wormhole" onclick="toggleWormholePlayback()">⇄ WORMHOLE</button>
+        </div>
         </div>
       </div>
 
@@ -552,6 +571,29 @@ const EVENT_COLORS = {
 
 function evColor(ev) { return EVENT_COLORS[ev] || '#707090'; }
 function evClass(ev) { return `ev-${ev.replace(/[^a-z_]/g,'_')}`; }
+function formatHexByte(value) { return Number(value & 0xff).toString(16).padStart(2, '0').toUpperCase(); }
+function brailleForValue(value) { return String.fromCodePoint(0x2800 + (value & 0xff)); }
+function hexagramForValue(value) { return String.fromCodePoint(0x4DC0 + (value & 63)); }
+function canonicalPathForNode(node) {
+  const file = (node.series_path || 'unknown').replace(/[^a-z0-9._-]+/gi, '-').toLowerCase();
+  return `artifact://dashboard/${file}/seq/${node.seq}`;
+}
+function canonicalTranscriptForNode(node) {
+  const curr8 = node.curr8 ?? ((node.seq * 13) & 0xff);
+  const curr6 = curr8 & 63;
+  return `${node.hexagram || hexagramForValue(curr6)} | ${node.braille || brailleForValue(curr8)} | ${node.header8 || formatHexByte(curr8)}/${node.pattern16 || `${formatHexByte(curr8)}${formatHexByte(curr6)}`} | ${node.path || canonicalPathForNode(node)}`;
+}
+NARRATIVE_NODES.forEach((node) => {
+  const curr8 = ((node.seq * 13) + (node.source_line || 0)) & 0xff;
+  node.curr8 = curr8;
+  node.curr6 = curr8 & 63;
+  node.braille = brailleForValue(curr8);
+  node.hexagram = hexagramForValue(node.curr6);
+  node.header8 = formatHexByte(curr8);
+  node.pattern16 = `${formatHexByte(curr8)}${formatHexByte(node.curr6)}`;
+  node.path = canonicalPathForNode(node);
+  node.transcript = canonicalTranscriptForNode(node);
+});
 
 // ─── STARS ───────────────────────────────────────────────────────────────────
 const sf = document.getElementById('starfield');
@@ -665,6 +707,77 @@ const ctx = canvas.getContext('2d');
 let canvasNodes = [...NARRATIVE_NODES];
 let zoom = 1, panX = 0, panY = 0;
 let dragging = false, lastMx = 0, lastMy = 0;
+let sceneMode = 'structure';
+let wormholeTimer = null;
+let wormholeStep = 0;
+let renderedSceneNodes = [];
+
+function buildPascalProjection(nodes) {
+  const sorted = [...nodes].sort((a, b) => a.seq - b.seq);
+  const rows = [];
+  let cursor = 0;
+  let row = 0;
+  while (cursor < sorted.length) {
+    const take = Math.min(row + 1, sorted.length - cursor);
+    rows.push(sorted.slice(cursor, cursor + take));
+    cursor += take;
+    row += 1;
+  }
+  const projected = [];
+  const rowGap = 84;
+  const colGap = 120;
+  rows.forEach((items, rowIndex) => {
+    const rowWidth = (items.length - 1) * colGap;
+    items.forEach((node, k) => {
+      projected.push({
+        ...node,
+        row: rowIndex,
+        k,
+        px: -rowWidth / 2 + k * colGap,
+        py: rowIndex * rowGap,
+        runtimeActive: sceneMode === 'runtime' ? rowIndex < wormholeStep : false,
+        runtimeBlocked: sceneMode === 'runtime' ? (rowIndex === wormholeStep - 1 && (node.event === 'covenant' || node.event === 'warning')) : false
+      });
+    });
+  });
+  return projected;
+}
+
+function setSceneMode(mode) {
+  sceneMode = mode;
+  document.getElementById('btn-pascal-structure').classList.toggle('active', mode === 'structure');
+  document.getElementById('btn-pascal-runtime').classList.toggle('active', mode === 'runtime');
+  renderCanvas();
+}
+
+function stopWormholePlayback() {
+  if (wormholeTimer) {
+    clearInterval(wormholeTimer);
+    wormholeTimer = null;
+  }
+  document.getElementById('btn-pascal-wormhole').classList.remove('active');
+}
+
+function tickWormholePlayback() {
+  wormholeStep += 1;
+  renderCanvas();
+  const maxRow = Math.max(0, ...buildPascalProjection(canvasNodes).map((n) => n.row));
+  if (wormholeStep > maxRow + 1) {
+    stopWormholePlayback();
+  }
+}
+
+function toggleWormholePlayback() {
+  if (wormholeTimer) {
+    stopWormholePlayback();
+    renderCanvas();
+    return;
+  }
+  setSceneMode('runtime');
+  wormholeStep = 0;
+  wormholeTimer = setInterval(tickWormholePlayback, 650);
+  document.getElementById('btn-pascal-wormhole').classList.add('active');
+}
 
 function resizeCanvas() {
   const r = canvas.parentElement.getBoundingClientRect();
@@ -683,9 +796,17 @@ function worldToScreen(nx, nz) {
   ];
 }
 
+function pascalToScreen(px, py) {
+  return [
+    canvas.width / 2 + px * zoom + panX,
+    72 + py * zoom + panY
+  ];
+}
+
 function renderCanvas(nodes) {
   if (nodes) canvasNodes = nodes;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  renderedSceneNodes = buildPascalProjection(canvasNodes);
 
   // Background grid
   ctx.strokeStyle = 'rgba(200,169,81,0.04)';
@@ -697,39 +818,46 @@ function renderCanvas(nodes) {
     ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke();
   }
 
-  // Draw edges (adjacent pairs)
-  ctx.strokeStyle = 'rgba(200,169,81,0.08)';
-  ctx.lineWidth = 0.5;
-  for (let i = 1; i < canvasNodes.length; i++) {
-    const a = canvasNodes[i-1], b = canvasNodes[i];
-    const [ax,ay] = worldToScreen(a.position.x, a.position.z);
-    const [bx,by] = worldToScreen(b.position.x, b.position.z);
-    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke();
-  }
+  // Pascal dependency edges
+  renderedSceneNodes.forEach((node) => {
+    if (!Number.isInteger(node.row) || node.row === 0) return;
+    const parents = renderedSceneNodes.filter((candidate) =>
+      candidate.row === node.row - 1 && (candidate.k === node.k || candidate.k === node.k - 1)
+    );
+    const [x2, y2] = pascalToScreen(node.px, node.py);
+    parents.forEach((parent) => {
+      const [x1, y1] = pascalToScreen(parent.px, parent.py);
+      ctx.strokeStyle = node.runtimeBlocked ? 'rgba(196,74,42,0.65)' : (node.runtimeActive && parent.runtimeActive ? 'rgba(61,158,110,0.45)' : 'rgba(200,169,81,0.12)');
+      ctx.lineWidth = node.runtimeActive && parent.runtimeActive ? 1.8 : 0.9;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    });
+  });
 
   // Draw nodes
-  canvasNodes.forEach(n => {
-    const [x,y] = worldToScreen(n.position.x, n.position.z);
+  renderedSceneNodes.forEach(n => {
+    const [x,y] = pascalToScreen(n.px, n.py);
     const col = evColor(n.event);
-    const r = n.event === 'covenant' ? 7 : n.event === 'revelation' || n.event === 'insight' ? 6 : 4;
+    const r = n.event === 'covenant' ? 8 : n.event === 'revelation' || n.event === 'insight' ? 6 : 5;
 
     // Glow
     const grd = ctx.createRadialGradient(x,y,0, x,y,r*3);
-    grd.addColorStop(0, col + '44');
+    grd.addColorStop(0, n.runtimeBlocked ? 'rgba(196,74,42,0.35)' : n.runtimeActive ? 'rgba(61,158,110,0.28)' : col + '44');
     grd.addColorStop(1, col + '00');
     ctx.fillStyle = grd;
     ctx.beginPath(); ctx.arc(x,y,r*3,0,Math.PI*2); ctx.fill();
 
     // Node
-    ctx.fillStyle = col + 'cc';
-    ctx.strokeStyle = col;
-    ctx.lineWidth = 1;
+    ctx.fillStyle = n.runtimeBlocked ? 'rgba(196,74,42,0.9)' : n.runtimeActive ? 'rgba(61,158,110,0.85)' : col + 'cc';
+    ctx.strokeStyle = n.runtimeBlocked ? '#c44a2a' : n.runtimeActive ? '#3d9e6e' : col;
+    ctx.lineWidth = n.runtimeActive ? 1.8 : 1;
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); ctx.stroke();
 
-    // Label for important nodes
-    if (n.event === 'insight' || n.event === 'revelation' || n.event === 'covenant') {
-      const lbl = n.text.length > 32 ? n.text.slice(0,32)+'…' : n.text;
-      ctx.fillStyle = col + 'bb';
+    if (n.event === 'insight' || n.event === 'revelation' || n.event === 'covenant' || n.row < 2) {
+      const lbl = n.row < 2 ? `r${n.row}/k${n.k}` : (n.text.length > 32 ? n.text.slice(0,32)+'…' : n.text);
+      ctx.fillStyle = n.runtimeActive ? 'rgba(245,240,232,0.92)' : col + 'bb';
       ctx.font = '9px DM Mono, monospace';
       ctx.fillText(lbl, x+r+3, y+3);
     }
@@ -750,8 +878,8 @@ canvas.addEventListener('mousemove', e => {
   }
 
   let found = null;
-  for (const n of canvasNodes) {
-    const [x,y] = worldToScreen(n.position.x, n.position.z);
+  for (const n of renderedSceneNodes) {
+    const [x,y] = pascalToScreen(n.px, n.py);
     if (Math.hypot(mx-x, my-y) < 10) { found = n; break; }
   }
 
@@ -761,7 +889,7 @@ canvas.addEventListener('mousemove', e => {
     tt.style.top = (e.clientY-10)+'px';
     document.getElementById('tt-event').textContent = found.event;
     document.getElementById('tt-text').textContent = found.text || '—';
-    document.getElementById('tt-series').textContent = found.series_path + ' · seq ' + found.seq;
+    document.getElementById('tt-series').textContent = found.transcript || (found.series_path + ' · seq ' + found.seq);
     canvas.style.cursor = 'pointer';
   } else {
     tt.style.display = 'none';
@@ -784,8 +912,8 @@ canvas.addEventListener('wheel', e => {
 canvas.addEventListener('click', e => {
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  for (const n of canvasNodes) {
-    const [x,y] = worldToScreen(n.position.x, n.position.z);
+  for (const n of renderedSceneNodes) {
+    const [x,y] = pascalToScreen(n.px, n.py);
     if (Math.hypot(mx-x, my-y) < 10) {
       selectNode(n, null);
       // switch to timeline and scroll there

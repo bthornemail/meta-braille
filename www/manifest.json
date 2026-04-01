@@ -1,0 +1,103 @@
+{
+  "id": "/",
+  "name": "Symbolic Web",
+  "short_name": "Symbolic Web",
+  "description": "A signal-first runtime where canonical events form a dependency lattice across shared projection surfaces.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "background_color": "#f4f0e8",
+  "theme_color": "#8b4513",
+  "icons": [
+    {
+      "src": "/icons/artifact-aztec.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/artifact-aztec-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/artifact-aztec-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Shadow",
+      "short_name": "Shadow",
+      "description": "Open the dependency field",
+      "url": "/shadow"
+    },
+    {
+      "name": "Portal",
+      "short_name": "Portal",
+      "description": "Open the runtime view",
+      "url": "/portal"
+    },
+    {
+      "name": "World",
+      "short_name": "World",
+      "description": "Open the composition surface",
+      "url": "/world"
+    },
+    {
+      "name": "Artifact",
+      "short_name": "Artifact",
+      "description": "Open witness and scanner realization",
+      "url": "/artifact"
+    }
+  ],
+  "share_target": {
+    "action": "/artifact-share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "artifacts",
+          "accept": [
+            "image/svg+xml",
+            "image/png",
+            "application/json"
+          ]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/artifact",
+      "accept": {
+        "image/svg+xml": [
+          ".svg"
+        ],
+        "image/png": [
+          ".png"
+        ],
+        "application/json": [
+          ".json"
+        ]
+      }
+    }
+  ],
+  "categories": [
+    "developer",
+    "education",
+    "utilities"
+  ],
+  "lang": "en",
+  "dir": "ltr"
+}
