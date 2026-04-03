@@ -202,3 +202,6 @@ Use when:
 
 This order prioritizes the route with the most device/browser sensitivity first,
 then confirms the public narrative surfaces.
+
+After this checklist is complete, record the real-device artifact acceptance in
+[72-artifact-device-validation-record.md](./72-artifact-device-validation-record.md).

@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#8b4513">
+    <link rel="icon" href="/icons/artifact-aztec-192.png" type="image/png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="manifest" href="/manifest.json">
     <title>Symbolic Web - Live Dependency Runtime</title>
     <style>
@@ -56,6 +58,12 @@
         display: grid;
         gap: 10px;
       }
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(260px, 360px);
+        gap: 16px;
+        align-items: start;
+      }
       .intro-copy {
         max-width: 760px;
         color: #5a4a3a;
@@ -82,6 +90,56 @@
         font-size: 0.86rem;
         color: #6d5843;
         white-space: pre-wrap;
+      }
+      .artifact-card {
+        display: grid;
+        gap: 10px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px;
+      }
+      .artifact-card h2 {
+        margin: 0;
+        font-size: 1rem;
+      }
+      .artifact-card img {
+        width: 100%;
+        max-width: 240px;
+        justify-self: center;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: white;
+      }
+      .artifact-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .artifact-actions a {
+        text-decoration: none;
+      }
+      .artifact-note {
+        color: #5a4a3a;
+        font-size: 0.92rem;
+      }
+      details.panel {
+        padding: 0;
+        overflow: hidden;
+      }
+      details.panel > summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 16px;
+        font-weight: 600;
+      }
+      details.panel > summary::-webkit-details-marker {
+        display: none;
+      }
+      .details-body {
+        padding: 0 16px 16px;
+        display: grid;
+        gap: 16px;
       }
       .scope-strip,
       .control-strip {
@@ -331,6 +389,7 @@
         justify-self: start;
       }
       @media (max-width: 960px) {
+        .hero,
         .workspace {
           grid-template-columns: 1fr;
         }
@@ -350,183 +409,206 @@
   <body>
     <main>
       <section class="panel">
-        <div class="intro-stack">
-          <h1>Symbolic Web - Live Dependency Runtime</h1>
-          <p class="intro-copy">A signal-first system where canonical events form a dependency lattice, visualized and executed through shared projection surfaces.</p>
-          <div class="entry-links">
-            <a href="/shadow"><button type="button">Shadow</button></a>
-            <a href="/portal"><button type="button">Portal</button></a>
-            <a href="/world"><button type="button">World</button></a>
-            <a href="/artifact"><button type="button">Artifact</button></a>
-            <a href="/docs/"><button type="button">Docs</button></a>
-          </div>
-          <div class="grounding-line">Braille -> Address -> Pascal lattice -> Projection -> Runtime overlays</div>
-          <p id="status">showcase: booting live dependency runtime…</p>
-        </div>
-        <div class="toolbar">
-          <input id="peer-target" type="text" placeholder="peer id">
-          <button id="connect-peer" type="button">Connect Peer</button>
-          <button id="mode-signal" type="button">Signal</button>
-          <button id="mode-stream" type="button">Stream</button>
-          <button id="mode-wordnet" type="button">WordNet</button>
-          <button id="reset-view" type="button" title="Restore the default layout without changing the stream">Reset View</button>
-        </div>
-        <p id="wordnet-status">observer/wordnet: waiting…</p>
-      </section>
-
-      <section class="panel scope-strip">
-        <h2>240-Axis Scope Strip</h2>
-        <div class="scope-grid">
-          <div class="scope-chip">
-            <strong>Scope128</strong>
-            <span id="fs-scope">waiting…</span>
-          </div>
-          <div class="scope-chip">
-            <strong>Partition Layer</strong>
-            <span id="fs-partition">waiting…</span>
-          </div>
-          <div class="scope-chip">
-            <strong>Scene Step</strong>
-            <span id="fs-scene-step">waiting…</span>
-          </div>
-          <div class="scope-chip">
-            <strong>Orbit Step</strong>
-            <span id="fs-orbit-step">waiting…</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="workspace">
-        <aside class="rail">
-          <section class="panel">
-            <h2>GS Relation Rail</h2>
-            <div class="feature-card" data-card="transport">
-              <div class="feature-head">
-                <h3>Transport / Fanout</h3>
-                <button type="button" data-toggle-card="transport" title="Collapse or expand this panel">Collapse</button>
-              </div>
-              <div class="feature-body">
-                <div class="pillbar">
-                  <button type="button" data-card-mode="transport" data-mode="local">Local</button>
-                  <button type="button" data-card-mode="transport" data-mode="remote">Remote</button>
-                </div>
-                <div class="mini" id="transport-card">waiting…</div>
-              </div>
+        <div class="hero">
+          <div class="intro-stack">
+            <h1>Symbolic Web - Live Dependency Runtime</h1>
+            <p class="intro-copy">A signal-first system where canonical events form a dependency lattice, visualized and executed through shared projection surfaces.</p>
+            <div class="entry-links">
+              <a href="/shadow"><button type="button">Shadow</button></a>
+              <a href="/portal"><button type="button">Portal</button></a>
+              <a href="/world"><button type="button">World</button></a>
+              <a href="/artifact"><button type="button">Artifact</button></a>
+              <a href="/docs/"><button type="button">Docs</button></a>
             </div>
-            <div class="feature-card" data-card="history">
-              <div class="feature-head">
-                <h3>Transcript / Recovery</h3>
-                <button type="button" data-toggle-card="history" title="Collapse or expand this panel">Collapse</button>
+            <div class="grounding-line">Braille -> Address -> Pascal lattice -> Projection -> Runtime overlays</div>
+            <p id="status">showcase: booting live dependency runtime…</p>
+          </div>
+          <aside class="artifact-card">
+            <h2>Scan This Artifact</h2>
+            <img src="/artifacts/public-icon/artifact-aztec-512.png?v=3" width="240" height="240" alt="Scannable Aztec artifact icon">
+            <div class="artifact-note">This icon is the scannable artifact for the public app path. Scan it or open the artifact surface to import files, witness SVG/PNG, or scanner transport.</div>
+            <div class="artifact-actions">
+              <a href="/artifact"><button type="button">Open Artifact</button></a>
+              <a href="/artifacts/public-icon/"><button type="button">Artifact Suite</button></a>
+            </div>
+            <div class="grounding-line">artifact://public/icon</div>
+          </aside>
+        </div>
+      </section>
+
+      <details class="panel">
+        <summary>Advanced Runtime Controls</summary>
+        <div class="details-body">
+          <div class="toolbar">
+            <input id="peer-target" type="text" placeholder="peer id">
+            <button id="connect-peer" type="button">Connect Peer</button>
+            <button id="mode-signal" type="button">Signal</button>
+            <button id="mode-stream" type="button">Stream</button>
+            <button id="mode-wordnet" type="button">WordNet</button>
+            <button id="reset-view" type="button" title="Restore the default layout without changing the stream">Reset View</button>
+          </div>
+          <p id="wordnet-status">observer/wordnet: waiting…</p>
+        </div>
+      </details>
+
+      <details class="panel" open>
+        <summary>Live Runtime Snapshot</summary>
+        <div class="details-body">
+          <section class="scope-strip">
+            <h2>240-Axis Scope Strip</h2>
+            <div class="scope-grid">
+              <div class="scope-chip">
+                <strong>Scope128</strong>
+                <span id="fs-scope">waiting…</span>
               </div>
-              <div class="feature-body">
-                <div class="pillbar">
-                  <button type="button" data-card-mode="history" data-mode="local">Local</button>
-                  <button type="button" data-card-mode="history" data-mode="remote">Remote</button>
-                </div>
-                <div class="mini" id="history-card">waiting…</div>
+              <div class="scope-chip">
+                <strong>Partition Layer</strong>
+                <span id="fs-partition">waiting…</span>
+              </div>
+              <div class="scope-chip">
+                <strong>Scene Step</strong>
+                <span id="fs-scene-step">waiting…</span>
+              </div>
+              <div class="scope-chip">
+                <strong>Orbit Step</strong>
+                <span id="fs-orbit-step">waiting…</span>
               </div>
             </div>
           </section>
-        </aside>
 
-        <div class="main-stack">
-          <section class="panel scene-panel">
-            <h2>Observer Projection</h2>
-            <div class="scene-topline">
-              <div class="scene-card">
-                <h3>Orbit Clock</h3>
-                <div id="orbit-clock">waiting…</div>
-              </div>
-              <div class="scene-card">
-                <h3>256-Axis Projection Map</h3>
-                <div class="pillbar projection-toggle">
-                  <button id="projection-2d" type="button">2D</button>
-                  <button id="projection-3d" type="button">3D</button>
+          <section class="workspace">
+            <aside class="rail">
+              <section class="panel">
+                <h2>GS Relation Rail</h2>
+                <div class="feature-card" data-card="transport">
+                  <div class="feature-head">
+                    <h3>Transport / Fanout</h3>
+                    <button type="button" data-toggle-card="transport" title="Collapse or expand this panel">Collapse</button>
+                  </div>
+                  <div class="feature-body">
+                    <div class="pillbar">
+                      <button type="button" data-card-mode="transport" data-mode="local">Local</button>
+                      <button type="button" data-card-mode="transport" data-mode="remote">Remote</button>
+                    </div>
+                    <div class="mini" id="transport-card">waiting…</div>
+                  </div>
                 </div>
-                <div id="projection-map">waiting…</div>
-              </div>
-            </div>
-            <div class="scene-stage">
-              <div class="scene-stage-main">
-                <div id="scene-glyph" class="scene-glyph">⠓</div>
-                <div id="scene-title" class="scene-title">waiting…</div>
-                <div id="scene-caption" class="mini">projection pending…</div>
-                <div class="tap-controls pillbar">
-                  <button id="tap-view-stream" type="button">Tap Stream</button>
-                  <button id="tap-view-kingwen" type="button">King Wen</button>
+                <div class="feature-card" data-card="history">
+                  <div class="feature-head">
+                    <h3>Transcript / Recovery</h3>
+                    <button type="button" data-toggle-card="history" title="Collapse or expand this panel">Collapse</button>
+                  </div>
+                  <div class="feature-body">
+                    <div class="pillbar">
+                      <button type="button" data-card-mode="history" data-mode="local">Local</button>
+                      <button type="button" data-card-mode="history" data-mode="remote">Remote</button>
+                    </div>
+                    <div class="mini" id="history-card">waiting…</div>
+                  </div>
                 </div>
-                <div id="scene-tap-stream" class="tap-stream">
-                  <div class="tap-empty">Waiting for tap pulses…</div>
+              </section>
+            </aside>
+
+            <div class="main-stack">
+              <section class="panel scene-panel">
+                <h2>Observer Projection</h2>
+                <div class="scene-topline">
+                  <div class="scene-card">
+                    <h3>Orbit Clock</h3>
+                    <div id="orbit-clock">waiting…</div>
+                  </div>
+                  <div class="scene-card">
+                    <h3>256-Axis Projection Map</h3>
+                    <div class="pillbar projection-toggle">
+                      <button id="projection-2d" type="button">2D</button>
+                      <button id="projection-3d" type="button">3D</button>
+                    </div>
+                    <div id="projection-map">waiting…</div>
+                  </div>
                 </div>
-                <pre id="scene-dump" class="mini">䷀ | ⠀ | 00/0000 | m/orbit/0/part/0/dialect/default/chain/0</pre>
-              </div>
-              <div class="scene-aside">
-                <strong>Scene Trace</strong>
-                <div id="scene-meta" class="scene-meta">waiting…</div>
-                <strong>Narrative Overlay</strong>
-                <div id="narrative-overlay" class="narrative-stack">
-                  <article class="narrative-card">
+                <div class="scene-stage">
+                  <div class="scene-stage-main">
+                    <div id="scene-glyph" class="scene-glyph">⠓</div>
+                    <div id="scene-title" class="scene-title">waiting…</div>
+                    <div id="scene-caption" class="mini">projection pending…</div>
+                    <div class="tap-controls pillbar">
+                      <button id="tap-view-stream" type="button">Tap Stream</button>
+                      <button id="tap-view-kingwen" type="button">King Wen</button>
+                    </div>
+                    <div id="scene-tap-stream" class="tap-stream">
+                      <div class="tap-empty">Waiting for tap pulses…</div>
+                    </div>
+                    <pre id="scene-dump" class="mini">䷀ | ⠀ | 00/0000 | m/orbit/0/part/0/dialect/default/chain/0</pre>
+                  </div>
+                  <div class="scene-aside">
+                    <strong>Scene Trace</strong>
+                    <div id="scene-meta" class="scene-meta">waiting…</div>
                     <strong>Narrative Overlay</strong>
-                    <span>Waiting for a stream event.</span>
-                  </article>
+                    <div id="narrative-overlay" class="narrative-stack">
+                      <article class="narrative-card">
+                        <strong>Narrative Overlay</strong>
+                        <span>Waiting for a stream event.</span>
+                      </article>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </section>
+
+              <section class="panel">
+                <h2>Peers</h2>
+                <ul id="peers"></ul>
+              </section>
+
+              <section class="panel">
+                <h2>Canonical Transcript Window</h2>
+                <pre id="latest">{}</pre>
+              </section>
+
+              <section class="panel">
+                <h2>Shadow Canvas Projection</h2>
+                <pre id="json-canvas">{"nodes":[],"edges":[]}</pre>
+              </section>
+
+              <section class="panel">
+                <h2>Canonical DOM Graph</h2>
+                <div id="graph"></div>
+              </section>
             </div>
-          </section>
 
-          <section class="panel">
-            <h2>Peers</h2>
-            <ul id="peers"></ul>
-          </section>
-
-          <section class="panel">
-            <h2>Canonical Transcript Window</h2>
-            <pre id="latest">{}</pre>
-          </section>
-
-          <section class="panel">
-            <h2>Shadow Canvas Projection</h2>
-            <pre id="json-canvas">{"nodes":[],"edges":[]}</pre>
-          </section>
-
-          <section class="panel">
-            <h2>Canonical DOM Graph</h2>
-            <div id="graph"></div>
+            <aside class="rail">
+              <section class="panel">
+                <h2>US Observer Rail</h2>
+                <div class="feature-card" data-card="selection">
+                  <div class="feature-head">
+                    <h3>Selection / Identity</h3>
+                    <button type="button" data-toggle-card="selection" title="Collapse or expand this panel">Collapse</button>
+                  </div>
+                  <div class="feature-body">
+                    <div class="pillbar">
+                      <button type="button" data-card-mode="selection" data-mode="local">Local</button>
+                      <button type="button" data-card-mode="selection" data-mode="remote">Remote</button>
+                    </div>
+                    <div class="mini" id="selection-card">waiting…</div>
+                  </div>
+                </div>
+                <div class="feature-card" data-card="projection">
+                  <div class="feature-head">
+                    <h3>Projection / Mirror Lane</h3>
+                    <button type="button" data-toggle-card="projection" title="Collapse or expand this panel">Collapse</button>
+                  </div>
+                  <div class="feature-body">
+                    <div class="pillbar">
+                      <button type="button" data-card-mode="projection" data-mode="local">Local</button>
+                      <button type="button" data-card-mode="projection" data-mode="remote">Remote</button>
+                    </div>
+                    <div class="mini" id="projection-card">waiting…</div>
+                  </div>
+                </div>
+              </section>
+            </aside>
           </section>
         </div>
-
-        <aside class="rail">
-          <section class="panel">
-            <h2>US Observer Rail</h2>
-            <div class="feature-card" data-card="selection">
-              <div class="feature-head">
-                <h3>Selection / Identity</h3>
-                <button type="button" data-toggle-card="selection" title="Collapse or expand this panel">Collapse</button>
-              </div>
-              <div class="feature-body">
-                <div class="pillbar">
-                  <button type="button" data-card-mode="selection" data-mode="local">Local</button>
-                  <button type="button" data-card-mode="selection" data-mode="remote">Remote</button>
-                </div>
-                <div class="mini" id="selection-card">waiting…</div>
-              </div>
-            </div>
-            <div class="feature-card" data-card="projection">
-              <div class="feature-head">
-                <h3>Projection / Mirror Lane</h3>
-                <button type="button" data-toggle-card="projection" title="Collapse or expand this panel">Collapse</button>
-              </div>
-              <div class="feature-body">
-                <div class="pillbar">
-                  <button type="button" data-card-mode="projection" data-mode="local">Local</button>
-                  <button type="button" data-card-mode="projection" data-mode="remote">Remote</button>
-                </div>
-                <div class="mini" id="projection-card">waiting…</div>
-              </div>
-            </div>
-          </section>
-        </aside>
-      </section>
+      </details>
 
       <section class="panel control-strip">
         <h2>RS Reduction / Transcript Bar</h2>

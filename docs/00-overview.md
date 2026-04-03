@@ -22,18 +22,19 @@ proof docs = confidence boundary
 8. [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md)
 9. [Public Release](./70-public-release.md)
 10. [Public Route Smoke Checklist](./71-public-route-smoke-checklist.md)
-11. [matroid-garden.com Deployment](./80-matroid-garden-deploy.md)
-12. [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md)
-13. [Shadow Canvas Law](./95-shadow-canvas-law.md)
-14. [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md)
-15. [Legacy NDJSON Wrapper Schema](./97-legacy-ndjson-wrapper-schema.md)
-16. [Axis Model](./98-axis-model.md)
-17. [Braille Axis Contract](./99-braille-axis-contract.md)
-18. [Braille Kernel Codec](./100-braille-kernel-codec.md)
-19. [Meta-Circular Interpreter](./101-meta-circular-interpreter.md)
-20. [Matroid Emergence](./102-matroid-emergence.md)
-21. [Aztec Artifact Surface](./103-aztec-artifact-surface.md)
-22. [Artifact-First Transport And Sharing](./104-artifact-first-transport-and-sharing.md)
+11. [Artifact Device Validation Record](./72-artifact-device-validation-record.md)
+12. [matroid-garden.com Deployment](./80-matroid-garden-deploy.md)
+13. [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md)
+14. [Shadow Canvas Law](./95-shadow-canvas-law.md)
+15. [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md)
+16. [Legacy NDJSON Wrapper Schema](./97-legacy-ndjson-wrapper-schema.md)
+17. [Axis Model](./98-axis-model.md)
+18. [Braille Axis Contract](./99-braille-axis-contract.md)
+19. [Braille Kernel Codec](./100-braille-kernel-codec.md)
+20. [Meta-Circular Interpreter](./101-meta-circular-interpreter.md)
+21. [Matroid Emergence](./102-matroid-emergence.md)
+22. [Aztec Artifact Surface](./103-aztec-artifact-surface.md)
+23. [Artifact-First Transport And Sharing](./104-artifact-first-transport-and-sharing.md)
 
 ## What This System Is
 
@@ -154,6 +155,7 @@ This handbook is intentionally self-contained. The rest of the repo still contai
 - For the small cross-domain anchor vocabulary, go to [Shared Vocabulary](./50-shared-vocabulary.md).
 - For the signal-first upgrade, go to [Signal-First Braille + Hexagram](./60-signal-first-braille-hexagram.md).
 - For the final go/no-go pass across the public routes, go to [Public Route Smoke Checklist](./71-public-route-smoke-checklist.md).
+- For the final real-device acceptance record on icon scan, PNG scan, and fallback behavior, go to [Artifact Device Validation Record](./72-artifact-device-validation-record.md).
 - For the full address / projection / materialization stack, go to [Canonical Projection And Resolution](./90-canonical-projection-and-resolution.md).
 - For the browser-side substrate and projection law, go to [Shadow Canvas Law](./95-shadow-canvas-law.md).
 - For the coordinate-space, traversal, and tap-code-style reduction, go to [Coordinate Adapters And Traversal](./96-coordinate-adapters-and-traversal.md).

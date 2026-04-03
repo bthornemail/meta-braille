@@ -379,6 +379,44 @@ def recent_events(config: RuntimeConfig, dialect: str | None, part: str | None, 
     return events[-limit:]
 
 
+def shadow_scene_payload(config: RuntimeConfig) -> dict[str, Any]:
+    latest = None
+    if config.latest_json.exists():
+        try:
+            latest = json.loads(config.latest_json.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            latest = None
+    nodes: list[dict[str, Any]] = []
+    if latest:
+        key = str(latest.get("path") or latest.get("braille") or f"step-{latest.get('step', 0)}")
+        nodes.append(
+            {
+                "key": key,
+                "event": latest,
+                "dataset": {},
+                "cas": latest.get("step"),
+                "updatedAt": int(time.time() * 1000),
+            }
+        )
+    return {"nodes": nodes, "count": len(nodes)}
+
+
+def shadow_relations_payload() -> dict[str, Any]:
+    return {
+        "summary": {
+            "total": 0,
+            "nodes": 0,
+            "glosses": 0,
+            "edges": 0,
+            "selectedId": None,
+            "sources": [],
+        },
+        "selectedId": None,
+        "records": [],
+        "selection": None,
+    }
+
+
 class RuntimeHandler(BaseHTTPRequestHandler):
     server: "RuntimeServer"
 
@@ -389,6 +427,13 @@ class RuntimeHandler(BaseHTTPRequestHandler):
         web_root = self.server.config.web_dir.resolve()
         target = (web_root / clean_path).resolve()
         if target != web_root and web_root not in target.parents:
+            return None
+        if target.exists() and target.is_dir():
+            index_target = (target / "index.html").resolve()
+            if index_target == web_root or web_root not in index_target.parents:
+                return None
+            if index_target.exists() and index_target.is_file():
+                return index_target
             return None
         if not target.exists() or not target.is_file():
             return None
@@ -409,6 +454,12 @@ class RuntimeHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/shadow-scene-graph":
+            self.write_json(shadow_scene_payload(self.server.config))
+            return
+        if parsed.path == "/shadow-relations":
+            self.write_json(shadow_relations_payload())
+            return
         if parsed.path == "/api/config":
             self.write_json(
                 {
@@ -573,6 +624,10 @@ def content_type_for_path(path: Path) -> str:
         return "text/html; charset=utf-8"
     if suffix == ".svg":
         return "image/svg+xml"
+    if suffix == ".png":
+        return "image/png"
+    if suffix == ".ico":
+        return "image/x-icon"
     return "application/octet-stream"
 
 

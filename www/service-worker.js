@@ -6,7 +6,7 @@ import {
   serializeRelationStore,
 } from "./relation-store.js";
 
-const STATIC_CACHE = "meta-braille-static-v1";
+const STATIC_CACHE = "meta-braille-static-v3";
 const ARTIFACT_SHARE_CACHE = "meta-braille-artifact-share-v1";
 const ARTIFACT_SHARE_KEY = "/__artifact-share/latest.json";
 const SHELL_FILES = [
@@ -26,6 +26,12 @@ const SHELL_FILES = [
   "/icons/artifact-aztec.svg",
   "/icons/artifact-aztec-192.png",
   "/icons/artifact-aztec-512.png",
+  "/artifacts/public-icon/",
+  "/artifacts/public-icon/index.html",
+  "/artifacts/public-icon/artifact.json",
+  "/artifacts/public-icon/artifact-aztec.svg",
+  "/artifacts/public-icon/artifact-aztec-192.png",
+  "/artifacts/public-icon/artifact-aztec-512.png",
 ];
 const shadowSceneGraph = new Map();
 let relationStore = createRelationStore();
@@ -112,7 +118,15 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key.startsWith("meta-braille-static-") && key !== STATIC_CACHE)
+          .map((key) => caches.delete(key)),
+      ),
+    ).then(() => self.clients.claim()),
+  );
 });
 
 self.addEventListener("fetch", (event) => {
